@@ -1,0 +1,120 @@
+﻿@inject IProveedoresService serviceProveedor
+@inject NavigationManager navigate
+@inject IJSRuntime js
+
+<EditForm Model="ProveedorVM">
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Nombre:</label>
+                <InputText id="txtNombre" @bind-Value="ProveedorVM.Nombre" autofocus class="form-control" />
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="form-group">
+                <label>Correo:</label>
+                <InputText @bind-Value="ProveedorVM.Correo" type="email" class="form-control" />
+                <small id="emailHelp" class="form-text text-muted"></small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Telefono1:</label>
+                <input type="tel" @bind-value="ProveedorVM.Telefono1" class="form-control">
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="form-group">
+                <label>Telefono2:</label>
+                <input type="tel" @bind-value="ProveedorVM.Telefono2" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Direccion:</label>
+                <InputTextArea @bind-Value="ProveedorVM.Direccion" class="form-control" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Fax:</label>
+                <InputText @bind-Value="ProveedorVM.Fax" class="form-control" />
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label>Ruc:</label>
+                <InputText @bind-Value="ProveedorVM.Ruc" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <button type="submit" @onclick="GuardarActualizarProveedor" class="btn btn-outline-primary"><i class="bi bi-save mt-1"></i>  @LabelButton</button>
+    <button type="button" class="btn btn-outline-danger" @onclick="CerraModal"><i class="bi bi-save mt-1"></i>  Cerrar</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public ProveedoresViewModel ProveedorVM { get; set; }
+
+    [Parameter]
+    public EventCallback CerraModal { get; set; }
+
+    [Parameter]
+    public EventCallback RecargarListado { get; set; }
+
+    string LabelButton = "";
+
+    public Response respuesta { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ProveedorVM.IdProveedor == 0)
+            LabelButton = "Gurdar";
+        else
+            LabelButton = "Update";
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (ProveedorVM.IdProveedor == 0)
+            LabelButton = "Guardar";
+        else
+            LabelButton = "Actualizar";
+
+        await js.InvokeVoidAsync("focusElementById", "txtNombre");
+    }
+
+    protected async Task GuardarActualizarProveedor()
+    {
+        if (ProveedorVM.IdProveedor == 0)
+            respuesta = await serviceProveedor.GuardarProveedor(ProveedorVM);
+        else
+            respuesta = await serviceProveedor.ActualizarProveedor(ProveedorVM);
+
+        if (respuesta.Ok)
+        {
+            await js.InvokeVoidAsync("showAlert", "success", respuesta.Message, "");
+            //await Task.Delay(1600).ContinueWith((task) =>
+            //{
+            //});
+            await CerraModal.InvokeAsync(true);
+            navigate.NavigateTo("proveedores", forceLoad: true);
+        }
+        else
+        {
+            ///error de 
+            await CerraModal.InvokeAsync(true);
+        }
+    }
+
+}

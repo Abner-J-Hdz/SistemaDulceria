@@ -1,0 +1,40 @@
+﻿@inherits LayoutComponentBase
+@inject IBootstrapCSS BootrapCSS
+<div class="sidebar">
+    <NavMenu />
+</div>
+
+<div class="main">
+    <div class="top-row px-4">
+        <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+    </div>
+
+    <div class="content px-4">
+        @Body
+    </div>
+</div>
+
+
+@code{
+    private bool isServerSide = true;
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    try
+    //    {
+    //        await BootrapCSS.SetBootstrapCSS("4.3.1");
+    //    }
+    //    catch (Exception )
+    //    {
+    //        isServerSide = true;
+    //        throw;
+    //    }
+    //}
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (isServerSide && firstRender)
+        {
+            await BootrapCSS.SetBootstrapCSS("4.3.1");
+        }
+    }
+}

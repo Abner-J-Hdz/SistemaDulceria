@@ -1,0 +1,126 @@
+﻿@inject IProveedoresService service
+
+<div class="d-flex  justify-content-between" style="">
+    <div>
+        <h2>Proveedores</h2>
+    </div>
+    <div class="align-content-end">
+        <button type="button" class="btn btn-outline-info" @onclick="NuevoProveedor">
+            <i class="bi bi-plus-circle m-1"></i> Nuevo
+        </button>
+    </div>
+</div>
+
+<span class="text-danger">@message</span>
+<span class="text-danger">@error</span>
+
+<table class="table table-bordered  table-striped table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Nombre</th>
+            <th scope="col">Correo</th>
+            <th scope="col">Telefono</th>
+            <th scope="col">Telefono2</th>
+            <th scope="col">Direccion</th>
+            <th scope="col">Fax</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Proveedores)
+        {
+            <tr>
+                <td>@item.Nombre</td>
+                <td>@item.Correo</td>
+                <td>@item.Telefono1</td>
+                <td>@item.Telefono2</td>
+                <td>@item.Direccion</td>
+                <td>@item.Fax</td>
+                <td><button class="btn btn-sm btn-outline-primary" @onclick="@(e => EditaProveedor(e, item.IdProveedor))"><i class="bi bi-pencil-square"></i></button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<BSModal @ref="ModalEdit" Size="Size.Large">
+    <BSModalHeader OnClick="@(() => ModalEdit.Hide())">Editar Proveedor</BSModalHeader>
+    <BSModalBody>
+        <FormularioProveedor ProveedorVM="@proveedorEdit" CerraModal="CerrarModalEdit" RecargarListado="RecargarListadoProveedores" />
+    </BSModalBody>
+</BSModal>
+
+<BSModal @ref="ModalNuevo" Size="Size.Large">
+    <BSModalHeader OnClick="@(() => ModalNuevo.Hide())">Nuevo Proveedor</BSModalHeader>
+    <BSModalBody>
+        <FormularioProveedor ProveedorVM="@proveedorNuevo" CerraModal="CerrarModalNuevo" />
+    </BSModalBody>
+    <BSModalFooter>
+        <BSButton Color="Color.Secondary" @onclick="@(() => ModalNuevo.Hide())">Close</BSButton>
+        <BSButton Color="Color.Primary" @onclick="@(() => ModalNuevo.Hide())">Save Changes</BSButton>
+    </BSModalFooter>
+</BSModal>
+
+
+@code{
+
+    BSModal ModalEdit { get; set; }
+    List<ProveedoresViewModel> Proveedores = new List<ProveedoresViewModel>();
+
+    ProveedoresViewModel proveedorEdit = new ProveedoresViewModel();
+
+    string message = "";
+    string error = "";
+
+    BSModal ModalNuevo { get; set; }
+
+    ProveedoresViewModel proveedorNuevo = new ProveedoresViewModel();
+
+
+    protected void NuevoProveedor()
+    {
+        ModalNuevo.Show();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            Proveedores = await service.ObtenerProveedores();
+        }
+        catch (Exception ex)
+        {
+            message = "Ha ocurrido un error al obtener proveedores";
+            error = ex.Message;
+        }
+    }
+
+    protected void EditaProveedor(EventArgs e, int IdProveedor)
+    {
+        proveedorEdit = Proveedores.FirstOrDefault(x => x.IdProveedor == IdProveedor);
+        ModalEdit.Show();
+    }
+
+    protected void CerrarModalNuevo()
+    {
+        ModalNuevo.Hide();
+    }
+
+    protected void CerrarModalEdit()
+    {
+        ModalEdit.Hide();
+    }
+
+    protected async void RecargarListadoProveedores()
+    {
+        try
+        {
+            Proveedores = await service.ObtenerProveedores();
+        }
+        catch (Exception ex)
+        {
+            message = "Ha ocurrido un error al obtener proveedores";
+            error = ex.Message;
+        }
+    }
+
+}
