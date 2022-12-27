@@ -58,8 +58,11 @@
             </div>
         </div>
     </div>
-    <button type="submit" @onclick="GuardarActualizarProveedor" class="btn btn-outline-primary"><i class="bi bi-save mt-1"></i>  @LabelButton</button>
-    <button type="button" class="btn btn-outline-danger" @onclick="CerraModal"><i class="bi bi-save mt-1"></i>  Cerrar</button>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" @onclick="CerraModal"><i class="bi bi-x-circle mr-1"></i>  Cerrar</button>
+        <button type="submit" @onclick="GuardarActualizarProveedor" class="btn btn-outline-primary"><i class="bi bi-save mt-1"></i>  @LabelButton</button>
+    </div>
 </EditForm>
 
 @code {

@@ -1,11 +1,12 @@
 ﻿@inject IProveedoresService service
-
-<div class="d-flex  justify-content-between" style="">
+@inject IJSRuntime js
+@inject NavigationManager navigate
+<div class="d-flex  justify-content-between mb-2" style="">
     <div>
         <h2>Proveedores</h2>
     </div>
     <div class="align-content-end">
-        <button type="button" class="btn btn-outline-info" @onclick="NuevoProveedor">
+        <button title="Nuevo proveedor" type="button" class="btn btn-outline-info" @onclick="NuevoProveedor">
             <i class="bi bi-plus-circle m-1"></i> Nuevo
         </button>
     </div>
@@ -36,14 +37,17 @@
                 <td>@item.Telefono2</td>
                 <td>@item.Direccion</td>
                 <td>@item.Fax</td>
-                <td><button class="btn btn-sm btn-outline-primary" @onclick="@(e => EditaProveedor(e, item.IdProveedor))"><i class="bi bi-pencil-square"></i></button></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" title="Editar" @onclick="@(e => EditaProveedor(e, item.IdProveedor))"><i class="bi bi-pencil-square"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" title="Eliminar" @onclick="@(e => AlertaEliminarProveedor(e, item.IdProveedor, item.Nombre))"><i class="bi bi-trash"></i></button>
+                </td>
             </tr>
         }
     </tbody>
 </table>
 
 <BSModal @ref="ModalEdit" Size="Size.Large">
-    <BSModalHeader OnClick="@(() => ModalEdit.Hide())">Editar Proveedor</BSModalHeader>
+    <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalEdit.Hide())">Editar Proveedor</BSModalHeader>
     <BSModalBody>
         <FormularioProveedor ProveedorVM="@proveedorEdit" CerraModal="CerrarModalEdit" RecargarListado="RecargarListadoProveedores" />
     </BSModalBody>
@@ -54,27 +58,38 @@
     <BSModalBody>
         <FormularioProveedor ProveedorVM="@proveedorNuevo" CerraModal="CerrarModalNuevo" />
     </BSModalBody>
-    <BSModalFooter>
-        <BSButton Color="Color.Secondary" @onclick="@(() => ModalNuevo.Hide())">Close</BSButton>
-        <BSButton Color="Color.Primary" @onclick="@(() => ModalNuevo.Hide())">Save Changes</BSButton>
-    </BSModalFooter>
 </BSModal>
 
+<BSModal @ref="ModalEliminar" Size="Size.Small">
+    <BSModalHeader Class="bg-danger text-white" OnClick="@(() => ModalEliminar.Hide())">Eliminar proveedor</BSModalHeader>
+    <BSModalBody>
+        <p>
+            <span>Está seguro de eliminar el proveedor <strong>@nombreProveedor</strong> ?</span>
+        </p>
+    </BSModalBody>
+    <div class="modal-footer">
+        <button class="btn btn-outline-danger" @onclick="CerrarModalEliminar"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
+        <button class="btn btn-outline-primary" @onclick="EliminarProveedor"><i class="bi bi-trash mr-1 "></i>Eliminar</button>
+
+    </div>
+</BSModal>
 
 @code{
 
     BSModal ModalEdit { get; set; }
+    BSModal ModalNuevo { get; set; }
+    BSModal ModalEliminar { get; set; }
+
     List<ProveedoresViewModel> Proveedores = new List<ProveedoresViewModel>();
 
     ProveedoresViewModel proveedorEdit = new ProveedoresViewModel();
 
     string message = "";
     string error = "";
-
-    BSModal ModalNuevo { get; set; }
+    string nombreProveedor = "";
+    int idProveedorEliminar = 0;
 
     ProveedoresViewModel proveedorNuevo = new ProveedoresViewModel();
-
 
     protected void NuevoProveedor()
     {
@@ -104,10 +119,10 @@
     {
         ModalNuevo.Hide();
     }
-     
+
     protected void CerrarModalEdit()
     {
-        ModalEdit.Hide();////icializacion de git
+        ModalEdit.Hide();
     }
 
     protected async void RecargarListadoProveedores()
@@ -120,6 +135,42 @@
         {
             message = "Ha ocurrido un error al obtener proveedores";
             error = ex.Message;
+        }
+    }
+
+    protected void AlertaEliminarProveedor(EventArgs e, int IdProveedor, string nombreProveedorEliminar)
+    {
+        ModalEliminar.Show();
+        nombreProveedor = nombreProveedorEliminar;
+        idProveedorEliminar = IdProveedor;
+    }
+
+    protected void CerrarModalEliminar()
+    {
+        idProveedorEliminar = 0;
+
+        ModalEliminar.Hide();
+    }
+
+    protected async void EliminarProveedor()
+    {
+        try
+        {
+            var respuesta = await service.EliminarProveedor(idProveedorEliminar);
+            if (respuesta.Ok)
+            {
+                await js.InvokeVoidAsync("showAlert", "success", respuesta.Message, "");
+                CerrarModalEliminar();
+                await Task.Delay(1600).ContinueWith((task) =>
+                {
+                    navigate.NavigateTo("proveedores", forceLoad: true);
+                });
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
         }
     }
 

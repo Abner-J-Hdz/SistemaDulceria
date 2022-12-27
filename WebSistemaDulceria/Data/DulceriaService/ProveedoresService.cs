@@ -36,7 +36,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     Fax = x.Fax,
                     Ruc = x.Fax,
                     EstaActivo = x.EstaActivo
-                }).ToList();
+                }).Where(x => x.EstaActivo).ToList();
             }
             catch (Exception ex)
             {
@@ -50,9 +50,6 @@ namespace WebSistemaDulceria.Data.DulceriaService
             Response resp = new Response();
             try
             {
-
-                
-
                 var proveedor = new Proveedores
                 {
                     Nombre = proveedoresVM.Nombre,
@@ -67,7 +64,6 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     FechaModificacion = DateTime.Now,
                     IdUsuarioModificacion = 1
                 };
-
 
                 context.Proveedores.Add(proveedor);
                 await context.SaveChangesAsync();
