@@ -2,12 +2,14 @@
 @inject NavigationManager navigate
 @inject IJSRuntime js
 
-<EditForm Model="ProveedorVM">
+<EditForm Model="ProveedorVM" OnValidSubmit="GuardarActualizarProveedor">
+    <DataAnnotationsValidator />
     <div class="row">
         <div class="col">
             <div class="form-group">
                 <label>Nombre:</label>
                 <InputText id="txtNombre" @bind-Value="ProveedorVM.Nombre" autofocus class="form-control" />
+                <ValidationMessage For="() => ProveedorVM.Nombre" />
             </div>
         </div>
 
@@ -15,6 +17,7 @@
             <div class="form-group">
                 <label>Correo:</label>
                 <InputText @bind-Value="ProveedorVM.Correo" type="email" class="form-control" />
+                <ValidationMessage For="() => ProveedorVM.Correo" />
                 <small id="emailHelp" class="form-text text-muted"></small>
             </div>
         </div>
@@ -25,6 +28,7 @@
             <div class="form-group">
                 <label>Telefono1:</label>
                 <input type="tel" @bind-value="ProveedorVM.Telefono1" class="form-control">
+                
             </div>
         </div>
 
@@ -61,7 +65,7 @@
 
     <div class="modal-footer">
         <button type="button" class="btn btn-outline-danger" @onclick="CerraModal"><i class="bi bi-x-circle mr-1"></i>  Cerrar</button>
-        <button type="submit" @onclick="GuardarActualizarProveedor" class="btn btn-outline-primary"><i class="bi bi-save mt-1"></i>  @LabelButton</button>
+        <button type="submit" class="btn btn-outline-primary"><i class="bi bi-save mt-1"></i>  @LabelButton</button>
     </div>
 </EditForm>
 
@@ -99,6 +103,8 @@
 
     protected async Task GuardarActualizarProveedor()
     {
+        
+
         if (ProveedorVM.IdProveedor == 0)
             respuesta = await serviceProveedor.GuardarProveedor(ProveedorVM);
         else
