@@ -1,0 +1,88 @@
+﻿@inject IProveedoresService service
+
+<hr />
+<div class="row">
+    <div class="col">
+        <div class="form-inline">
+
+            <label class="sr-only" for="nombreProveedor">nombreProveedor</label>
+            <div class="input-group mb-2 mr-sm-2">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">Nombre</div>
+                </div>
+                <input type="text" @bind-value="busqueda" class="form-control" id="nombreProveedor" placeholder="Nombre proveedor">
+            </div>
+
+            <button type="button" class="btn btn-outline-primary mb-2" @onclick="BuscarProveedor" >
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<hr />
+
+<div class="table-responsive">
+    <table class="table table-bordered  table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Correo</th>
+                <th scope="col">Telefono</th>
+                <th scope="col">Telefono2</th>
+                <th scope="col">Direccion</th>
+                <th scope="col">Fax</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Proveedores)
+            {
+                <tr>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-check-circle"></i>
+                        </button>
+                    </td>
+                    <td>@item.Nombre</td>
+                    <td>@item.Correo</td>
+                    <td>@item.Telefono1</td>
+                    <td>@item.Telefono2</td>
+                    <td>@item.Direccion</td>
+                    <td>@item.Fax</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    List<ProveedoresViewModel> Proveedores = new List<ProveedoresViewModel>();
+    List<ProveedoresViewModel> ProveedoresTemp = new List<ProveedoresViewModel>();
+    string message = "";
+    string error = "";
+    string busqueda = "";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            Proveedores = await service.ObtenerProveedores();
+            ProveedoresTemp = Proveedores;
+        }
+        catch (Exception ex)
+        {
+            message = "Ha ocurrido un error al obtener proveedores";
+            error = ex.Message;
+        }
+    }
+
+    protected void BuscarProveedor()
+    {
+        if (string.IsNullOrEmpty(busqueda))
+            Proveedores = ProveedoresTemp;
+        else
+            Proveedores = Proveedores.Where(x => x.Nombre.ToLower().Contains(busqueda.ToLower())).ToList();
+    }
+
+}

@@ -7,6 +7,7 @@ namespace Entidades.DulceriaEntidades
 {
     public class Proveedores
     {
+        [Key]
         public int IdProveedor { get; set; }
 
         [Required]
@@ -39,6 +40,7 @@ namespace Entidades.DulceriaEntidades
         public DateTime FechaModificacion { get; set; }
 
         public int IdUsuarioModificacion { get; set; }
+
 
     }
 }

@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Datos", "Datos\Datos.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entidades", "Entidades\Entidades.csproj", "{709F2D92-C9C6-4F3B-A97A-9DDD07ABF7B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSistemaDulceria", "WebSistemaDulceria\WebSistemaDulceria.csproj", "{934BCDA7-26C8-4B1A-9935-1ED957B515B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSistemaDulceria", "WebSistemaDulceria\WebSistemaDulceria.csproj", "{934BCDA7-26C8-4B1A-9935-1ED957B515B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

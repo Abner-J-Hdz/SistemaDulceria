@@ -7,12 +7,12 @@ using System.Text;
 
 namespace Datos.Mapeo
 {
-    public class ProveedoresMap : IEntityTypeConfiguration<Proveedores>
+    public class DetallePedidoMap : IEntityTypeConfiguration<DetallePedido>
     {
-        public void Configure(EntityTypeBuilder<Proveedores> builder)
+        public void Configure(EntityTypeBuilder<DetallePedido> builder)
         {
-            builder.ToTable("TblProveedores")
-                    .HasKey(c => c.IdProveedor);
+            builder.ToTable("TblDetallePedido")
+                .HasKey(x => x.IdDetallePedido);
         }
     }
 }

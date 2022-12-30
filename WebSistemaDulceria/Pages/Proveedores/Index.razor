@@ -2,33 +2,3 @@
 @page "/proveedores"
 
 <ListadoProveedores />
-
-@*<BSModal @ref="ModalNuevo" Size="Size.Large">
-    <BSModalHeader OnClick="@(() => ModalNuevo.Hide())">Nuevo Proveedor</BSModalHeader>
-    <BSModalBody>
-        <FormularioProveedor ProveedorVM="@proveedorNuevo" CerraModal="CerraModal" />
-    </BSModalBody>
-    <BSModalFooter>
-        <BSButton Color="Color.Secondary" @onclick="@(() => ModalNuevo.Hide())">Close</BSButton>
-        <BSButton Color="Color.Primary" @onclick="@(() => ModalNuevo.Hide())">Save Changes</BSButton>
-    </BSModalFooter>
-</BSModal>*@
-
-@code {
-    //BSModal ModalNuevo { get; set; }
-
-    //ProveedoresViewModel proveedorNuevo = new ProveedoresViewModel();
-
-    //bool RecargarListado = false;
-
-    //protected void NuevoProveedor()
-    //{
-    //    ModalNuevo.Show();
-    //}
-
-    //protected void CerraModal()
-    //{
-    //    ModalNuevo.Hide();
-    //}
-
-}
