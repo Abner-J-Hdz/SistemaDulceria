@@ -39,7 +39,7 @@
             {
                 <tr>
                     <td>
-                        <button class="btn btn-sm btn-outline-primary">
+                        <button class="btn btn-sm btn-outline-primary" @onclick="(e) =>Seleccion(e, item.IdProveedor, item.Nombre)">
                             <i class="bi bi-check-circle"></i>
                         </button>
                     </td>
@@ -56,6 +56,9 @@
 </div>
 
 @code {
+    [Parameter]
+    public ProveedoresViewModel ProveedorSeleccion { get; set; }
+
     List<ProveedoresViewModel> Proveedores = new List<ProveedoresViewModel>();
     List<ProveedoresViewModel> ProveedoresTemp = new List<ProveedoresViewModel>();
     string message = "";
@@ -83,6 +86,12 @@
             Proveedores = ProveedoresTemp;
         else
             Proveedores = Proveedores.Where(x => x.Nombre.ToLower().Contains(busqueda.ToLower())).ToList();
+    }
+
+    protected void Seleccion(EventArgs e, int IdProveedor, string NombreProveedor)
+    {
+        ProveedorSeleccion.IdProveedor = IdProveedor;
+        ProveedorSeleccion.Nombre = NombreProveedor;
     }
 
 }

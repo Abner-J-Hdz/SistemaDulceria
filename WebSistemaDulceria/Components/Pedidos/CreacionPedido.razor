@@ -1,0 +1,38 @@
+﻿
+<div class="card">
+    <h5 class="card-header">Pedido</h5>
+    <div class="card-body">
+        <FormularioPedido PedidoVM="PedidoVM" />
+        <button class="btn btn-primary" @onclick="AgregarProducto" title="Añadir producto"><i class="bi bi-box mr-1"></i>Agregar Producto</button>
+    </div>
+</div>
+
+<BSModal @ref="ModalProducto" IsFullWidth="true">
+    <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalProducto.Hide())">Selecciona proveedor</BSModalHeader>
+    <BSModalBody>
+        <SeleccionProducto SeleccionArticulo="PedidoViewModel.Articulo" />
+    </BSModalBody>
+    <div class="modal-footer">
+        <button class="btn btn-outline-danger" @onclick="() => ModalProducto.Hide()"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
+    </div>
+</BSModal>
+
+@code {
+
+    PedidoViewModel PedidoVM = new PedidoViewModel();
+
+    DetallePedidoViewModel PedidoViewModel = new DetallePedidoViewModel();
+
+    BSModal ModalProducto { get; set; }
+
+    protected void AgregarProducto()
+    {
+        ModalProducto.Show();
+
+        PedidoVM.NumeroFactura = 0151;
+
+        PedidoVM.Proveedor.Nombre = "XD";
+
+    }
+
+}

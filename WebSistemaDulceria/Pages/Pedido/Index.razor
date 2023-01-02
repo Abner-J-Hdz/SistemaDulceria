@@ -1,25 +1,7 @@
 ﻿@page "/Pedido"
 
-<h3>Pedido</h3>
-
-<button title="Selecionar proveedor" type="button" class="btn btn-outline-info" @onclick="() => ModalProveedor.Show()">
-    <i class="bi bi-plus-circle m-1"></i> Nuevo
-</button>
-
-<BSModal @ref="ModalProveedor" IsFullWidth="true">
-    <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalProveedor.Hide())">Selecciona proveedor</BSModalHeader>
-    <BSModalBody>
-        <SelectProveedor />
-    </BSModalBody>
-    <div class="modal-footer">
-        <button class="btn btn-outline-danger" @onclick="() => ModalProveedor.Hide()"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
-    </div>
-</BSModal>
-
-
-
-<FormularioPedido />
+<CreacionPedido />
 
 @code {
-    BSModal ModalProveedor { get; set; }
+
 }
