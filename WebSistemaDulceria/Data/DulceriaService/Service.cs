@@ -11,13 +11,15 @@ using WebSistemaDulceria.Utils;
 
 namespace WebSistemaDulceria.Data.DulceriaService
 {
-    public class ProveedoresService : IProveedoresService
+    public class Service : IService
     {
         private readonly DbContextDulceria context;
-        public ProveedoresService(DbContextDulceria _context)
+        public Service(DbContextDulceria _context)
         {
             context = _context;
         }
+
+        #region Proveedores
 
         public async Task<List<ProveedoresViewModel>> ObtenerProveedores()
         {
@@ -39,7 +41,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
                 }).Where(x => x.EstaActivo).ToList();
             }
             catch (Exception ex)
-            {
+                                                                                                                                                                                                                                                                                                                                                                                                             {
 
                 throw;
             }
@@ -136,5 +138,39 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
             }
         }
+        #endregion
+
+        #region Articulo
+        public async Task<List<ArticuloViewModel>> ObtenerArticulos()
+        {
+            try
+            {
+                var ArticulosDb = await context.Articulo.Where(x => x.EstaActivo).ToListAsync();
+
+                return ArticulosDb.Select(x => new ArticuloViewModel
+                {
+                    IdArticulo = x.IdArticulo,
+                    Nombre = x.Nombre,
+                    CodInterno = x.CodInterno,
+                    CodBarra = x.CodBarra,
+                    IdPresentacion = x.IdPresentacion,
+                    IdUnidadMedida = x.IdUnidadMedida,
+                    CantidadMinima = x.CantidadMinima,
+                    TieneVencimiento = x.TieneVencimiento,
+                    EsMenudeo = x.EsMenudeo,
+                    EsProductoTerminado = x.EsProductoTerminado,
+                    EstaActivo = x.EstaActivo
+                }).ToList();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        #endregion
+
     }
 }

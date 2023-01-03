@@ -7,7 +7,7 @@ using WebSistemaDulceria.Utils;
 
 namespace WebSistemaDulceria.Data.DulceriaService
 {
-    interface IProveedoresService
+    interface IService
     {
         Task<List<ProveedoresViewModel>> ObtenerProveedores();
 
@@ -16,5 +16,8 @@ namespace WebSistemaDulceria.Data.DulceriaService
         Task<Response> ActualizarProveedor(ProveedoresViewModel proveedoresVM);
 
         Task<Response> EliminarProveedor(int idProveedor);
+
+        Task<List<ArticuloViewModel>> ObtenerArticulos();
+
     }
 }

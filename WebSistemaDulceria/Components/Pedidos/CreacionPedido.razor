@@ -3,14 +3,17 @@
     <h5 class="card-header">Pedido</h5>
     <div class="card-body">
         <FormularioPedido PedidoVM="PedidoVM" />
-        <button class="btn btn-primary" @onclick="AgregarProducto" title="Añadir producto"><i class="bi bi-box mr-1"></i>Agregar Producto</button>
+        <button class="btn btn-primary" @onclick="AbrirModalProducto" title="Añadir producto"><i class="bi bi-box mr-1"></i>Agregar Producto</button>
+        <div class="table-responsive mt-4" >
+            <PedidoDetalle DetalleVM="PedidoVM.DetallePedido" />
+        </div>
     </div>
 </div>
 
 <BSModal @ref="ModalProducto" IsFullWidth="true">
     <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalProducto.Hide())">Selecciona proveedor</BSModalHeader>
     <BSModalBody>
-        <SeleccionProducto SeleccionArticulo="PedidoViewModel.Articulo" />
+        <SeleccionProducto SeleccionArticulo="PedidoDetalleViewModel.Articulo" AgregarDetalle="AgregarDetalle" />
     </BSModalBody>
     <div class="modal-footer">
         <button class="btn btn-outline-danger" @onclick="() => ModalProducto.Hide()"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
@@ -21,18 +24,35 @@
 
     PedidoViewModel PedidoVM = new PedidoViewModel();
 
-    DetallePedidoViewModel PedidoViewModel = new DetallePedidoViewModel();
+
+    DetallePedidoViewModel PedidoDetalleViewModel = new DetallePedidoViewModel();
+
 
     BSModal ModalProducto { get; set; }
 
-    protected void AgregarProducto()
+    protected void AbrirModalProducto()
     {
+        ///validar que los datos del pedido sean validos
         ModalProducto.Show();
 
-        PedidoVM.NumeroFactura = 0151;
+        //PedidoVM.NumeroFactura = 0151;
 
-        PedidoVM.Proveedor.Nombre = "XD";
-
+        //PedidoVM.Proveedor.Nombre = "XD";
     }
+
+    protected void CerraModalArticulos()
+    {
+        ModalProducto.Hide();
+    }
+
+    protected async void AgregarDetalle()
+    {
+        PedidoDetalleViewModel.IdArticulo = PedidoDetalleViewModel.Articulo.IdArticulo;
+        PedidoDetalleViewModel.Cantidad = 1;
+        PedidoDetalleViewModel.Precio = 15;
+        PedidoDetalleViewModel.Subtotal = PedidoDetalleViewModel.Cantidad * PedidoDetalleViewModel.Precio;
+
+        PedidoVM.DetallePedido.Add(PedidoDetalleViewModel);
+        }
 
 }

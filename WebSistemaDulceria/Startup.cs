@@ -38,7 +38,7 @@ namespace WebSistemaDulceria
             services.AddDbContext<DbContextDulceria>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("ConexionDulceria")));
 
-            services.AddScoped<IProveedoresService, ProveedoresService>();
+            services.AddScoped<IService, Service>();
 
         }
 

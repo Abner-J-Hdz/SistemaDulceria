@@ -1,4 +1,5 @@
-﻿
+﻿@inject IService service
+
 <div class="form-row">
     <div class="form-group col-sm-6 col-md-4 col-lg-3">
         <label for="txtNFactura">N° Factura:</label>
@@ -29,7 +30,7 @@
 <BSModal @ref="ModalProveedor" IsFullWidth="true">
     <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalProveedor.Hide())">Selecciona proveedor</BSModalHeader>
     <BSModalBody>
-        <SelectProveedor ProveedorSeleccion="PedidoVM.Proveedor"  />
+        <SelectProveedor ProveedorSeleccion="PedidoVM.Proveedor" />
     </BSModalBody>
     <div class="modal-footer">
         <button class="btn btn-outline-danger" @onclick="() => ModalProveedor.Hide()"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
@@ -41,13 +42,6 @@
     [Parameter]
     public PedidoViewModel PedidoVM { get; set; }
 
-
     BSModal ModalProveedor { get; set; }
-
-
-    protected void SeleccionarProveedor()
-    {
-
-    }
 
 }

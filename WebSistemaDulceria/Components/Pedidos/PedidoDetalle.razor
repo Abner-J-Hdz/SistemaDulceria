@@ -3,7 +3,7 @@
 <table class="table table-bordered  table-striped table-hover">
     <thead>
         <tr>
-            <th>Select</th>
+            <th></th>
             <th scope="col">Articulo</th>
             <th scope="col">Cantidad</th>
             <th scope="col">Precio</th>
@@ -13,10 +13,24 @@
         </tr>
     </thead>
     <tbody>
-
+        @{
+            foreach (var item in DetalleVM)
+            {
+                <tr>
+                    <td><button title="Eliminar detalle" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button></td>
+                    <td><input disabled id="nombreArticulo" @bind-value="item.Articulo.Nombre" class="form-control" /></td>
+                    <td><input id="cantidadArticulo" @bind-value="item.Cantidad" class="form-control" /></td>
+                    <td><input id="precioArticulo" @bind-value="item.Precio" class="form-control" /></td>
+                    <td><input id="descuentoArticulo" @bind-value="item.Descuento" class="form-control" /></td>
+                    <td><input id="ivaArticulo" @bind-value="item.Iva" class="form-control" /></td>
+                    <td><input id="totalArticulo" @bind-value="item.Total" class="form-control" /></td>
+                </tr>
+            }
+        }
     </tbody>
 </table>
 
 @code {
-
+    [Parameter]
+    public List<DetallePedidoViewModel> DetalleVM { get; set; }
 }

@@ -1,4 +1,5 @@
-﻿
+﻿@inject IService service
+@using WebSistemaDulceria.Data.DulceriaService
 <hr />
 <div class="row">
     <div class="col">
@@ -54,11 +55,27 @@
     [Parameter]
     public ArticuloViewModel SeleccionArticulo { get; set; }
 
+    [Parameter]
+    public EventCallback AgregarDetalle { get; set; }
+
     List<ArticuloViewModel> Articulos = new List<ArticuloViewModel>();
     List<ArticuloViewModel> ArticulosTemp = new List<ArticuloViewModel>();
     string message = "";
     string error = "";
     string busqueda = "";
+
+
+    Data ServiceData = new Data();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Articulos = await service.ObtenerArticulos();
+    }
+
+    /*protected override void OnInitialized()
+    {
+        Articulos = ServiceData.ObtenerArticulos();   
+    }*/
 
     protected void BuscarArticulos()
     {
@@ -68,10 +85,14 @@
             Articulos = ArticulosTemp.Where(x => x.Nombre.ToLower().Contains(busqueda.ToLower())).ToList();
     }
 
-    protected void Seleccion(EventArgs e, int IdArticulo, string NombreArticulo)
+    protected async void Seleccion(EventArgs e, int IdArticulo, string NombreArticulo)
     {
         SeleccionArticulo.IdArticulo = IdArticulo;
         SeleccionArticulo.Nombre = NombreArticulo;
+        await AgregarDetalle.InvokeAsync(true);
+
     }
+
+
 
 }
