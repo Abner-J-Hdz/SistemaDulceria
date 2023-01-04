@@ -141,11 +141,11 @@ namespace WebSistemaDulceria.Data.DulceriaService
         #endregion
 
         #region Articulo
-        public async Task<List<ArticuloViewModel>> ObtenerArticulos()
+        public List<ArticuloViewModel> ObtenerArticulos()
         {
             try
             {
-                var ArticulosDb = await context.Articulo.Where(x => x.EstaActivo).ToListAsync();
+                var ArticulosDb =  context.Articulo.Where(x => x.EstaActivo).ToList();
 
                 return ArticulosDb.Select(x => new ArticuloViewModel
                 {

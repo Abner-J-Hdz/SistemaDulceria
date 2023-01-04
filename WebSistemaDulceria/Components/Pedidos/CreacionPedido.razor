@@ -2,9 +2,17 @@
 <div class="card">
     <h5 class="card-header">Pedido</h5>
     <div class="card-body">
+
+        @if (validarFormPedido)
+        {
+            <div class="alert alert-danger" role="alert">
+                Todos los campos del pedido son obligatorio
+            </div>
+        }
+
         <FormularioPedido PedidoVM="PedidoVM" />
         <button class="btn btn-primary" @onclick="AbrirModalProducto" title="Añadir producto"><i class="bi bi-box mr-1"></i>Agregar Producto</button>
-        <div class="table-responsive mt-4" >
+        <div class="table-responsive mt-4">
             <PedidoDetalle DetalleVM="PedidoVM.DetallePedido" />
         </div>
     </div>
@@ -13,7 +21,7 @@
 <BSModal @ref="ModalProducto" IsFullWidth="true">
     <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalProducto.Hide())">Selecciona proveedor</BSModalHeader>
     <BSModalBody>
-        <SeleccionProducto SeleccionArticulo="PedidoDetalleViewModel.Articulo" AgregarDetalle="AgregarDetalle" />
+        <SeleccionProducto SeleccionArticulo="PedidoDetalleViewModel.Articulo" AgregarDetalle="AgregarDetalle" CerraModalProducto="CerraModalProducto"  />
     </BSModalBody>
     <div class="modal-footer">
         <button class="btn btn-outline-danger" @onclick="() => ModalProducto.Hide()"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
@@ -24,20 +32,32 @@
 
     PedidoViewModel PedidoVM = new PedidoViewModel();
 
-
     DetallePedidoViewModel PedidoDetalleViewModel = new DetallePedidoViewModel();
 
-
     BSModal ModalProducto { get; set; }
+
+
+    bool validarFormPedido = false;
 
     protected void AbrirModalProducto()
     {
         ///validar que los datos del pedido sean validos
-        ModalProducto.Show();
+        ///
+        if(PedidoVM.NumeroFactura == null && PedidoVM.IdProveedor == 0 && PedidoVM.NumeroReferencia == null)
+        {
+            validarFormPedido = true;
+        }
+        else
+        {
+            validarFormPedido = false;
+            ModalProducto.Show();
 
-        //PedidoVM.NumeroFactura = 0151;
+            //PedidoVM.NumeroFactura = 0151;
 
-        //PedidoVM.Proveedor.Nombre = "XD";
+            //PedidoVM.Proveedor.Nombre = "XD";
+
+        }
+
     }
 
     protected void CerraModalArticulos()
@@ -45,7 +65,7 @@
         ModalProducto.Hide();
     }
 
-    protected async void AgregarDetalle()
+    protected void AgregarDetalle()
     {
         PedidoDetalleViewModel.IdArticulo = PedidoDetalleViewModel.Articulo.IdArticulo;
         PedidoDetalleViewModel.Cantidad = 1;
@@ -53,6 +73,13 @@
         PedidoDetalleViewModel.Subtotal = PedidoDetalleViewModel.Cantidad * PedidoDetalleViewModel.Precio;
 
         PedidoVM.DetallePedido.Add(PedidoDetalleViewModel);
-        }
+    }
+
+    protected void CerraModalProducto()
+    {
+        ModalProducto.Hide();
+    }
+
+
 
 }

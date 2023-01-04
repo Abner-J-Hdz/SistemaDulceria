@@ -58,6 +58,9 @@
     [Parameter]
     public EventCallback AgregarDetalle { get; set; }
 
+    [Parameter]
+    public EventCallback CerraModalProducto { get; set; }
+
     List<ArticuloViewModel> Articulos = new List<ArticuloViewModel>();
     List<ArticuloViewModel> ArticulosTemp = new List<ArticuloViewModel>();
     string message = "";
@@ -69,7 +72,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Articulos = await service.ObtenerArticulos();
+        Articulos =  service.ObtenerArticulos();
     }
 
     /*protected override void OnInitialized()
@@ -90,9 +93,7 @@
         SeleccionArticulo.IdArticulo = IdArticulo;
         SeleccionArticulo.Nombre = NombreArticulo;
         await AgregarDetalle.InvokeAsync(true);
-
+        await CerraModalProducto.InvokeAsync(false);
     }
-
-
 
 }

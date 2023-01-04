@@ -59,6 +59,9 @@
 @code {
     [Parameter]
     public ProveedoresViewModel ProveedorSeleccion { get; set; }
+    
+    [Parameter]
+    public EventCallback CerrarModalProveedor { get; set; }
 
     List<ProveedoresViewModel> Proveedores = new List<ProveedoresViewModel>();
     List<ProveedoresViewModel> ProveedoresTemp = new List<ProveedoresViewModel>();
@@ -92,6 +95,7 @@
     {
         ProveedorSeleccion.IdProveedor = IdProveedor;
         ProveedorSeleccion.Nombre = NombreProveedor;
+        CerrarModalProveedor.InvokeAsync(false);
     }
 
 }

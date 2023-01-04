@@ -17,7 +17,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         Task<Response> EliminarProveedor(int idProveedor);
 
-        Task<List<ArticuloViewModel>> ObtenerArticulos();
+        List<ArticuloViewModel> ObtenerArticulos();
 
     }
 }
