@@ -29,6 +29,7 @@ namespace WebSistemaDulceria.Models.DulceriaModels
 
         public decimal Total { get; set; }
 
+        public bool BlockHeader { get; set; }
         public int? NumeroReferencia { get; set; }
 
         [Required]

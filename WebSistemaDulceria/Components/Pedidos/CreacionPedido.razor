@@ -1,4 +1,4 @@
-﻿
+﻿@inject IJSRuntime js
 <div class="card">
     <h5 class="card-header">Pedido</h5>
     <div class="card-body">
@@ -13,7 +13,27 @@
         <FormularioPedido PedidoVM="PedidoVM" />
         <button class="btn btn-primary" @onclick="AbrirModalProducto" title="Añadir producto"><i class="bi bi-box mr-1"></i>Agregar Producto</button>
         <div class="table-responsive mt-4">
-            <PedidoDetalle DetalleVM="PedidoVM.DetallePedido" />
+            <table class="table table-bordered  table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th scope="col">Articulo</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Precio</th>
+                        <th scope="col">Descuento</th>
+                        <th scope="col">I.V.A.</th>
+                        <th scope="col">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var detalle in PedidoVM.DetallePedido)
+                        {
+                            <PedidoDetalle DetalleVM="detalle" />
+                        }
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -21,7 +41,7 @@
 <BSModal @ref="ModalProducto" IsFullWidth="true">
     <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalProducto.Hide())">Selecciona proveedor</BSModalHeader>
     <BSModalBody>
-        <SeleccionProducto SeleccionArticulo="PedidoDetalleViewModel.Articulo" AgregarDetalle="AgregarDetalle" CerraModalProducto="CerraModalProducto"  />
+        <SeleccionProducto SeleccionArticulo="PedidoDetalleViewModel.Articulo" AgregarDetalle="AgregarDetalle" CerraModalProducto="CerraModalProducto" />
     </BSModalBody>
     <div class="modal-footer">
         <button class="btn btn-outline-danger" @onclick="() => ModalProducto.Hide()"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
@@ -36,19 +56,20 @@
 
     BSModal ModalProducto { get; set; }
 
-
     bool validarFormPedido = false;
 
-    protected void AbrirModalProducto()
+    protected async void AbrirModalProducto()
     {
         ///validar que los datos del pedido sean validos
         ///
-        if(PedidoVM.NumeroFactura == null && PedidoVM.IdProveedor == 0 && PedidoVM.NumeroReferencia == null)
+        if (PedidoVM.NumeroFactura == null && PedidoVM.IdProveedor == 0 && PedidoVM.NumeroReferencia == null)
         {
             validarFormPedido = true;
         }
         else
         {
+            string[] elementArray = new string[4] { "txtNFactura", "btnProveedor", "dtfecha", "txtNumeroReferencia" };
+            await js.InvokeVoidAsync("blockElement", (object)elementArray);
             validarFormPedido = false;
             ModalProducto.Show();
 
@@ -67,10 +88,16 @@
 
     protected void AgregarDetalle()
     {
+        int IdPedidoDetalle = PedidoVM.DetallePedido.OrderByDescending(x => x.IdDetallePedido).FirstOrDefault()?.IdDetallePedido + 1 ?? 1;
+
+        //Verficar si producto ya existe
+
+        PedidoDetalleViewModel.IdDetallePedido = IdPedidoDetalle;
         PedidoDetalleViewModel.IdArticulo = PedidoDetalleViewModel.Articulo.IdArticulo;
         PedidoDetalleViewModel.Cantidad = 1;
         PedidoDetalleViewModel.Precio = 15;
         PedidoDetalleViewModel.Subtotal = PedidoDetalleViewModel.Cantidad * PedidoDetalleViewModel.Precio;
+        PedidoDetalleViewModel.Total = PedidoDetalleViewModel.Subtotal;
 
         PedidoVM.DetallePedido.Add(PedidoDetalleViewModel);
     }

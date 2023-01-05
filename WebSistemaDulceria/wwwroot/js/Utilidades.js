@@ -16,3 +16,9 @@ function showAlert(icon, title, text) {
         timer: 1500
     })
 }
+
+function blockElement(elements) {
+    for (let i = 0; i < elements.length; i++) {
+        document.getElementById(elements[i]).disabled = true;
+    }
+}

@@ -172,5 +172,26 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         #endregion
 
+        #region Proveedores
+        
+        public Response GuardarPedido(PedidoViewModel pedidoVM)
+        {
+            try
+            {
+                Pedido pedido = new Pedido
+                {
+                    IdProveedor = pedidoVM.IdProveedor,
+                };
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            return new Response();
+        }
+
+
+        #endregion
     }
 }
