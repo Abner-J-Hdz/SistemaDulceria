@@ -36,6 +36,8 @@ namespace WebSistemaDulceria.Models.DulceriaModels
 
         public bool EstaActivo { get; set; }
 
+        public List<PreciosViewModel> Precios { get; set; } = new List<PreciosViewModel>();
+
         /*public DateTime FechaCreacion { get; set; }
 
         public int IdUsuarioCreacion { get; set; }

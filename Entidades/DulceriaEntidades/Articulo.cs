@@ -43,5 +43,7 @@ namespace Entidades.DulceriaEntidades
         public DateTime FechaModificacion { get; set; }
 
         public int IdUsuarioModificacion { get; set; }
+
+        public ICollection<Precios> Precios { get; set; }
     }
 }

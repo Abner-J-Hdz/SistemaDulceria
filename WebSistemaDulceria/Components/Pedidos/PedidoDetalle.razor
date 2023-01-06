@@ -1,9 +1,9 @@
 ﻿
 <tr>
-    <td><button title="Eliminar detalle" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button></td>
+    <td><button title="Eliminar detalle" @onclick="() => EliminarDetalle(DetalleVM.IdDetallePedido.ToString())" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button></td>
     <td><input disabled @bind-value="DetalleVM.Articulo.Nombre" class="form-control" /></td>
     <td><input  value="@DetalleVM.Cantidad" class="form-control" @onchange="handleChangeCantidad" /></td>
-    <td><input id="precioArticulo-@DetalleVM.IdDetallePedido" value="@DetalleVM.Precio"  @onchange="handleChangePrecio" class="form-control" /></td>
+    <td><input disabled id="precioArticulo-@DetalleVM.IdDetallePedido"  value="@DetalleVM.Precio"  @onchange="handleChangePrecio" class="form-control" /></td>
     <td><input id="descuentoArticulo-@DetalleVM.IdDetallePedido" value="@DetalleVM.Descuento" @onchange="handleChangeDescuento" class="form-control" /></td>
     <td><input id="ivaArticulo-@DetalleVM.IdDetallePedido" value="@DetalleVM.Iva" @onchange="handleChangeIva" class="form-control" /></td>
     <td><input disabled id="totalArticulo-@DetalleVM.IdDetallePedido" value="@DetalleVM.Total"  class="form-control" /></td>
@@ -12,6 +12,9 @@
 @code {
     [Parameter]
     public DetallePedidoViewModel DetalleVM { get; set; }
+
+    [Parameter]
+    public EventCallback<string> EliminarLinea { get; set; }
 
     private void handleChangeCantidad(ChangeEventArgs e)
     {
@@ -42,6 +45,12 @@
         DetalleVM.Descuento = Convert.ToDecimal(e.Value as string);
 
         DetalleVM.Subtotal = DetalleVM.Cantidad * DetalleVM.Descuento;
+    }
+
+    private  void EliminarDetalle(string IdDetalle)
+    {
+        //Console.WriteLine(IdDetalle);
+         EliminarLinea.InvokeAsync(IdDetalle);
 
     }
 

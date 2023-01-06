@@ -13,7 +13,7 @@ namespace Datos
         public DbSet<Pedido> Pedido { get; set; }
         public DbSet<DetallePedido> DetallePedido { get; set; }
         public DbSet<Articulo> Articulo { get; set; }
-
+        public DbSet<Precios> Precios { get; set; }
 
         public DbContextDulceria(DbContextOptions<DbContextDulceria> options) : base(options)
         {
@@ -27,6 +27,7 @@ namespace Datos
             modelBuilder.ApplyConfiguration(new PedidoMap());
             modelBuilder.ApplyConfiguration(new DetallePedidoMap());
             modelBuilder.ApplyConfiguration(new ArticuloMap());
+            modelBuilder.ApplyConfiguration(new PreciosMap());
             
         }
     }

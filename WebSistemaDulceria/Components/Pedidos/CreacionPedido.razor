@@ -29,7 +29,7 @@
                     @{
                         foreach (var detalle in PedidoVM.DetallePedido)
                         {
-                            <PedidoDetalle DetalleVM="detalle" />
+                            <PedidoDetalle DetalleVM="detalle" EliminarLinea="@EliminarDetalle" />
                         }
                     }
                 </tbody>
@@ -62,7 +62,7 @@
     {
         ///validar que los datos del pedido sean validos
         ///
-        if (PedidoVM.NumeroFactura == null && PedidoVM.IdProveedor == 0 && PedidoVM.NumeroReferencia == null)
+        if (PedidoVM.NumeroFactura == null || PedidoVM.Proveedor.IdProveedor == 0 || PedidoVM.NumeroReferencia == null)
         {
             validarFormPedido = true;
         }
@@ -95,7 +95,7 @@
         PedidoDetalleViewModel.IdDetallePedido = IdPedidoDetalle;
         PedidoDetalleViewModel.IdArticulo = PedidoDetalleViewModel.Articulo.IdArticulo;
         PedidoDetalleViewModel.Cantidad = 1;
-        PedidoDetalleViewModel.Precio = 15;
+        PedidoDetalleViewModel.Precio = PedidoDetalleViewModel.Articulo.Precios.FirstOrDefault()?.PrecioCosto ?? 0;
         PedidoDetalleViewModel.Subtotal = PedidoDetalleViewModel.Cantidad * PedidoDetalleViewModel.Precio;
         PedidoDetalleViewModel.Total = PedidoDetalleViewModel.Subtotal;
 
@@ -107,6 +107,18 @@
         ModalProducto.Hide();
     }
 
+    private void EliminarDetalle(string IdDetalle)
+    {
+
+        int id = Convert.ToInt32(IdDetalle);
+        var detalle = PedidoVM.DetallePedido.FirstOrDefault(x => x.IdDetallePedido == id);
+
+        if(detalle != null)
+        {
+            PedidoVM.DetallePedido.Remove(detalle);
+        }
+
+    }
 
 
 }

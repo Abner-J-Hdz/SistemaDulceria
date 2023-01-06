@@ -147,6 +147,8 @@ namespace WebSistemaDulceria.Data.DulceriaService
             {
                 var ArticulosDb =  context.Articulo.Where(x => x.EstaActivo).ToList();
 
+                
+
                 return ArticulosDb.Select(x => new ArticuloViewModel
                 {
                     IdArticulo = x.IdArticulo,
@@ -159,7 +161,12 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     TieneVencimiento = x.TieneVencimiento,
                     EsMenudeo = x.EsMenudeo,
                     EsProductoTerminado = x.EsProductoTerminado,
-                    EstaActivo = x.EstaActivo
+                    EstaActivo = x.EstaActivo,
+                    Precios = context.Precios.Where(y => y.IdArticulo == x.IdArticulo).Select(
+                        z => new PreciosViewModel
+                        {
+                            PrecioCosto = z.PrecioCosto
+                        }).ToList() ?? new List<PreciosViewModel>()
                 }).ToList();
 
             }

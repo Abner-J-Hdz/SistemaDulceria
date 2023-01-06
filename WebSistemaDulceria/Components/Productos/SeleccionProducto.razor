@@ -92,6 +92,10 @@
     {
         SeleccionArticulo.IdArticulo = IdArticulo;
         SeleccionArticulo.Nombre = NombreArticulo;
+
+        var precios = Articulos.Where(x => x.IdArticulo == IdArticulo).FirstOrDefault()?.Precios ?? new List<PreciosViewModel>();
+
+        SeleccionArticulo.Precios = precios;
         await AgregarDetalle.InvokeAsync(true);
         await CerraModalProducto.InvokeAsync(false);
     }
