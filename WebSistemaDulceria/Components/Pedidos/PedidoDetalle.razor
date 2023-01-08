@@ -16,6 +16,9 @@
     [Parameter]
     public EventCallback<string> EliminarLinea { get; set; }
 
+    [Parameter]
+    public EventCallback CalcularTotales { get; set; }
+
     private void handleChangeCantidad(ChangeEventArgs e)
     {
         DetalleVM.Cantidad = Convert.ToDecimal( e.Value as string);
@@ -23,12 +26,14 @@
         DetalleVM.Subtotal = DetalleVM.Cantidad * DetalleVM.Precio;
 
         DetalleVM.Total = DetalleVM.Subtotal + DetalleVM.Iva - DetalleVM.Descuento;
+        CalcularTotales.InvokeAsync(false);
     }
 
     private void handleChangeIva(ChangeEventArgs e)
     {
         DetalleVM.Iva = Convert.ToDecimal(e.Value as string);
         DetalleVM.Total = DetalleVM.Subtotal + DetalleVM.Iva;
+        CalcularTotales.InvokeAsync(false);
     }
 
     private void handleChangePrecio(ChangeEventArgs e)
@@ -38,6 +43,7 @@
         DetalleVM.Subtotal = DetalleVM.Cantidad * DetalleVM.Precio;
 
         DetalleVM.Total = DetalleVM.Subtotal + DetalleVM.Iva - DetalleVM.Descuento;
+        CalcularTotales.InvokeAsync(false);
     }
 
     private void handleChangeDescuento(ChangeEventArgs e)
@@ -45,13 +51,13 @@
         DetalleVM.Descuento = Convert.ToDecimal(e.Value as string);
 
         DetalleVM.Subtotal = DetalleVM.Cantidad * DetalleVM.Descuento;
+        CalcularTotales.InvokeAsync(false);
     }
 
     private  void EliminarDetalle(string IdDetalle)
     {
-        //Console.WriteLine(IdDetalle);
-         EliminarLinea.InvokeAsync(IdDetalle);
-
+        EliminarLinea.InvokeAsync(IdDetalle);
+        CalcularTotales.InvokeAsync(false);
     }
 
 }

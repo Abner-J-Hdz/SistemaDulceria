@@ -147,8 +147,6 @@ namespace WebSistemaDulceria.Data.DulceriaService
             {
                 var ArticulosDb =  context.Articulo.Where(x => x.EstaActivo).ToList();
 
-                
-
                 return ArticulosDb.Select(x => new ArticuloViewModel
                 {
                     IdArticulo = x.IdArticulo,
