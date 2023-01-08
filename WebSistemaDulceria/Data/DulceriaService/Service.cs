@@ -177,26 +177,69 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         #endregion
 
-        #region Proveedores
-        
-        public Response GuardarPedido(PedidoViewModel pedidoVM)
+        #region Pedidos
+
+        public async Task<Response> GuardarPedido(PedidoViewModel pedidoVM)
         {
+            Response resp = new Response();
             try
             {
-                Pedido pedido = new Pedido
+                var pedido = new Pedido
                 {
                     IdProveedor = pedidoVM.IdProveedor,
-                };
-            }
-            catch (Exception ex)
-            {
+                    NumeroFactura = pedidoVM.NumeroFactura.Value,
+                    NumeroReferencia = pedidoVM.NumeroReferencia.Value,
+                    Observaciones = pedidoVM.Observaciones, 
 
-                throw;
+                    Subtotal = pedidoVM.DetallePedido.Sum(x => x.Subtotal),
+                    Iva = pedidoVM.DetallePedido.Sum(x => x.Iva),
+                    Descuento = pedidoVM.DetallePedido.Sum(x => x.Descuento),
+                    Total = pedidoVM.DetallePedido.Sum(x => x.Total),
+
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    IdUsuarioModificacion = 1,
+                    IdUsuarioCreacion = 1
+                   
+                };
+
+                var pedidoDetalle = new List<DetallePedido>();
+
+                foreach (var item in pedidoVM.DetallePedido)
+                {
+                    pedidoDetalle.Add(new DetallePedido { 
+                        IdArticulo = item.Articulo.IdArticulo,
+                        Cantidad = item.Cantidad,
+                        Precio = item.Precio,
+                        Subtotal = item.Subtotal,
+                        Descuento = item.Descuento,
+                        Iva = item.Iva
+                    });
+                }
+
+                pedido.DetallePedido = new List<DetallePedido>();
+                pedido.DetallePedido = pedidoDetalle;
+
+                context.Pedido.Add(pedido);
+                await context.SaveChangesAsync();
+
+                resp.Ok = true;
+                resp.Message = "Guardado con éxito";
+                return resp;
             }
-            return new Response();
+            catch (Exception  ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ha ocurrido un error al guardar proveedor";
+                resp.Error = ex.Message;
+                return resp;
+            }
         }
 
 
         #endregion
+
+
+
     }
 }

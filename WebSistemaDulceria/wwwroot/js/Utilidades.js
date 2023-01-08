@@ -22,3 +22,9 @@ function blockElement(elements) {
         document.getElementById(elements[i]).disabled = true;
     }
 }
+/*
+function enabledElement(elements) {
+    for (let i = 0; i < elements.length; i++) {
+        document.getElementById(elements[i]).disabled = false;
+    }
+}*/

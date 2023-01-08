@@ -1,6 +1,22 @@
 ﻿@inject IJSRuntime js
+
 <div class="card">
-    <h5 class="card-header">Pedido</h5>
+    <div class="card-header d-flex justify-content-between">
+        <div>
+            <h5 class="">Pedido</h5>
+        </div>
+        <div>
+            <button class="btn btn-sm btn-outline-primary" id="btnGuardar" title="Guardar">
+                <i class="bi bi-save"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-info" id="btnBuscar" title="Buscar">
+                <i class="bi bi-search"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger" id="btnCancelar" title="Cancelar">
+                <i class="bi bi-x-circle"></i>
+            </button>
+        </div>
+    </div>
     <div class="card-body">
 
         @if (validarFormPedido)
@@ -29,7 +45,7 @@
                     @{
                         foreach (var detalle in PedidoVM.DetallePedido)
                         {
-                            <PedidoDetalle DetalleVM="detalle" EliminarLinea="@EliminarDetalle" CalcularTotales="CalcularTotales"  />
+                            <PedidoDetalle DetalleVM="detalle" EliminarLinea="@EliminarDetalle" CalcularTotales="CalcularTotales" />
                         }
                     }
                 </tbody>
@@ -40,12 +56,12 @@
             <div style="" class=" col-sm-8 col-md-4">
                 <div class="form-group row">
                     <label class="col-sm-4 col-form-label">Subtotal:</label>
-                        <div class="col-sm-8">
-                            <input @bind-value="subtotal" class="form-control" />
-                        </div>
-                 </div>
+                    <div class="col-sm-8">
+                        <input @bind-value="subtotal" class="form-control" />
+                    </div>
+                </div>
                 <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">Impuesto:</label> 
+                    <label class="col-sm-4 col-form-label">Impuesto:</label>
                     <div class="col-sm-8">
                         <input @bind-value="impuesto" class="form-control" />
                     </div>
@@ -96,6 +112,20 @@
 
     string mensajeError = "";
 
+    protected override async void OnInitialized()
+    {
+        try
+        {
+            string[] elementBlock = new string[2] { "btnGuardar", "btnCancelar" };
+            await js.InvokeVoidAsync("blockElement", (object)elementBlock);
+
+        }
+        catch (Exception e)
+        {
+            e.Message.ToString();
+        }
+    }
+
     protected async void AbrirModalProducto()
     {
         ///validar que los datos del pedido sean validos
@@ -112,10 +142,6 @@
             validarFormPedido = false;
             ModalProducto.Show();
 
-            //PedidoVM.NumeroFactura = 0151;
-
-            //PedidoVM.Proveedor.Nombre = "XD";
-
         }
 
     }
@@ -130,7 +156,7 @@
         int IdPedidoDetalle = PedidoVM.DetallePedido.OrderByDescending(x => x.IdDetallePedido).FirstOrDefault()?.IdDetallePedido + 1 ?? 1;
 
         //Verficar si producto ya existe
-        if( PedidoVM.DetallePedido.FirstOrDefault(x => x.IdArticulo == PedidoDetalleViewModel.Articulo.IdArticulo) != null)
+        if (PedidoVM.DetallePedido.FirstOrDefault(x => x.IdArticulo == PedidoDetalleViewModel.Articulo.IdArticulo) != null)
         {
             validarFormPedido = true;
             mensajeError = "Este articulo ya está en el detalle";
@@ -141,7 +167,7 @@
         decimal total = precio * 1;
         PedidoVM.DetallePedido.Add(new DetallePedidoViewModel
         {
-            IdDetallePedido =IdPedidoDetalle,
+            IdDetallePedido = IdPedidoDetalle,
             IdArticulo = PedidoDetalleViewModel.Articulo.IdArticulo,
             Cantidad = 1,
             Articulo = PedidoDetalleViewModel.Articulo,
@@ -166,7 +192,7 @@
         int id = Convert.ToInt32(IdDetalle);
         var detalle = PedidoVM.DetallePedido.FirstOrDefault(x => x.IdDetallePedido == id);
 
-        if(detalle != null)
+        if (detalle != null)
         {
             PedidoVM.DetallePedido.Remove(detalle);
         }
