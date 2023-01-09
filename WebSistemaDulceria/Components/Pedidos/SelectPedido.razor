@@ -26,45 +26,39 @@
     <table class="table table-bordered  table-striped table-hover">
         <thead>
             <tr>
-                <th>Select</th>
+                @*<th>Select</th>*@
                 <th scope="col">Nombre</th>
-                <th scope="col">Correo</th>
-                <th scope="col">Telefono</th>
-                <th scope="col">Telefono2</th>
-                <th scope="col">Direccion</th>
-                <th scope="col">Fax</th>
+                <th scope="col">N° Factura</th>
+                <th scope="col">N° Referencia</th>
+                <th scope="col">Fecha</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Proveedores)
+            @foreach (var item in Pedidos)
             {
                 <tr>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary" @onclick="(e) =>Seleccion(e, item.IdProveedor, item.Nombre)">
+                    @*<td>
+                        <button class="btn btn-sm btn-outline-primary" >
                             <i class="bi bi-check-circle"></i>
                         </button>
-                    </td>
-                    <td>@item.Nombre</td>
-                    <td>@item.Correo</td>
-                    <td>@item.Telefono1</td>
-                    <td>@item.Telefono2</td>
-                    <td>@item.Direccion</td>
-                    <td>@item.Fax</td>
+                    </td>*@
+                    <td>@item.Proveedor.Nombre</td>
+                    <td>@item.NumeroFactura</td>
+                    <td>@item.NumeroReferencia</td>
+                    <td>@item.Fecha</td>
+
                 </tr>
             }
         </tbody>
     </table>
 </div>
 
+
 @code {
-    [Parameter]
-    public ProveedoresViewModel ProveedorSeleccion { get; set; }
 
-    [Parameter]
-    public EventCallback CerrarModalProveedor { get; set; }
+    List<PedidoViewModel> Pedidos = new List<PedidoViewModel>();
+    List<PedidoViewModel> PedidosTemp = new List<PedidoViewModel>();
 
-    List<ProveedoresViewModel> Proveedores = new List<ProveedoresViewModel>();
-    List<ProveedoresViewModel> ProveedoresTemp = new List<ProveedoresViewModel>();
     string message = "";
     string error = "";
     string busqueda = "";
@@ -73,8 +67,8 @@
     {
         try
         {
-            Proveedores = await service.ObtenerProveedores();
-            ProveedoresTemp = Proveedores;
+            Pedidos = service.ObtenerPedidos();
+            PedidosTemp = Pedidos;
         }
         catch (Exception ex)
         {
@@ -86,16 +80,9 @@
     protected void BuscarProveedor()
     {
         if (string.IsNullOrEmpty(busqueda))
-            Proveedores = ProveedoresTemp;
+            Pedidos = PedidosTemp;
         else
-            Proveedores = Proveedores.Where(x => x.Nombre.ToLower().Contains(busqueda.ToLower())).ToList();
-    }
-
-    protected void Seleccion(EventArgs e, int IdProveedor, string NombreProveedor)
-    {
-        ProveedorSeleccion.IdProveedor = IdProveedor;
-        ProveedorSeleccion.Nombre = NombreProveedor;
-        CerrarModalProveedor.InvokeAsync(false);
+            Pedidos = Pedidos.Where(x => x.Proveedor.Nombre.ToLower().Contains(busqueda.ToLower())).ToList();
     }
 
 }

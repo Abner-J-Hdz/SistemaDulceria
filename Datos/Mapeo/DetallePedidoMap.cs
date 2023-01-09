@@ -13,6 +13,14 @@ namespace Datos.Mapeo
         {
             builder.ToTable("TblDetallePedido")
                 .HasKey(x => x.IdDetallePedido);
+
+            builder.HasOne(dt => dt.Pedido)
+                .WithMany(p => p.DetallePedido)
+                .HasForeignKey(dt => dt.IdPedido);
+
+            builder.HasOne(dt => dt.Articulo)
+                .WithMany()
+                .HasForeignKey(dt => dt.IdArticulo);
         }
     }
 }

@@ -237,6 +237,39 @@ namespace WebSistemaDulceria.Data.DulceriaService
             }
         }
 
+        public List<PedidoViewModel> ObtenerPedidos()
+        {
+            List<PedidoViewModel> pedidos = new List<PedidoViewModel>();
+            try
+            {
+                var pedidoDb = context.Pedido.ToList();
+
+                foreach (var item in pedidoDb)
+                {
+                    pedidos.Add(new PedidoViewModel
+                    {
+                        IdPedido = item.IdPedido,
+                        IdProveedor = item.IdProveedor,
+                        Proveedor = new ProveedoresViewModel
+                        {
+                            IdProveedor = item.IdProveedor,
+                            Nombre = context.Proveedores.FirstOrDefault(x => x.IdProveedor == item.IdProveedor)?.Nombre  ?? ""
+                        },
+                        NumeroFactura= item.NumeroFactura,
+                        NumeroReferencia = item.NumeroReferencia,
+                        Fecha = item.Fecha
+                    });
+                }
+                return pedidos;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+
 
         #endregion
 

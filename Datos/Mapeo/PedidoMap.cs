@@ -13,6 +13,7 @@ namespace Datos.Mapeo
         {
             builder.ToTable("TblPedido")
                 .HasKey(c => c.IdPedido);
+            
         }
     }
 }

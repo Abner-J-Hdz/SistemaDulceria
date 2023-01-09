@@ -22,5 +22,8 @@ namespace WebSistemaDulceria.Data.DulceriaService
         
         /// Pedidos
         Task<Response> GuardarPedido(PedidoViewModel pedidoVM);
+
+        List<PedidoViewModel> ObtenerPedidos();
+
     }
 }

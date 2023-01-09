@@ -62,8 +62,13 @@
             </table>
         </div>
 
-        <div class="d-flex justify-content-end">
-            <div style="" class=" col-sm-8 col-md-4">
+        <div class="row d-flex justify-content-end">
+            <div class="col-sm-4 col-md-8">
+                <textarea @bind="@PedidoVM.Observaciones" class="form-control h-100" disabled="@txtObservaciones">
+
+                </textarea>
+            </div>
+            <div style="" class=" col-sm-6 col-md-4">
                 <div class="form-group row">
                     <label class="col-sm-4 col-form-label">Subtotal:</label>
                     <div class="col-sm-8">
@@ -105,6 +110,17 @@
     </div>
 </BSModal>
 
+
+<BSModal @ref="ModalPedidos" IsFullWidth="true">
+    <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalPedidos.Hide())">Selecciona pedido</BSModalHeader>
+    <BSModalBody>
+        <SelectPedido/>
+    </BSModalBody>
+    <div class="modal-footer">
+        <button class="btn btn-outline-danger" @onclick="() => ModalPedidos.Hide()"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
+    </div>
+</BSModal>
+
 @code {
 
     PedidoViewModel PedidoVM = new PedidoViewModel();
@@ -112,6 +128,7 @@
     DetallePedidoViewModel PedidoDetalleViewModel = new DetallePedidoViewModel();
 
     BSModal ModalProducto { get; set; }
+    BSModal ModalPedidos { get; set; }
 
     bool BtnNuevo = false; //{ get; set; }
     bool BtnGuardar = false; //{ get; set; }
@@ -119,6 +136,7 @@
     bool BtnCancelar = false; //{ get; set; }
     bool BtnAgregarProducto = false;
     bool BlockFormulario = true;
+    bool txtObservaciones = true;
 
     bool validarFormPedido = false;
 
@@ -141,6 +159,7 @@
             BtnCancelar = true;
             BtnAgregarProducto = true;
             PedidoVM.Fecha = DateTime.Now;
+
         }
         catch (Exception e)
         {
@@ -275,6 +294,7 @@
         BtnGuardar = true;
         BtnCancelar = true;
         BtnAgregarProducto = true;
+        txtObservaciones = true;
         CalcularTotales();
     }
 
@@ -286,10 +306,12 @@
         BtnGuardar = false;
         BtnCancelar = false;
         BtnAgregarProducto = false;
+        txtObservaciones = false;
     }
 
     private void handleBuscar()
     {
+        ModalPedidos.Show();
     }
 
 

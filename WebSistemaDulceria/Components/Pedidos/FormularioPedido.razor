@@ -5,7 +5,7 @@
         <div class="form-group col-sm-6 col-md-4 col-lg-3">
             <label for="txtNFactura">N° Factura:</label>
             @*<InputNumber class="form-control" @bind-Value="PedidoVM.NumeroFactura" placeholder="N° factura" />*@
-            <input step="any"  @bind-value="PedidoVM.NumeroFactura" placeholder="N° factura" type="number"  class="form-control"  disabled="@DisabledFormulario">
+            <input step="any"  @bind-value="PedidoVM.NumeroFactura" placeholder="N° factura" type="number" min="0" max="9999"  class="form-control"  disabled="@DisabledFormulario">
             @*<input type="text" class="form-control" id="txtNFactura" @bind-value="PedidoVM.NumeroFactura" >*@
             <ValidationMessage For="() => PedidoVM.NumeroFactura" />
         </div>
@@ -29,7 +29,7 @@
 
         <div class="form-group col-sm-6 col-md-4 col-lg-3">
             <label for="dtfecha">N° Referencia:</label>
-            <input type="text" class="form-control" disabled="@DisabledFormulario" @bind-value="PedidoVM.NumeroReferencia" id="txtNumeroReferencia" />
+            <input type="number" class="form-control" disabled="@DisabledFormulario" min="0" max="9999" @bind-value="PedidoVM.NumeroReferencia" id="txtNumeroReferencia" />
             <ValidationMessage For="() => PedidoVM.NumeroReferencia" />
 
         </div>

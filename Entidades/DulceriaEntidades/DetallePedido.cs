@@ -24,6 +24,8 @@ namespace Entidades.DulceriaEntidades
 
         public decimal Iva { get; set; }
 
+        public Pedido Pedido { get; set; }
+
         public Articulo Articulo { get; set; }
     }
 }
