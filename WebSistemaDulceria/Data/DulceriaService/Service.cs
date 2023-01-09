@@ -184,20 +184,21 @@ namespace WebSistemaDulceria.Data.DulceriaService
             Response resp = new Response();
             try
             {
+                var fecha = DateTime.Now;
                 var pedido = new Pedido
                 {
-                    IdProveedor = pedidoVM.IdProveedor,
+                    IdProveedor = pedidoVM.Proveedor.IdProveedor,
                     NumeroFactura = pedidoVM.NumeroFactura.Value,
                     NumeroReferencia = pedidoVM.NumeroReferencia.Value,
-                    Observaciones = pedidoVM.Observaciones, 
-
+                    Observaciones = pedidoVM.Observaciones,
+                    Fecha = pedidoVM.Fecha,
                     Subtotal = pedidoVM.DetallePedido.Sum(x => x.Subtotal),
                     Iva = pedidoVM.DetallePedido.Sum(x => x.Iva),
                     Descuento = pedidoVM.DetallePedido.Sum(x => x.Descuento),
                     Total = pedidoVM.DetallePedido.Sum(x => x.Total),
 
-                    FechaCreacion = DateTime.Now,
-                    FechaModificacion = DateTime.Now,
+                    FechaCreacion = fecha,
+                    FechaModificacion = fecha,
                     IdUsuarioModificacion = 1,
                     IdUsuarioCreacion = 1
                    
