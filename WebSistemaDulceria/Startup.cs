@@ -1,5 +1,6 @@
 using BlazorStrap;
 using Datos;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -33,7 +34,18 @@ namespace WebSistemaDulceria
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddBootstrapCSS();
-           
+
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+            /*services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                    options.SlidingExpiration = true;
+                    options.AccessDeniedPath = "/Forbidden/";
+                });*/
+
+
             services.AddSingleton<WeatherForecastService>();
             services.AddDbContext<DbContextDulceria>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("ConexionDulceria")));
@@ -59,11 +71,16 @@ namespace WebSistemaDulceria
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.UseAuthentication();
+
             app.UseRouting();
+
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();
+                
                 endpoints.MapFallbackToPage("/_Host");
             });
         }

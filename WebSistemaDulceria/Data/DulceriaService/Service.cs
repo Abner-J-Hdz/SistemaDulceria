@@ -5,9 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using WebSistemaDulceria.Models.DulceriaModels;
 using WebSistemaDulceria.Utils;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebSistemaDulceria.Data.DulceriaService
 {
@@ -269,11 +273,39 @@ namespace WebSistemaDulceria.Data.DulceriaService
             }
         }
 
-
-
         #endregion
 
 
+        /*public async Task onLogin(string email, string password)
+        {
+            //validar el usuario en la base de datos
+            if (email == "admin@dulceria.com" && password == "admin123")
+            {
+                // Iniciar una sesión
+                var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, "vendedor user"),
+                    };
 
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+  
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));
+            }
+        }*/
+
+
+        //public Task OnLogout()
+        //{
+            /*await Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignOutAsync();*/
+        //}
     }
 }
+
+/*
+Agrega el atributo Authorize a las páginas o componentes que requieren autenticación para protegerlos de acceso no autorizado:
+Copy code
+@attribute [Authorize]*/
