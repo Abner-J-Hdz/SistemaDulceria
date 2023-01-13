@@ -1,13 +1,25 @@
-﻿<form>
+﻿@page "/login"
+@page "/login/{ErrorMessage}"
+@inject NavigationManager NavManager
+@attribute [AllowAnonymous]
+
+<form action="/account/login" method="post">
+
+    @if (ErrorMessage != null)
+    {
+        <div class="text-danger">@ErrorMessage</div>
+    }
+
+
     <!-- Email input -->
     <div class="form-outline mb-4">
-        <input type="email" id="form2Example1" class="form-control" />
+        <input name="email" type="email" id="form2Example1" class="form-control" />
         <label class="form-label" for="form2Example1">Email address</label>
     </div>
 
     <!-- Password input -->
     <div class="form-outline mb-4">
-        <input type="password" id="form2Example2" class="form-control" />
+        <input name="password" type="password" id="form2Example2" class="form-control" />
         <label class="form-label" for="form2Example2">Password</label>
     </div>
 
@@ -28,7 +40,7 @@
     </div>
 
     <!-- Submit button -->
-    <button type="button" class="btn btn-primary btn-block mb-4">Sign in</button>
+    <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
 
     <!-- Register buttons -->
     <div class="text-center">
@@ -51,5 +63,6 @@
         </button>
     </div>
 </form>
-    @code {
-    }
+@code {
+    [Parameter] public string ErrorMessage { get; set; }
+}

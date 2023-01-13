@@ -35,8 +35,11 @@ namespace WebSistemaDulceria
             services.AddServerSideBlazor();
             services.AddBootstrapCSS();
 
+            services.AddControllers();///para añadir y gestionar controladores
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+            ///servicio de autenticacion de ASP.NET
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie();///AddCookie() MANTENDRÁ EL ESTADO DE LA AUTENTICACION
             /*services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
@@ -69,18 +72,20 @@ namespace WebSistemaDulceria
             }
 
             app.UseHttpsRedirection();
+
             app.UseStaticFiles();
 
-            app.UseAuthentication();
-
             app.UseRouting();
+
+            //MIDLEWARE para gestionar la autenticacion y la autorizacion
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();
-                
+                endpoints.MapControllers();
                 endpoints.MapFallbackToPage("/_Host");
             });
         }

@@ -11,18 +11,13 @@ namespace WebSistemaDulceria.Controllers
 {
     public class AccountController : Controller
     {
-
-
-
         [HttpPost("/account/login")]
         public async Task<IActionResult> Login(string email, string password)
         {
-
             try
             {
                 if (email == "admin@dulceria.com" && password == "admin123")
                 {
-
                     //Añadimos los claims Usuario y Rol para tenerlos disponibles en la Cookie
                     //Podríamos obtenerlos de una base de datos.
                     var claims = new[]

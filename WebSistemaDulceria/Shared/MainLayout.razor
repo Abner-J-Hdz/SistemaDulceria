@@ -1,15 +1,31 @@
 ﻿@inherits LayoutComponentBase
 @inject IBootstrapCSS BootrapCSS
-<div class="sidebar">
-    <NavMenu />
-</div>
+    <AuthorizeView>
+        <Authorized>
+            <div class="sidebar">
+                <NavMenu />
+            </div>
+        </Authorized>
+    </AuthorizeView>
 
 <div class="main">
     <div class="top-row px-4">
-        <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        <AuthorizeView>
+            <Authorized>
+                <span class="ml-md-auto">
+                    usuario conectado: @context.User.Identity.Name
+                    <a href="/account/logout">Logout</a>
+                </span>
+            </Authorized>
+        </AuthorizeView>
     </div>
 
     <div class="content px-4">
+        <AuthorizeView>
+            <NotAuthorized>
+                <a href="login" class="ml-md-auto">Inicia Sesion</a>
+            </NotAuthorized>
+        </AuthorizeView>
         @Body
     </div>
 </div>
