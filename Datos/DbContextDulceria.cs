@@ -14,6 +14,7 @@ namespace Datos
         public DbSet<DetallePedido> DetallePedido { get; set; }
         public DbSet<Articulo> Articulo { get; set; }
         public DbSet<Precios> Precios { get; set; }
+        public DbSet<Usuarios> Usuarios { get; set; }
 
         public DbContextDulceria(DbContextOptions<DbContextDulceria> options) : base(options)
         {
@@ -28,6 +29,8 @@ namespace Datos
             modelBuilder.ApplyConfiguration(new DetallePedidoMap());
             modelBuilder.ApplyConfiguration(new ArticuloMap());
             modelBuilder.ApplyConfiguration(new PreciosMap());
+            modelBuilder.ApplyConfiguration(new UsuarioMap());
+            
             
         }
     }

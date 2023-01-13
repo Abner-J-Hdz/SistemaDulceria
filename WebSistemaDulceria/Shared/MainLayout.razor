@@ -13,8 +13,9 @@
         <AuthorizeView>
             <Authorized>
                 <span class="ml-md-auto">
-                    usuario conectado: @context.User.Identity.Name
-                    <a href="/account/logout">Logout</a>
+                    <i class="bi bi-person-bounding-box"></i>
+                    : @context.User.Identity.Name
+                    <a href="/account/logout"><i class="bi bi-box-arrow-in-right mr-1"></i> Log out</a>
                 </span>
             </Authorized>
         </AuthorizeView>
@@ -23,10 +24,16 @@
     <div class="content px-4">
         <AuthorizeView>
             <NotAuthorized>
-                <a href="login" class="ml-md-auto">Inicia Sesion</a>
+                <div class="row">
+                    <div class="col-auto mx-auto">
+                        <a href="login" class="ml-md-auto">Inicia Sesion</a>
+                    </div>
+                </div>
             </NotAuthorized>
         </AuthorizeView>
-        @Body
+
+                @Body
+
     </div>
 </div>
 

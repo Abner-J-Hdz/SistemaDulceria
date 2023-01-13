@@ -1,0 +1,75 @@
+﻿@inject IService service
+@using WebSistemaDulceria.Data.DulceriaService
+<hr />
+<div class="row">
+    <div class="col">
+        <div class="form-inline">
+
+            <label class="sr-only" for="nombreProveedor">nombreProveedor</label>
+            <div class="input-group mb-2 mr-sm-2">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">Nombre</div>
+                </div>
+                <input type="text" @bind-value="busqueda" class="form-control" id="txtbusquedaArticulo" placeholder="">
+            </div>
+
+            <button type="button" class="btn btn-outline-primary mb-2" @onclick="BuscarArticulos">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<hr />
+
+<div class="table-responsive">
+    <table class="table table-bordered  table-striped table-hover">
+        <thead>
+            <tr>
+                <th></th>
+                <th scope="col">Cod</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Cod Barra</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Articulos)
+            {
+                <tr>
+                    <td>
+
+                    </td>
+                    <td>@item.CodInterno</td>
+                    <td>@item.Nombre</td>
+                    <td>@item.CodBarra</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+@code {
+    List<ArticuloViewModel> Articulos = new List<ArticuloViewModel>();
+    List<ArticuloViewModel> ArticulosTemp = new List<ArticuloViewModel>();
+    string message = "";
+    string error = "";
+    string busqueda = "";
+
+
+    Data ServiceData = new Data();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Articulos = service.ObtenerArticulos();
+        ArticulosTemp = Articulos;
+    }
+
+    protected void BuscarArticulos()
+    {
+        if (string.IsNullOrEmpty(busqueda))
+            Articulos = ArticulosTemp;
+        else
+            Articulos = ArticulosTemp.Where(x => x.Nombre.ToLower().Contains(busqueda.ToLower())).ToList();
+    }
+
+}

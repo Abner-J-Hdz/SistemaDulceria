@@ -275,6 +275,39 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         #endregion
 
+        public Response GetUsuarioLogin(string email, string password)
+        {
+            Response resp = new Response();
+
+            try
+            {
+                var usuario = context.Usuarios.FirstOrDefault(x => x.Email == email);
+
+                if(usuario == null)
+                {
+                    resp.Ok = false;
+                    resp.Error = "usuario no encontrado";
+
+                    return resp;
+                }
+
+                if(usuario.Password == password)
+                {
+                    resp.Ok = true;
+                    resp.ResponseParameter1 = usuario.IdUsuario.ToString();
+                    return resp;
+                }
+
+                resp.Ok = false;
+                resp.Error = "Contraseña invalida";
+                return resp;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
 
         /*public async Task onLogin(string email, string password)
         {
@@ -300,7 +333,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         //public Task OnLogout()
         //{
-            /*await Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignOutAsync();*/
+        /*await Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignOutAsync();*/
         //}
     }
 }

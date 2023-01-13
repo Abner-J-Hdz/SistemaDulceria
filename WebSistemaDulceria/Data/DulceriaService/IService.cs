@@ -25,6 +25,8 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         List<PedidoViewModel> ObtenerPedidos();
 
+        Response GetUsuarioLogin(string email, string password);
+
         //Task onLogin(string email, string password);
 
     }
