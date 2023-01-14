@@ -11,7 +11,7 @@ namespace Datos.Mapeo
     {
         public void Configure(EntityTypeBuilder<Usuarios> builder)
         {
-            builder.ToTable("Usuarios")
+            builder.ToTable("TblUsuarios")
                 .HasKey(x => x.IdUsuario);
         }
     }

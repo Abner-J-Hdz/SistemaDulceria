@@ -36,7 +36,12 @@
             {
                 <tr>
                     <td>
-
+                        <button class="btn btn-sm btn-outline-primary" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                     <td>@item.CodInterno</td>
                     <td>@item.Nombre</td>
@@ -46,7 +51,6 @@
         </tbody>
     </table>
 </div>
-
 
 @code {
     List<ArticuloViewModel> Articulos = new List<ArticuloViewModel>();

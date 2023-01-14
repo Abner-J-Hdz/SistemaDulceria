@@ -18,29 +18,29 @@
 <table class="table table-bordered  table-striped table-hover">
     <thead>
         <tr>
+            <th></th>
             <th scope="col">Nombre</th>
             <th scope="col">Correo</th>
             <th scope="col">Telefono</th>
             <th scope="col">Telefono2</th>
             <th scope="col">Direccion</th>
             <th scope="col">Fax</th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Proveedores)
         {
             <tr>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" title="Editar" @onclick="@(e => EditaProveedor(e, item.IdProveedor))"><i class="bi bi-pencil-square"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" title="Eliminar" @onclick="@(e => AlertaEliminarProveedor(e, item.IdProveedor, item.Nombre))"><i class="bi bi-trash"></i></button>
+                </td>
                 <td>@item.Nombre</td>
                 <td>@item.Correo</td>
                 <td>@item.Telefono1</td>
                 <td>@item.Telefono2</td>
                 <td>@item.Direccion</td>
                 <td>@item.Fax</td>
-                <td>
-                    <button class="btn btn-sm btn-outline-primary" title="Editar" @onclick="@(e => EditaProveedor(e, item.IdProveedor))"><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn btn-sm btn-outline-danger" title="Eliminar" @onclick="@(e => AlertaEliminarProveedor(e, item.IdProveedor, item.Nombre))"><i class="bi bi-trash"></i></button>
-                </td>
             </tr>
         }
     </tbody>
