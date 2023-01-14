@@ -1,0 +1,74 @@
+﻿@inject IService service
+@inject NavigationManager navigate
+@inject IJSRuntime js
+
+<EditForm Model="ArticuloVM" >
+    <DataAnnotationsValidator />
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Nombre:</label>
+                <InputText id="txtNombre" @bind-Value="ArticuloVM.Nombre" autofocus class="form-control" />
+                <ValidationMessage For="() => ArticuloVM.Nombre" />
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="form-group">
+                <label>CodInterno:</label>
+                <InputText @bind-Value="ArticuloVM.CodInterno" type="email" class="form-control" />
+                <ValidationMessage For="() => ArticuloVM.CodInterno" />
+                <small id="emailHelp" class="form-text text-muted"></small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Vencimiento:</label>
+                <input type="checkbox" @bind-value="ArticuloVM.TieneVencimiento" class="form-control">
+
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="form-group">
+                <label>Menudeo:</label>
+                <input type="tel" @bind-value="ArticuloVM.EsMenudeo" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>CantidadMenudeo:</label>
+                <InputCheckbox @bind-Value="ArticuloVM.CantidadMenudeo" class="form-control" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Fax:</label>
+                <InputCheckbox @bind-Value="ArticuloVM.EsProductoTerminado" class="form-control" />
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" ><i class="bi bi-x-circle mr-1"></i>  Cerrar</button>
+        <button type="submit" class="btn btn-outline-primary"><i class="bi bi-save mt-1"></i>  @LabelButton</button>
+    </div>
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public ArticuloViewModel ArticuloVM { get; set; }
+
+    string LabelButton = "";
+
+
+}

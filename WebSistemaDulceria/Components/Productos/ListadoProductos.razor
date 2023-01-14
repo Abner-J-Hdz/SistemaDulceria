@@ -1,7 +1,21 @@
 ﻿@inject IService service
 @using WebSistemaDulceria.Data.DulceriaService
-<hr />
-<div class="row">
+
+<div class="d-flex  justify-content-between mb-2" style="">
+    <div>
+        <h2 class="text-primary">Articulos</h2>
+    </div>
+    <div class="align-content-end">
+        <button title="Nuevo Articulo" type="button" class="btn btn-outline-info" @onclick="NuevoProveedor">
+            <i class="bi bi-plus-circle m-1"></i> Nuevo
+        </button>
+    </div>
+</div>
+
+<span class="text-danger">@message</span>
+<span class="text-danger">@error</span>
+
+@*<div class="row">
     <div class="col">
         <div class="form-inline">
 
@@ -18,8 +32,7 @@
             </button>
         </div>
     </div>
-</div>
-<hr />
+</div>*@
 
 <div class="table-responsive">
     <table class="table table-bordered  table-striped table-hover">
@@ -39,7 +52,9 @@
                         <button class="btn btn-sm btn-outline-primary" title="Editar">
                             <i class="bi bi-pencil-square"></i>
                         </button>
-                        <button class="btn btn-sm btn-outline-danger" title="Eliminar">
+                        <button 
+                                @onclick="@(e => AlertaEliminarArticulo(e, item.IdArticulo, item.Nombre))"
+                                class="btn btn-sm btn-outline-danger" title="Eliminar">
                             <i class="bi bi-trash"></i>
                         </button>
                     </td>
@@ -52,15 +67,48 @@
     </table>
 </div>
 
+<BSModal @ref="ModalNuevo" Size="Size.Large">
+    <BSModalHeader OnClick="@(() => ModalNuevo.Hide())">Nuevo Proveedor</BSModalHeader>
+    <BSModalBody>
+        <div>
+            <p>Cuerpo del modal</p>
+        </div>
+    </BSModalBody>
+</BSModal>
+
+<BSModal @ref="ModalEliminar" Size="Size.Small">
+    <BSModalHeader Class="bg-danger text-white" OnClick="@(() => ModalEliminar.Hide())">Eliminar articulo</BSModalHeader>
+    <BSModalBody>
+        <p>
+            <span>Está seguro de eliminar el articulo <strong>@nombreArticulo</strong> ?</span>
+        </p>
+    </BSModalBody>
+    <div class="modal-footer">
+        <button class="btn btn-outline-danger" @onclick="CerrarModalEliminar"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
+        <button class="btn btn-outline-primary" @onclick="EliminarProveedor"><i class="bi bi-trash mr-1 "></i>Eliminar</button>
+
+    </div>
+</BSModal>
+
 @code {
     List<ArticuloViewModel> Articulos = new List<ArticuloViewModel>();
     List<ArticuloViewModel> ArticulosTemp = new List<ArticuloViewModel>();
     string message = "";
     string error = "";
     string busqueda = "";
-
+    string nombreArticulo = "";
+    int idArticuloEliminar = 0;
 
     Data ServiceData = new Data();
+
+    BSModal ModalEdit { get; set; }
+    BSModal ModalNuevo { get; set; }
+    BSModal ModalEliminar { get; set; }
+
+    protected void NuevoProveedor()
+    {
+        ModalNuevo.Show();
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -74,6 +122,26 @@
             Articulos = ArticulosTemp;
         else
             Articulos = ArticulosTemp.Where(x => x.Nombre.ToLower().Contains(busqueda.ToLower())).ToList();
+    }
+
+
+    protected void AlertaEliminarArticulo(EventArgs e, int IdProveedor, string nombreProveedorEliminar)
+    {
+        ModalEliminar.Show();
+        nombreArticulo = nombreProveedorEliminar;
+        idArticuloEliminar = IdProveedor;
+    }
+
+    protected void CerrarModalEliminar()
+    {
+        idArticuloEliminar = 0;
+
+        ModalEliminar.Hide();
+    }
+
+    protected async void EliminarProveedor()
+    {
+        CerrarModalEliminar();
     }
 
 }
