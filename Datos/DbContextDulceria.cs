@@ -15,6 +15,8 @@ namespace Datos
         public DbSet<Articulo> Articulo { get; set; }
         public DbSet<Precios> Precios { get; set; }
         public DbSet<Usuarios> Usuarios { get; set; }
+        public DbSet<Lote> Lote { get; set; }
+        public DbSet<DetalleProductoTerminado> DetalleProductoTerminado { get; set; }
 
         public DbContextDulceria(DbContextOptions<DbContextDulceria> options) : base(options)
         {
@@ -30,8 +32,8 @@ namespace Datos
             modelBuilder.ApplyConfiguration(new ArticuloMap());
             modelBuilder.ApplyConfiguration(new PreciosMap());
             modelBuilder.ApplyConfiguration(new UsuarioMap());
-            
-            
+            modelBuilder.ApplyConfiguration(new LoteMap());
+            modelBuilder.ApplyConfiguration(new DetalleProductoTerminadoMap());
         }
     }
 }

@@ -9,6 +9,8 @@ namespace WebSistemaDulceria.Data.DulceriaService
 {
     interface IService
     {
+
+        #region Proveedores
         Task<List<ProveedoresViewModel>> ObtenerProveedores();
 
         Task<Response> GuardarProveedor(ProveedoresViewModel proveedoresVM);
@@ -17,17 +19,31 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         Task<Response> EliminarProveedor(int idProveedor);
 
+        #endregion
+
+        #region Articulos
+        Task<Response> GuardarArticulo(ArticuloViewModel articuloVM);
+
+        Task<Response> ActualizarArticulo(ArticuloViewModel articuloVM);
+
         List<ArticuloViewModel> ObtenerArticulos();
-        
-        
-        /// Pedidos
+
+        Task<Response> EliminarArticulo(int idArticulo);
+
+        #endregion
+
+        #region Pedido
         Task<Response> GuardarPedido(PedidoViewModel pedidoVM);
 
         List<PedidoViewModel> ObtenerPedidos();
 
+
+        #endregion
+
+        #region Usuarios
         Response GetUsuarioLogin(string email, string password);
 
-        //Task onLogin(string email, string password);
+        #endregion
 
     }
 }

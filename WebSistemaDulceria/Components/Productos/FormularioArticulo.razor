@@ -15,51 +15,61 @@
 
         <div class="col">
             <div class="form-group">
-                <label>CodInterno:</label>
-                <InputText @bind-Value="ArticuloVM.CodInterno" type="email" class="form-control" />
+                <label>Cod Interno:</label>
+                <InputText @bind-Value="ArticuloVM.CodInterno" maxlength="5" class="form-control" />
                 <ValidationMessage For="() => ArticuloVM.CodInterno" />
                 <small id="emailHelp" class="form-text text-muted"></small>
             </div>
         </div>
     </div>
-
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Cod Barra:</label>
+                <InputText minlength="5" maxlength="5" id="txtNombre" @bind-Value="ArticuloVM.CodBarra" autofocus class="form-control" />
+                <ValidationMessage For="() => ArticuloVM.CodBarra" />
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label>Cantidad minima:</label>
+                <InputNumber min="0"  @bind-Value="ArticuloVM.CantidadMinima" autofocus class="form-control" />
+                <ValidationMessage For="() => ArticuloVM.CantidadMinima" />
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col">
             <div class="form-group">
                 <label>Vencimiento:</label>
                 <input type="checkbox" @bind-value="ArticuloVM.TieneVencimiento" class="form-control">
-
             </div>
         </div>
-
         <div class="col">
             <div class="form-group">
-                <label>Menudeo:</label>
-                <input type="tel" @bind-value="ArticuloVM.EsMenudeo" class="form-control">
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <div class="form-group">
-                <label>CantidadMenudeo:</label>
+                <label>Cantidad Menudeo:</label>
                 <InputCheckbox @bind-Value="ArticuloVM.CantidadMenudeo" class="form-control" />
             </div>
         </div>
     </div>
-
     <div class="row">
         <div class="col">
             <div class="form-group">
-                <label>Fax:</label>
+                <label>Menudeo:</label>
+                <input type="checkbox" @bind-value="ArticuloVM.EsMenudeo" class="form-control">
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label>Es Producto Terminado:</label>
                 <InputCheckbox @bind-Value="ArticuloVM.EsProductoTerminado" class="form-control" />
             </div>
         </div>
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline-danger" ><i class="bi bi-x-circle mr-1"></i>  Cerrar</button>
-        <button type="submit" class="btn btn-outline-primary"><i class="bi bi-save mt-1"></i>  @LabelButton</button>
+        <button type="button" class="btn btn-outline-danger" @onclick="CerraModal"><i class="bi bi-x-circle mr-1"></i>  Cerrar</button>
+        <button type="submit" class="btn btn-outline-primary" @onclick="GuardarActualizarProduccto"><i class="bi bi-save mt-1"></i>  @LabelButton</button>
     </div>
 </EditForm>
 
@@ -68,7 +78,54 @@
     [Parameter]
     public ArticuloViewModel ArticuloVM { get; set; }
 
+    [Parameter]
+    public EventCallback CerraModal { get; set; }
+
     string LabelButton = "";
 
+    public Response respuesta { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ArticuloVM.IdArticulo == 0)
+            LabelButton = "Guardar";
+        else
+            LabelButton = "Actualizar";
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (ArticuloVM.IdArticulo == 0)
+            LabelButton = "Guardar";
+        else
+            LabelButton = "Actualizar";
+
+        if(firstRender)
+            await js.InvokeVoidAsync("focusElementById", "txtNombre");
+    }
+
+    protected async Task GuardarActualizarProduccto()
+    {
+        if (ArticuloVM.IdArticulo == 0)
+            respuesta = await service.GuardarArticulo(ArticuloVM);
+        else
+            respuesta = await service.ActualizarArticulo(ArticuloVM);
+
+        if (respuesta.Ok)
+        {
+            ArticuloVM = new ArticuloViewModel();
+            await js.InvokeVoidAsync("showAlert", "success", respuesta.Message, "");
+            await Task.Delay(1600).ContinueWith((task) =>
+            {
+                navigate.NavigateTo("productos", forceLoad: true);
+            });
+            await CerraModal.InvokeAsync(true);
+        }
+        else
+        {
+            ///error de 
+            await CerraModal.InvokeAsync(true);
+        }
+    }
 
 }

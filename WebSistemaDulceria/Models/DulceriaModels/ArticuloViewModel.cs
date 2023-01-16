@@ -24,6 +24,8 @@ namespace WebSistemaDulceria.Models.DulceriaModels
 
         public int CantidadMinima { get; set; }
 
+        [StringLength(5, ErrorMessage = "El CodBarra no deber tener mas de 5 caracteres")]
+        [RegularExpression("^[0-9]{5}$",ErrorMessage = "Solo numero de menos de 5 digitos")]
         public string CodBarra { get; set; }
 
         public bool TieneVencimiento { get; set; }
@@ -37,6 +39,10 @@ namespace WebSistemaDulceria.Models.DulceriaModels
         public bool EstaActivo { get; set; }
 
         public List<PreciosViewModel> Precios { get; set; } = new List<PreciosViewModel>();
+
+        public List<LoteViewModel> Lote { get; set; } = new List<LoteViewModel>();
+
+        public List<DetalleProductoTerminadoViewModel> DetalleProductoTerminado { get; set; } = new List<DetalleProductoTerminadoViewModel>();
 
         /*public DateTime FechaCreacion { get; set; }
 

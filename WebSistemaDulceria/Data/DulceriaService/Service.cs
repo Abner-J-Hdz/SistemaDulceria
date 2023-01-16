@@ -142,6 +142,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
             }
         }
+        
         #endregion
 
         #region Articulo
@@ -167,15 +168,131 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     Precios = context.Precios.Where(y => y.IdArticulo == x.IdArticulo).Select(
                         z => new PreciosViewModel
                         {
-                            PrecioCosto = z.PrecioCosto
-                        }).ToList() ?? new List<PreciosViewModel>()
+                            PrecioCosto = z.PrecioCosto,
+                            PrecioInicial =z.PrecioInicial,
+                            MargenGanancia = z.MargenGanancia,
+                            PrecioVenta = z.PrecioVenta
+                        }).ToList() ?? new List<PreciosViewModel>(),
+                    Lote = context.Lote.Where( y => y.IdArticulo == x.IdArticulo).Select(
+                        z => new  LoteViewModel
+                        {
+                            Cantidad = z.Cantidad,
+                            IdArticulo = z.IdArticulo,
+                            IdLote = z.IdLote,
+                        }).ToList() ?? new List<LoteViewModel>(),
+                    DetalleProductoTerminado = context.DetalleProductoTerminado.Where(y => y.IdArticuloTerminado == x.IdArticulo)
+                    .Select(z => new DetalleProductoTerminadoViewModel { 
+                        IdArticuloMaterial = z.IdArticuloMaterial,
+                        Cantidad = z.Cantidad,
+                        IdArticuloTerminado = z.IdArticuloTerminado
+                    }).ToList() ?? new List<DetalleProductoTerminadoViewModel>()
                 }).ToList();
 
             }
             catch (Exception ex)
             {
-
                 throw;
+            }
+        }
+
+        public async Task<Response> GuardarArticulo(ArticuloViewModel articuloVM)
+        {
+            Response resp = new Response();
+            try
+            {
+                var articulo = new Articulo
+                {
+                    Nombre = articuloVM.Nombre,
+                    CodBarra = articuloVM.CodBarra,
+                    CodInterno = articuloVM.CodInterno,
+                    TieneVencimiento = articuloVM.TieneVencimiento,
+                    EsMenudeo = articuloVM.EsMenudeo,
+                    CantidadMenudeo = articuloVM.CantidadMenudeo,
+                    EsProductoTerminado = articuloVM.EsProductoTerminado,
+                    IdUnidadMedida = 1,
+                    IdPresentacion = 1,
+                    EstaActivo = true,
+                    FechaModificacion = DateTime.Now,
+                    IdUsuarioModificacion = 1,
+                    FechaCreacion = DateTime.Now,
+                    IdUsuarioCreacion = 1
+                };
+
+                context.Articulo.Add(articulo);
+                await context.SaveChangesAsync();
+                resp.Ok = true;
+                resp.Message = "Guardado con éxito";
+                return resp;
+
+            }
+            catch (Exception ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ha ocurrido un error al actualizar proveedor";
+                resp.Error = ex.Message;
+                return resp;
+            }
+        }
+
+        public async Task<Response> ActualizarArticulo(ArticuloViewModel articuloVM)
+        {
+            Response resp = new Response();
+            try
+            {
+                var articuloDb = await context.Proveedores.FirstOrDefaultAsync(x => x.IdProveedor == articuloVM.IdArticulo);
+                var articulo = new Articulo
+                {
+                    Nombre = articuloVM.Nombre,
+                    CodBarra = articuloVM.CodBarra,
+                    CodInterno = articuloVM.CodInterno,
+                    TieneVencimiento = articuloVM.TieneVencimiento,
+                    EsMenudeo = articuloVM.EsMenudeo,
+                    CantidadMenudeo = articuloVM.CantidadMenudeo,
+                    EsProductoTerminado = articuloVM.EsProductoTerminado,
+                    IdUnidadMedida = 1,
+                    IdPresentacion = 1,
+                    FechaModificacion = DateTime.Now
+                };
+
+                context.Articulo.Add(articulo);
+                await context.SaveChangesAsync();
+                resp.Ok = true;
+                resp.Message = "Guardado con éxito";
+                return resp;
+
+            }
+            catch (Exception ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ha ocurrido un error al actualizar proveedor";
+                resp.Error = ex.Message;
+                return resp;
+            }
+        }
+
+        public async Task<Response> EliminarArticulo(int idArticulo)
+        {
+            Response resp = new Response();
+
+            try
+            {
+                var articulo = await context.Articulo.FirstOrDefaultAsync(x => x.IdArticulo == idArticulo);
+
+                if (articulo == null)
+                    throw new Exception("No se encontró proveedor");
+
+                articulo.EstaActivo = false;
+                await context.SaveChangesAsync();
+                resp.Ok = true;
+                resp.Message = "Eliminado con éxito"; ;
+                return resp;
+            }
+            catch (Exception ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ha ocurrido un error al eliminar articulo";
+                resp.Error = ex.Message;
+                return resp;
             }
         }
 
@@ -275,6 +392,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         #endregion
 
+        #region Usuarios
         public Response GetUsuarioLogin(string email, string password)
         {
             Response resp = new Response();
@@ -309,32 +427,8 @@ namespace WebSistemaDulceria.Data.DulceriaService
             }
         }
 
-        /*public async Task onLogin(string email, string password)
-        {
-            //validar el usuario en la base de datos
-            if (email == "admin@dulceria.com" && password == "admin123")
-            {
-                // Iniciar una sesión
-                var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, "vendedor user"),
-                    };
+        #endregion
 
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-  
-
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity));
-            }
-        }*/
-
-
-        //public Task OnLogout()
-        //{
-        /*await Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignOutAsync();*/
-        //}
     }
 }
 

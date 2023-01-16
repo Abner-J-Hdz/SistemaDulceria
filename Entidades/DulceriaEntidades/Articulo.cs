@@ -45,5 +45,10 @@ namespace Entidades.DulceriaEntidades
         public int IdUsuarioModificacion { get; set; }
 
         public ICollection<Precios> Precios { get; set; }
+
+        public ICollection<Lote> Lote { get; set; }
+
+        public ICollection<DetalleProductoTerminado> DetalleProductoTerminado { get; set; }
+
     }
 }

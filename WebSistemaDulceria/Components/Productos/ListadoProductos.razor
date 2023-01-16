@@ -42,6 +42,10 @@
                 <th scope="col">Cod</th>
                 <th scope="col">Nombre</th>
                 <th scope="col">Cod Barra</th>
+                <th scope="col">Costo</th>
+                <th scope="col">Precio Venta</th>
+                <th scope="col">Cantidad Lote</th>
+                <th scope="col">Cantidad Prod.Terminado</th>
             </tr>
         </thead>
         <tbody>
@@ -49,7 +53,9 @@
             {
                 <tr>
                     <td>
-                        <button class="btn btn-sm btn-outline-primary" title="Editar">
+                        <button class="btn btn-sm btn-outline-primary" title="Editar"
+                            @onclick="@(e => EditaArticulo(e, item.IdArticulo))"
+                                >
                             <i class="bi bi-pencil-square"></i>
                         </button>
                         <button 
@@ -61,6 +67,10 @@
                     <td>@item.CodInterno</td>
                     <td>@item.Nombre</td>
                     <td>@item.CodBarra</td>
+                    <td>@(item.Precios.FirstOrDefault()?.PrecioCosto?? 0)</td>
+                    <td>@(item.Precios.FirstOrDefault()?.PrecioVenta ?? 0)</td>
+                    <td>@(item.Lote.FirstOrDefault()?.Cantidad ?? 0)</td>
+                    <td>@(item.DetalleProductoTerminado.FirstOrDefault()?.Cantidad ?? 0)</td>
                 </tr>
             }
         </tbody>
@@ -70,11 +80,17 @@
 <BSModal @ref="ModalNuevo" Size="Size.Large">
     <BSModalHeader OnClick="@(() => ModalNuevo.Hide())">Nuevo Proveedor</BSModalHeader>
     <BSModalBody>
-        <div>
-            <p>Cuerpo del modal</p>
-        </div>
+        <FormularioArticulo ArticuloVM="articuloEdit" CerraModal="CerrarModalNuevo" />
     </BSModalBody>
 </BSModal>
+
+<BSModal @ref="ModalEdit" Size="Size.Large">
+    <BSModalHeader OnClick="@(() => ModalEdit.Hide())">Nuevo Proveedor</BSModalHeader>
+    <BSModalBody>
+        <FormularioArticulo ArticuloVM="articuloEdit" CerraModal="CerrarModalEdit" />
+    </BSModalBody>
+</BSModal>
+
 
 <BSModal @ref="ModalEliminar" Size="Size.Small">
     <BSModalHeader Class="bg-danger text-white" OnClick="@(() => ModalEliminar.Hide())">Eliminar articulo</BSModalHeader>
@@ -86,13 +102,15 @@
     <div class="modal-footer">
         <button class="btn btn-outline-danger" @onclick="CerrarModalEliminar"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
         <button class="btn btn-outline-primary" @onclick="EliminarProveedor"><i class="bi bi-trash mr-1 "></i>Eliminar</button>
-
     </div>
 </BSModal>
 
 @code {
     List<ArticuloViewModel> Articulos = new List<ArticuloViewModel>();
     List<ArticuloViewModel> ArticulosTemp = new List<ArticuloViewModel>();
+
+    ArticuloViewModel articuloEdit = new ArticuloViewModel();
+
     string message = "";
     string error = "";
     string busqueda = "";
@@ -124,6 +142,12 @@
             Articulos = ArticulosTemp.Where(x => x.Nombre.ToLower().Contains(busqueda.ToLower())).ToList();
     }
 
+    protected void EditaArticulo(EventArgs e, int IdArticulo)
+    {
+        articuloEdit = Articulos.FirstOrDefault(x => x.IdArticulo == IdArticulo);
+        ModalEdit.Show();
+    }
+
 
     protected void AlertaEliminarArticulo(EventArgs e, int IdProveedor, string nombreProveedorEliminar)
     {
@@ -142,6 +166,16 @@
     protected async void EliminarProveedor()
     {
         CerrarModalEliminar();
+    }
+
+    protected void CerrarModalNuevo()
+    {
+        ModalNuevo.Hide();
+    }
+
+    protected void CerrarModalEdit()
+    {
+        ModalEdit.Hide();
     }
 
 }
