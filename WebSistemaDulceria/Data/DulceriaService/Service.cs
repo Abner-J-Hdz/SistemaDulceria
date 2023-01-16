@@ -180,7 +180,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
                             IdArticulo = z.IdArticulo,
                             IdLote = z.IdLote,
                         }).ToList() ?? new List<LoteViewModel>(),
-                    DetalleProductoTerminado = context.DetalleProductoTerminado.Where(y => y.IdArticuloTerminado == x.IdArticulo)
+                    DetalleProductoTerminado = context.DetalleProductoTerminado.Where(y => y.IdArticuloMaterial == x.IdArticulo)
                     .Select(z => new DetalleProductoTerminadoViewModel { 
                         IdArticuloMaterial = z.IdArticuloMaterial,
                         Cantidad = z.Cantidad,

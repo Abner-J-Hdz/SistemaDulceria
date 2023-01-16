@@ -1,4 +1,7 @@
 ﻿@inject IService service
+@inject IJSRuntime js
+@inject NavigationManager navigate
+
 @using WebSistemaDulceria.Data.DulceriaService
 
 <div class="d-flex  justify-content-between mb-2" style="">
@@ -16,23 +19,23 @@
 <span class="text-danger">@error</span>
 
 @*<div class="row">
-    <div class="col">
-        <div class="form-inline">
+        <div class="col">
+            <div class="form-inline">
 
-            <label class="sr-only" for="nombreProveedor">nombreProveedor</label>
-            <div class="input-group mb-2 mr-sm-2">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">Nombre</div>
+                <label class="sr-only" for="nombreProveedor">nombreProveedor</label>
+                <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">Nombre</div>
+                    </div>
+                    <input type="text" @bind-value="busqueda" class="form-control" id="txtbusquedaArticulo" placeholder="">
                 </div>
-                <input type="text" @bind-value="busqueda" class="form-control" id="txtbusquedaArticulo" placeholder="">
-            </div>
 
-            <button type="button" class="btn btn-outline-primary mb-2" @onclick="BuscarArticulos">
-                <i class="bi bi-search"></i>
-            </button>
+                <button type="button" class="btn btn-outline-primary mb-2" @onclick="BuscarArticulos">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
         </div>
-    </div>
-</div>*@
+    </div>*@
 
 <div class="table-responsive">
     <table class="table table-bordered  table-striped table-hover">
@@ -54,12 +57,10 @@
                 <tr>
                     <td>
                         <button class="btn btn-sm btn-outline-primary" title="Editar"
-                            @onclick="@(e => EditaArticulo(e, item.IdArticulo))"
-                                >
+                                @onclick="@(e => EditaArticulo(e, item.IdArticulo))">
                             <i class="bi bi-pencil-square"></i>
                         </button>
-                        <button 
-                                @onclick="@(e => AlertaEliminarArticulo(e, item.IdArticulo, item.Nombre))"
+                        <button @onclick="@(e => AlertaEliminarArticulo(e, item.IdArticulo, item.Nombre))"
                                 class="btn btn-sm btn-outline-danger" title="Eliminar">
                             <i class="bi bi-trash"></i>
                         </button>
@@ -101,7 +102,7 @@
     </BSModalBody>
     <div class="modal-footer">
         <button class="btn btn-outline-danger" @onclick="CerrarModalEliminar"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
-        <button class="btn btn-outline-primary" @onclick="EliminarProveedor"><i class="bi bi-trash mr-1 "></i>Eliminar</button>
+        <button class="btn btn-outline-primary" @onclick="EliminarArticulo"><i class="bi bi-trash mr-1 "></i>Eliminar</button>
     </div>
 </BSModal>
 
@@ -163,9 +164,27 @@
         ModalEliminar.Hide();
     }
 
-    protected async void EliminarProveedor()
+    protected async void EliminarArticulo()
     {
-        CerrarModalEliminar();
+        try
+        {
+            var respuesta = await service.EliminarArticulo(idArticuloEliminar);
+            if (respuesta.Ok)
+            {
+                await js.InvokeVoidAsync("showAlert", "success", respuesta.Message, "");
+                CerrarModalEliminar();
+                await Task.Delay(1600).ContinueWith((task) =>
+                {
+                    navigate.NavigateTo("productos", forceLoad: true);
+                });
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+
     }
 
     protected void CerrarModalNuevo()
