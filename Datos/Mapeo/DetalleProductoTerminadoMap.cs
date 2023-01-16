@@ -14,6 +14,9 @@ namespace Datos.Mapeo
             builder.ToTable("TblDetalleProductoTerminado")
                 .HasKey(x => x.IdArticuloTerminado);
 
+            builder.HasOne(da => da.Articulo)
+                    .WithMany(a => a.DetalleProductoTerminado)
+                    .HasForeignKey(da => da.IdArticuloMaterial);
         }
     }
 }

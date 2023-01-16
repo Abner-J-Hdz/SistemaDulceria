@@ -21,5 +21,7 @@ namespace Entidades.DulceriaEntidades
 
         public decimal PrecioVenta { get; set; }
 
+        public Articulo Articulo { get; set; }
+
     }
 }

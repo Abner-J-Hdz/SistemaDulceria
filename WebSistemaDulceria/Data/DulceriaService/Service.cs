@@ -215,11 +215,21 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     FechaModificacion = DateTime.Now,
                     IdUsuarioModificacion = 1,
                     FechaCreacion = DateTime.Now,
-                    IdUsuarioCreacion = 1
+                    IdUsuarioCreacion = 1,
+                    
                 };
+                articulo.Precios = new List<Precios>();
+
+                articulo.Precios.Add( new Precios {
+                        IdArticulo = articuloVM.IdArticulo,
+                        PrecioInicial = articuloVM.PrecioInicial,
+                        PrecioCosto = articuloVM.PrecioCosto,
+                        PrecioVenta = articuloVM.PrecioVenta,
+                 });
 
                 context.Articulo.Add(articulo);
                 await context.SaveChangesAsync();
+
                 resp.Ok = true;
                 resp.Message = "Guardado con éxito";
                 return resp;
@@ -343,6 +353,24 @@ namespace WebSistemaDulceria.Data.DulceriaService
                 pedido.DetallePedido = pedidoDetalle;
 
                 context.Pedido.Add(pedido);
+
+                foreach (var item in pedidoDetalle)
+                {
+                    var productoTerminado = context.DetalleProductoTerminado.FirstOrDefault(x => x.IdArticuloMaterial == item.IdArticulo);
+
+                    if(productoTerminado == null)
+                    {
+                        var productoTerminadoDb = new DetalleProductoTerminado();
+                        productoTerminadoDb.IdArticuloMaterial = item.IdArticulo;
+                        productoTerminadoDb.Cantidad = (int)item.Cantidad;
+                        context.DetalleProductoTerminado.Add(productoTerminadoDb);
+                    }
+                    else
+                    {
+                        productoTerminado.Cantidad +=  (int)item.Cantidad;
+                    }
+                }
+
                 await context.SaveChangesAsync();
 
                 resp.Ok = true;

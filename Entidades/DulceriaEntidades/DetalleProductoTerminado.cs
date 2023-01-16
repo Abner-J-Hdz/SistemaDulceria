@@ -11,5 +11,8 @@ namespace Entidades.DulceriaEntidades
         public int IdArticuloMaterial { get; set; }
 
         public int Cantidad { get; set; }
+
+
+        public Articulo Articulo { get; set; }
     }
 }

@@ -20,7 +20,9 @@
     </div>
 </div>
 <hr />
-
+<div>
+    <span class="text-danger">@message</span>
+</div>
 <div class="table-responsive">
     <table class="table table-bordered  table-striped table-hover">
         <thead>
@@ -95,6 +97,12 @@
         SeleccionArticulo.Nombre = NombreArticulo;
 
         var precios = Articulos.Where(x => x.IdArticulo == IdArticulo).FirstOrDefault()?.Precios ?? new List<PreciosViewModel>();
+
+        if (precios.Count() == 0)
+        {
+            message = "Articulo sin precio";
+            return;
+        }
 
         SeleccionArticulo.Precios = precios;
         await AgregarDetalle.InvokeAsync(true);

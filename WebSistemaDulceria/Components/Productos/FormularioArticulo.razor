@@ -2,7 +2,7 @@
 @inject NavigationManager navigate
 @inject IJSRuntime js
 
-<EditForm Model="ArticuloVM" >
+<EditForm Model="ArticuloVM">
     <DataAnnotationsValidator />
     <div class="row">
         <div class="col">
@@ -33,7 +33,7 @@
         <div class="col">
             <div class="form-group">
                 <label>Cantidad minima:</label>
-                <InputNumber min="0"  @bind-Value="ArticuloVM.CantidadMinima" autofocus class="form-control" />
+                <InputNumber min="0" @bind-Value="ArticuloVM.CantidadMinima" autofocus class="form-control" />
                 <ValidationMessage For="() => ArticuloVM.CantidadMinima" />
             </div>
         </div>
@@ -67,6 +67,22 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Precio costo:</label>
+                <input min="0" type="number" @bind-value="ArticuloVM.PrecioCosto" class="form-control">
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label>Precio venta</label>
+                <InputNumber min="0" @bind-Value="ArticuloVM.PrecioVenta" class="form-control" />
+            </div>
+        </div>
+    </div>
+
+
     <div class="modal-footer">
         <button type="button" class="btn btn-outline-danger" @onclick="CerraModal"><i class="bi bi-x-circle mr-1"></i>  Cerrar</button>
         <button type="submit" class="btn btn-outline-primary" @onclick="GuardarActualizarProduccto"><i class="bi bi-save mt-1"></i>  @LabelButton</button>
@@ -77,7 +93,7 @@
 @code {
     [Parameter]
     public ArticuloViewModel ArticuloVM { get; set; }
-
+    
     [Parameter]
     public EventCallback CerraModal { get; set; }
 

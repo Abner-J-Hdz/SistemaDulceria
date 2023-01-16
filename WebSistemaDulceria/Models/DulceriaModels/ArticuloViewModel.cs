@@ -44,6 +44,10 @@ namespace WebSistemaDulceria.Models.DulceriaModels
 
         public List<DetalleProductoTerminadoViewModel> DetalleProductoTerminado { get; set; } = new List<DetalleProductoTerminadoViewModel>();
 
+        public decimal PrecioInicial { get; set; }
+        public decimal PrecioCosto { get; set; }
+        public decimal PrecioVenta { get; set; }
+
         /*public DateTime FechaCreacion { get; set; }
 
         public int IdUsuarioCreacion { get; set; }

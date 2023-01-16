@@ -44,7 +44,7 @@
                 <th scope="col">Cod Barra</th>
                 <th scope="col">Costo</th>
                 <th scope="col">Precio Venta</th>
-                <th scope="col">Cantidad Lote</th>
+                @*<th scope="col">Cantidad Lote</th>*@
                 <th scope="col">Cantidad Prod.Terminado</th>
             </tr>
         </thead>
@@ -69,7 +69,7 @@
                     <td>@item.CodBarra</td>
                     <td>@(item.Precios.FirstOrDefault()?.PrecioCosto?? 0)</td>
                     <td>@(item.Precios.FirstOrDefault()?.PrecioVenta ?? 0)</td>
-                    <td>@(item.Lote.FirstOrDefault()?.Cantidad ?? 0)</td>
+                    @*<td>@(item.Lote.FirstOrDefault()?.Cantidad ?? 0)</td>*@
                     <td>@(item.DetalleProductoTerminado.FirstOrDefault()?.Cantidad ?? 0)</td>
                 </tr>
             }
