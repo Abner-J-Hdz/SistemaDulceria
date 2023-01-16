@@ -8,6 +8,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using WebSistemaDulceria.Data.DulceriaService;
+using WebSistemaDulceria.Utils;
+
 namespace WebSistemaDulceria.Controllers
 {
     public class AccountController : Controller
@@ -25,7 +27,12 @@ namespace WebSistemaDulceria.Controllers
         {
             try
             {
+                EncryptMd5 encrypt = new EncryptMd5();
+
                 var usuario = _context.Usuarios.FirstOrDefault(x => x.Email == email);
+
+
+                usuario.Password = encrypt.Descrypt(usuario.Password);
 
                 if (usuario == null)
                     return LocalRedirect("/login/usuario no encontrado");

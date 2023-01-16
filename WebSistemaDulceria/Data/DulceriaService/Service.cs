@@ -425,9 +425,13 @@ namespace WebSistemaDulceria.Data.DulceriaService
         {
             Response resp = new Response();
 
+            EncryptMd5 encrypt = new EncryptMd5();
+
             try
             {
                 var usuario = context.Usuarios.FirstOrDefault(x => x.Email == email);
+
+                usuario.Password = encrypt.Encrypt(password);
 
                 if(usuario == null)
                 {
