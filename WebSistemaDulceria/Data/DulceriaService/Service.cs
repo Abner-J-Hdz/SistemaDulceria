@@ -168,6 +168,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     Precios = context.Precios.Where(y => y.IdArticulo == x.IdArticulo).Select(
                         z => new PreciosViewModel
                         {
+                            IdArticuloPrecio = z.IdArticuloPrecio,
                             PrecioCosto = z.PrecioCosto,
                             PrecioInicial =z.PrecioInicial,
                             MargenGanancia = z.MargenGanancia,
@@ -249,22 +250,30 @@ namespace WebSistemaDulceria.Data.DulceriaService
             Response resp = new Response();
             try
             {
-                var articuloDb = await context.Proveedores.FirstOrDefaultAsync(x => x.IdProveedor == articuloVM.IdArticulo);
-                var articulo = new Articulo
-                {
-                    Nombre = articuloVM.Nombre,
-                    CodBarra = articuloVM.CodBarra,
-                    CodInterno = articuloVM.CodInterno,
-                    TieneVencimiento = articuloVM.TieneVencimiento,
-                    EsMenudeo = articuloVM.EsMenudeo,
-                    CantidadMenudeo = articuloVM.CantidadMenudeo,
-                    EsProductoTerminado = articuloVM.EsProductoTerminado,
-                    IdUnidadMedida = 1,
-                    IdPresentacion = 1,
-                    FechaModificacion = DateTime.Now
-                };
+                var articuloDb = context.Articulo.FirstOrDefault(x => x.IdArticulo == articuloVM.IdArticulo);
 
-                context.Articulo.Add(articulo);
+                if(articuloDb == null)
+                {
+                    resp.Ok = false;
+                    resp.Message = "No se encontró articulo";
+                    return resp;
+                }
+
+                articuloDb.Nombre = articuloVM.Nombre;
+                articuloDb.CodBarra = articuloVM.CodBarra;
+                articuloDb.CodInterno = articuloVM.CodInterno;
+                articuloDb.TieneVencimiento = articuloVM.TieneVencimiento;
+                articuloDb.EsMenudeo = articuloVM.EsMenudeo;
+                articuloDb.CantidadMenudeo = articuloVM.CantidadMenudeo;
+                articuloDb.EsProductoTerminado = articuloVM.EsProductoTerminado;
+                articuloDb.IdUnidadMedida = 1;
+                articuloDb.IdPresentacion = 1;
+                articuloDb.FechaModificacion = DateTime.Now;
+
+                var precio = context.Precios.FirstOrDefault(x => x.IdArticuloPrecio == articuloVM.Precios.FirstOrDefault().IdArticuloPrecio);
+                precio.PrecioCosto = articuloVM.PrecioCosto;
+                precio.PrecioVenta = articuloVM.PrecioVenta;
+
                 await context.SaveChangesAsync();
                 resp.Ok = true;
                 resp.Message = "Guardado con éxito";

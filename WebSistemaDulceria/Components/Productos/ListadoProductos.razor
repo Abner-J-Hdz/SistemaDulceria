@@ -133,6 +133,8 @@
     {
         Articulos = service.ObtenerArticulos();
         ArticulosTemp = Articulos;
+        Articulos.ForEach(x => x.PrecioCosto = x.Precios.FirstOrDefault()?.PrecioCosto ?? 0);
+        Articulos.ForEach(x => x.PrecioVenta = x.Precios.FirstOrDefault()?.PrecioVenta ?? 0);
     }
 
     protected void BuscarArticulos()
