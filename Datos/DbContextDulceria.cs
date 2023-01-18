@@ -18,6 +18,8 @@ namespace Datos
         public DbSet<Lote> Lote { get; set; }
         public DbSet<DetalleProductoTerminado> DetalleProductoTerminado { get; set; }
         public DbSet<Clientes> Clientes { get; set; }
+        public DbSet<Venta> Venta { get; set; }
+        public DbSet<DetalleVenta> DetalleVenta { get; set; }
 
         public DbContextDulceria(DbContextOptions<DbContextDulceria> options) : base(options)
         {
@@ -36,6 +38,8 @@ namespace Datos
             modelBuilder.ApplyConfiguration(new LoteMap());
             modelBuilder.ApplyConfiguration(new DetalleProductoTerminadoMap());
             modelBuilder.ApplyConfiguration(new ClientesMap());
+            modelBuilder.ApplyConfiguration(new VentaMap());
+            modelBuilder.ApplyConfiguration(new DetalleVentaMap());
         }
     }
 }

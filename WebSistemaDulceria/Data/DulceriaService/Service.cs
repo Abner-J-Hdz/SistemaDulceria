@@ -551,6 +551,47 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         #endregion
 
+        #region Ventas
+
+        public List<VentaViewModel> ObtenerVentas()
+        {
+            List<VentaViewModel> ventas = new List<VentaViewModel>();
+            try
+            {
+                var ventasDb = context.Venta.ToList();
+
+                foreach (var item in ventasDb)
+                {
+                    ventas.Add(new VentaViewModel
+                    {
+                        IdVenta = item.IdVenta,
+                        IdCliente = item.IdCliente,
+                        
+                        NumeroRecibo = item.NumeroRecibo,
+                        Fecha = item.Fecha,
+
+                        SubTotal = item.SubTotal,
+                        Descuento = item.Descuento,
+                        Total = item.Total,
+                        Iva = item.Iva,
+
+                        Cliente = new ClientesViewModel
+                        {
+                            IdCliente = item.IdCliente,
+                            Nombre = context.Clientes.FirstOrDefault(x => x.IdCliente == item.IdCliente)?.Nombre ?? ""
+                        },
+                    });
+                }
+                return ventas;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        #endregion
+
         #region Usuarios
         public Response GetUsuarioLogin(string email, string password)
         {
