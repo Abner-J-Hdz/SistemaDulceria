@@ -17,6 +17,7 @@ namespace Datos
         public DbSet<Usuarios> Usuarios { get; set; }
         public DbSet<Lote> Lote { get; set; }
         public DbSet<DetalleProductoTerminado> DetalleProductoTerminado { get; set; }
+        public DbSet<Clientes> Clientes { get; set; }
 
         public DbContextDulceria(DbContextOptions<DbContextDulceria> options) : base(options)
         {
@@ -34,6 +35,7 @@ namespace Datos
             modelBuilder.ApplyConfiguration(new UsuarioMap());
             modelBuilder.ApplyConfiguration(new LoteMap());
             modelBuilder.ApplyConfiguration(new DetalleProductoTerminadoMap());
+            modelBuilder.ApplyConfiguration(new ClientesMap());
         }
     }
 }
