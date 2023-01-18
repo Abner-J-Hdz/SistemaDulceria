@@ -1,0 +1,175 @@
+﻿@inject IService service
+@inject IJSRuntime js
+@inject NavigationManager navigate
+
+<div class="d-flex  justify-content-between mb-2" style="">
+    <div>
+        <h2 class="text-primary">Clientes</h2>
+    </div>
+    <div class="align-content-end">
+        <button title="Nuevo proveedor" type="button" class="btn btn-outline-info" @onclick="NuevoCliente">
+            <i class="bi bi-plus-circle m-1"></i> Nuevo
+        </button>
+    </div>
+</div>
+<span class="text-danger">@message</span>
+<span class="text-danger">@error</span>
+
+<table class="table table-bordered  table-striped table-hover">
+    <thead>
+        <tr>
+            <th></th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Correo</th>
+            <th scope="col">Telefono</th>
+            <th scope="col">Telefono2</th>
+            <th scope="col">Direccion</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Clientes)
+        {
+            <tr>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" title="Editar" @onclick="@(e => EditaCliente(e, item.IdCliente))"><i class="bi bi-pencil-square"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" title="Eliminar" @onclick="@(e => AlertaEliminarCliente(e, item.IdCliente, item.Nombre))"><i class="bi bi-trash"></i></button>
+                </td>
+                <td>@item.Nombre</td>
+                <td>@item.Correo</td>
+                <td>@item.Telefono1</td>
+                <td>@item.Telefono2</td>
+                <td>@item.Direccion</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<BSModal @ref="ModalEdit" Size="Size.Large">
+    <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalEdit.Hide())">Editar Proveedor</BSModalHeader>
+    <BSModalBody>
+        <FormularioCliente ClienteVM="@clienteEdit" CerraModal="CerrarModalEdit" RecargarListado="RecargarListadoCliente" />
+    </BSModalBody>
+</BSModal>
+
+<BSModal @ref="ModalNuevo" Size="Size.Large">
+    <BSModalHeader OnClick="@(() => ModalNuevo.Hide())">Nuevo Proveedor</BSModalHeader>
+    <BSModalBody>
+        <FormularioCliente ClienteVM="@ClienteNuevo" CerraModal="CerrarModalNuevo" />
+    </BSModalBody>
+</BSModal>
+
+<BSModal @ref="ModalEliminar" Size="Size.Small">
+    <BSModalHeader Class="bg-danger text-white" OnClick="@(() => ModalEliminar.Hide())">Eliminar proveedor</BSModalHeader>
+    <BSModalBody>
+        <p>
+            <span>Está seguro de eliminar el proveedor <strong>@nombreCliente</strong> ?</span>
+        </p>
+    </BSModalBody>
+    <div class="modal-footer">
+        <button class="btn btn-outline-danger" @onclick="CerrarModalEliminar"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
+        <button class="btn btn-outline-primary" @onclick="EliminarCliente"><i class="bi bi-trash mr-1 "></i>Eliminar</button>
+
+    </div>
+</BSModal>
+
+
+@code {
+    BSModal ModalEdit { get; set; }
+    BSModal ModalNuevo { get; set; }
+    BSModal ModalEliminar { get; set; }
+
+    List<ClientesViewModel> Clientes = new List<ClientesViewModel>();
+
+    ClientesViewModel clienteEdit = new ClientesViewModel();
+
+    ClientesViewModel ClienteNuevo = new ClientesViewModel();
+
+    string message = "";
+    string error = "";
+    string nombreCliente = "";
+    int idClienteEliminar = 0;
+
+    protected void NuevoCliente()
+    {
+        ModalNuevo.Show();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            Clientes = service.ObtenerClientes();
+        }
+        catch (Exception ex)
+        {
+            message = "Ha ocurrido un error al obtener proveedores";
+            error = ex.Message;
+        }
+    }
+
+    protected void EditaCliente(EventArgs e, int IdCliente)
+    {
+        clienteEdit = Clientes.FirstOrDefault(x => x.IdCliente == IdCliente);
+        ModalEdit.Show();
+    }
+
+    protected void AlertaEliminarCliente(EventArgs e, int IdCliente, string nombreClienteEliminar)
+    {
+        ModalEliminar.Show();
+        nombreCliente = nombreClienteEliminar;
+        idClienteEliminar = IdCliente;
+    }
+
+    protected void CerrarModalNuevo()
+    {
+        ModalNuevo.Hide();
+    }
+
+    protected void CerrarModalEdit()
+    {
+        ModalEdit.Hide();
+    }
+
+    protected void CerrarModalEliminar()
+    {
+        idClienteEliminar = 0;
+
+        ModalEliminar.Hide();
+    }
+
+    protected async void RecargarListadoCliente()
+    {
+        try
+        {
+            Clientes = service.ObtenerClientes();
+        }
+        catch (Exception ex)
+        {
+            message = "Ha ocurrido un error al obtener proveedores";
+            error = ex.Message;
+        }
+    }
+
+    protected async void EliminarCliente()
+    {
+        try
+        {
+            var respuesta = await service.EliminarClientes(idClienteEliminar);
+            if (respuesta.Ok)
+            {
+                await js.InvokeVoidAsync("showAlert", "success", respuesta.Message, "");
+                CerrarModalEliminar();
+                await Task.Delay(1600).ContinueWith((task) =>
+                {
+                    navigate.NavigateTo("Clientes", forceLoad: true);
+                });
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+}

@@ -455,12 +455,15 @@ namespace WebSistemaDulceria.Data.DulceriaService
             Response resp = new Response();
             try
             {
+                clienteVM.Telefono1 = clienteVM.Telefono1 == null ? 0 : clienteVM.Telefono1;
+                clienteVM.Telefono2 = clienteVM.Telefono2 == null ? 0 : clienteVM.Telefono2;
+
                 var cliente = new Clientes
                 {
                     Nombre = clienteVM.Nombre,
                     Correo = clienteVM.Correo,
-                    Telefono1 = clienteVM.Telefono1,
-                    Telefono2 = clienteVM.Telefono2,
+                    Telefono1 = clienteVM?.Telefono1.Value ?? 0,
+                    Telefono2 = clienteVM?.Telefono2.Value ?? 0, 
                     Direccion = clienteVM.Direccion,
                     EstaActivo = true,
                     FechaCreacion = DateTime.Now,
@@ -501,8 +504,8 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
                 cliente.Nombre = clienteVM.Nombre;
                 cliente.Correo = clienteVM.Correo;
-                cliente.Telefono1 = clienteVM.Telefono1;
-                cliente.Telefono2 = clienteVM.Telefono2;
+                cliente.Telefono1 = clienteVM?.Telefono1.Value ?? 0;
+                cliente.Telefono2 = clienteVM?.Telefono2.Value ?? 0;
                 cliente.Direccion = clienteVM.Direccion;
                 cliente.FechaModificacion = DateTime.Now;
                 cliente.IdUsuarioModificacion = 1;

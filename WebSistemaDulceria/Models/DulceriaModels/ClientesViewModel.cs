@@ -16,9 +16,9 @@ namespace WebSistemaDulceria.Models.DulceriaModels
         [EmailAddress]
         public string Correo { get; set; }
 
-        public decimal Telefono1 { get; set; }
+        public decimal? Telefono1 { get; set; }
 
-        public decimal Telefono2 { get; set; }
+        public decimal? Telefono2 { get; set; }
 
         [StringLength(1000, ErrorMessage = "Maximo de caracteres es 1000")]
         public string Direccion { get; set; }
