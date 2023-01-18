@@ -37,8 +37,19 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         List<PedidoViewModel> ObtenerPedidos();
 
+        #endregion
+
+        #region Clientes
+        List<ClientesViewModel> ObtenerClientes();
+
+        Task<Response> GuardarClientes(ClientesViewModel clienteVM);
+
+        Task<Response> ActualizarClientes(ClientesViewModel clienteVM);
+
+        Task<Response> EliminarClientes(int idCliente);
 
         #endregion
+
 
         #region Usuarios
         Response GetUsuarioLogin(string email, string password);

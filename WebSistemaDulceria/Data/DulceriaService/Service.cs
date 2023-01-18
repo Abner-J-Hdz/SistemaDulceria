@@ -45,8 +45,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
                 }).Where(x => x.EstaActivo).ToList();
             }
             catch (Exception ex)
-                                                                                                                                                                                                                                                                                                                                                                                                             {
-
+            {
                 throw;
             }
         }
@@ -104,7 +103,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
                 
                 await context.SaveChangesAsync();
                 resp.Ok = true;
-                resp.Message = "Actualizado con éxito"; ;
+                resp.Message = "Actualizado con éxito";
                 return resp;
             }
             catch (Exception ex)
@@ -130,7 +129,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
                 proveedor.EstaActivo = false;
                 await context.SaveChangesAsync();
                 resp.Ok = true;
-                resp.Message = "Eliminado con éxito"; ;
+                resp.Message = "Eliminado con éxito";
                 return resp;
             }
             catch (Exception ex)
@@ -139,7 +138,6 @@ namespace WebSistemaDulceria.Data.DulceriaService
                 resp.Message = "Ha ocurrido un error al eliminar proveedor";
                 resp.Error = ex.Message;
                 return resp;
-
             }
         }
         
@@ -429,6 +427,127 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         #endregion
 
+        #region Clientes
+        public List<ClientesViewModel> ObtenerClientes()
+        {
+            try
+            {
+                var clientesDb = context.Clientes.Where(x => x.EstaActivo).ToList();
+
+                return clientesDb.Select(x => new ClientesViewModel {
+                    IdCliente = x.IdCliente,
+                    Nombre = x.Nombre,
+                    Correo = x.Correo,
+                    Telefono1 = x.Telefono1,
+                    Telefono2 = x.Telefono2,
+                    Direccion = x.Direccion,
+                    EstaActivo = x.EstaActivo
+                }).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<Response> GuardarClientes(ClientesViewModel clienteVM)
+        {
+            Response resp = new Response();
+            try
+            {
+                var cliente = new Clientes
+                {
+                    Nombre = clienteVM.Nombre,
+                    Correo = clienteVM.Correo,
+                    Telefono1 = clienteVM.Telefono1,
+                    Telefono2 = clienteVM.Telefono2,
+                    Direccion = clienteVM.Direccion,
+                    EstaActivo = true,
+                    FechaCreacion = DateTime.Now,
+                    IdUsuarioCreacion = 1,
+                    FechaModificacion = DateTime.Now,
+                    IdUsuarioModificacion = 1
+                };
+
+                context.Clientes.Add(cliente);
+
+                await context.SaveChangesAsync();
+                resp.Ok = true;
+                resp.Message = "Guardado con éxito";
+                return resp;
+            }
+            catch (Exception ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ha ocurrido un error al guardar proveedor";
+                resp.Error = ex.Message;
+                return resp;
+            }
+        }
+
+        public async Task<Response> ActualizarClientes(ClientesViewModel clienteVM)
+        {
+            Response resp = new Response();
+            try
+            {
+                var cliente = await context.Clientes.FirstOrDefaultAsync(x => x.IdCliente == clienteVM.IdCliente);
+
+                if(cliente == null)
+                {
+                    resp.Ok = false;
+                    resp.Message = "Cliente no encontrado";
+                    return resp;
+                }
+
+                cliente.Nombre = clienteVM.Nombre;
+                cliente.Correo = clienteVM.Correo;
+                cliente.Telefono1 = clienteVM.Telefono1;
+                cliente.Telefono2 = clienteVM.Telefono2;
+                cliente.Direccion = clienteVM.Direccion;
+                cliente.FechaModificacion = DateTime.Now;
+                cliente.IdUsuarioModificacion = 1;
+
+                await context.SaveChangesAsync();
+                resp.Ok = true;
+                resp.Message = "Actualizado con éxito";
+
+                return resp;
+            }
+            catch (Exception ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ha ocurrido un error al guardar proveedor";
+                resp.Error = ex.Message;
+                return resp;
+            }
+        }
+
+        public async Task<Response> EliminarClientes(int idCliente)
+        {
+            Response resp = new Response();
+            try
+            {
+                var cliente = await context.Clientes.FirstOrDefaultAsync(x => x.IdCliente == idCliente);
+                if (cliente == null)
+                    throw new Exception("No se encontró proveedor");
+
+                cliente.EstaActivo = false;
+                await context.SaveChangesAsync();
+                resp.Ok = true;
+                resp.Message = "Eliminado con éxito";
+                return resp;
+            }
+            catch (Exception ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ha ocurrido un error al eliminar proveedor";
+                resp.Error = ex.Message;
+                return resp;
+            }
+        }
+
+        #endregion
+
         #region Usuarios
         public Response GetUsuarioLogin(string email, string password)
         {
@@ -469,6 +588,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
         }
 
         #endregion
+
 
     }
 }
