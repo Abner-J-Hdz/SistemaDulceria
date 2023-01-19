@@ -629,6 +629,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
                 return usuariosDb.Select(x => new UsuarioViewModel
                 {
+                    IdUsuario = x.IdUsuario,
                     Nombre = x.Nombre,
                     Apellido = x.Apellido,
                     Email = x.Email,
@@ -701,7 +702,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
             }
         }
 
-        public async Task<Response> EliminarPassword(int IdUsuario)
+        public async Task<Response> EliminarUsuario(int IdUsuario)
         {
             Response resp = new Response();
             try
@@ -718,7 +719,8 @@ namespace WebSistemaDulceria.Data.DulceriaService
                 UsuarioDb.EstaActivo = false;
 
                 await context.SaveChangesAsync();
-
+                resp.Message = "Usuario eliminado correctamente";
+                resp.Ok = true;
                 return resp;
             }
             catch (Exception ex)

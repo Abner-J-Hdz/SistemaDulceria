@@ -60,7 +60,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         Task<Response> ActualizarPassword(int IdUsuario, string password);
 
-        Task<Response> EliminarPassword(int IdUsuario);
+        Task<Response> EliminarUsuario(int IdUsuario);
 
         Response GetUsuarioLogin(string email, string password);
         #endregion

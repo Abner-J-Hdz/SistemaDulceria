@@ -1,0 +1,87 @@
+﻿@inject IService serviceProveedor
+@inject NavigationManager navigate
+@inject IJSRuntime js
+
+<EditForm Model="UsuarioVM" OnValidSubmit="GuardarActualizarUsuario">
+    <DataAnnotationsValidator />
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Nombre:</label>
+                <InputText id="txtNombre" @bind-Value="UsuarioVM.Nombre" autofocus class="form-control" />
+                <ValidationMessage For="() => UsuarioVM.Nombre" />
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="form-group">
+                <label>Correo:</label>
+                <InputText @bind-Value="UsuarioVM.Apellido" type="text" class="form-control" />
+                <ValidationMessage For="() => UsuarioVM.Apellido" />
+                <small id="emailHelp" class="form-text text-muted"></small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Direccion:</label>
+                <InputText @bind-Value="UsuarioVM.Email" type="email" class="form-control" />
+                <ValidationMessage For="() => UsuarioVM.Email" />
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" @onclick="CerraModal"><i class="bi bi-x-circle mr-1"></i>  Cerrar</button>
+        <button type="submit" class="btn btn-outline-primary"><i class="bi bi-save mt-1"></i>  @LabelButton</button>
+    </div>
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public UsuarioViewModel UsuarioVM { get; set; }
+
+    [Parameter]
+    public EventCallback CerraModal { get; set; }
+
+    string LabelButton = "";
+
+    public Response respuesta { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (UsuarioVM.IdUsuario == 0)
+            LabelButton = "Guardar";
+        else
+            LabelButton = "Actualizar";
+
+        await js.InvokeVoidAsync("focusElementById", "txtNombre");
+    }
+
+    protected async Task GuardarActualizarUsuario()
+    {
+        if (UsuarioVM.IdUsuario == 0)
+            respuesta = await serviceProveedor.GuardarUsuario(UsuarioVM);
+        else
+            respuesta = await serviceProveedor.ActualizarUsuario(UsuarioVM);
+
+        if (respuesta.Ok)
+        {
+            await js.InvokeVoidAsync("showAlert", "success", respuesta.Message, "");
+            await Task.Delay(1600).ContinueWith((task) =>
+            {
+                navigate.NavigateTo("usuarios", forceLoad: true);
+            });
+            await CerraModal.InvokeAsync(true);
+        }
+        else
+        {
+            await CerraModal.InvokeAsync(true);
+        }
+    }
+
+
+}
