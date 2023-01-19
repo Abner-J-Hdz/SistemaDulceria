@@ -1,0 +1,293 @@
+﻿@inject IService service
+@inject IJSRuntime js
+@inject NavigationManager navigate
+@using WebSistemaDulceria.Components.Productos
+<div class="card">
+    <div class="card-header d-flex justify-content-between">
+        <div>
+            <h5 class="">Ventas</h5>
+        </div>
+        <div class="d-flex">
+            <BSButton OnClick="handleNuevo" Class="mt-2 mr-2" Color="Color.Primary" IsOutline="true" IsDisabled="@BtnNuevo" Size="Size.Small">
+                <i class="bi bi-plus-circle"></i>
+            </BSButton>
+            <BSButton OnClick="handleGuardar" Class="mt-2 mr-2" Color="Color.Primary" IsOutline="true" IsDisabled="@BtnGuardar" Size="Size.Small">
+                <i class="bi bi-save"></i>
+            </BSButton>
+            <BSButton OnClick="handleBuscar" Class="mt-2 mr-2" Color="Color.Info" IsOutline="true" IsDisabled="@BtnBuscar" Size="Size.Small">
+                <i class="bi bi-search"></i>
+            </BSButton>
+
+            <BSButton OnClick="handleCancelar" Class="mt-2 mr-2" Color="Color.Danger" IsOutline="true" IsDisabled="@BtnCancelar" Size="Size.Small">
+                <i class="bi bi-x-circle"></i>
+            </BSButton>
+        </div>
+    </div>
+    <div class="card-body">
+
+        @if (validarFormVenta)
+        {
+            <div class="alert alert-danger" role="alert">
+                @mensajeError
+            </div>
+        }
+        <FormularioVenta PedidoVM="VentaVM" DisabledFormulario="BlockFormulario" ></FormularioVenta>
+
+        <BSButton @onclick="AbrirModalProducto" Color="Color.Primary" title="Añadir producto" IsDisabled="@BtnAgregarProducto">
+            <i class="bi bi-box mr-1"></i>Agregar Producto
+        </BSButton>
+
+        <div class="table-responsive mt-4">
+            <table class="table table-bordered  table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th scope="col">Articulo</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Precio</th>
+                        <th scope="col">Descuento</th>
+                        <th scope="col">I.V.A.</th>
+                        <th scope="col">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var detalle in VentaVM.DetalleVenta)
+                        {
+                            @*<PedidoDetalle DetalleVM="detalle" EliminarLinea="@elimi" CalcularTotales="CalcularTotales" />*@
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row d-flex justify-content-end">
+            <div class="col-sm-4 col-md-8">
+                <textarea @bind="@VentaVM.Observaciones" class="form-control h-100" disabled="@txtObservaciones">
+
+                </textarea>
+            </div>
+            <div style="" class=" col-sm-6 col-md-4">
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Subtotal:</label>
+                    <div class="col-sm-8">
+                        <input @bind-value="subtotal" disabled class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Impuesto:</label>
+                    <div class="col-sm-8">
+                        <input @bind-value="impuesto" disabled class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Descuento:</label>
+                    <div class="col-sm-8">
+                        <input @bind-value="descuento" disabled class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group row">
+
+                    <label class="col-sm-4 col-form-label">Impuesto:</label>
+                    <div class="col-sm-8">
+                        <input @bind-value="total" disabled class="form-control" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<BSModal @ref="ModalProducto" IsFullWidth="true">
+    <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalProducto.Hide())">Selecciona producto</BSModalHeader>
+    <BSModalBody>
+       
+        <SeleccionProducto SeleccionArticulo="VentaDetalleViewModel.Articulo" AgregarDetalle="AgregarDetalle" CerraModalProducto="CerraModalProducto" />
+    </BSModalBody>
+    <div class="modal-footer">
+        <button class="btn btn-outline-danger" @onclick="() => ModalProducto.Hide()"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
+    </div>
+</BSModal>
+
+@code {
+    VentaViewModel VentaVM = new VentaViewModel();
+    DetalleVentaViewModel VentaDetalleViewModel = new DetalleVentaViewModel();
+
+    BSModal ModalProducto { get; set; }
+    BSModal ModalVentas { get; set; }
+
+    bool BtnNuevo = false; //{ get; set; }
+    bool BtnGuardar = false; //{ get; set; }
+    bool BtnBuscar = false; //{ get; set; }
+    bool BtnCancelar = false; //{ get; set; }
+    bool BtnAgregarProducto = false;
+    bool BlockFormulario = true;
+    bool txtObservaciones = true;
+
+    bool validarFormVenta = false;
+
+    decimal total { get; set; } = 0;
+    decimal subtotal { get; set; } = 0;
+    decimal impuesto { get; set; } = 0;
+    decimal descuento { get; set; } = 0;
+
+    string mensajeError = "";
+    string error = "";
+
+    public Response respuesta { get; set; }
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            BtnGuardar = true;
+            BtnCancelar = true;
+            BtnAgregarProducto = true;
+            VentaVM.Fecha = DateTime.Now;
+        }
+        catch (Exception e)
+        {
+            e.Message.ToString();
+        }
+    }
+
+
+    protected async void AbrirModalProducto()
+    {
+        if ( VentaVM.Cliente.IdCliente == 0 )
+        {
+            validarFormVenta = true;
+            mensajeError = "Todos los campos del pedido son obligatorio";
+        }
+        else
+        {
+            BlockFormulario = true;
+            validarFormVenta = false;
+            ModalProducto.Show();
+        }
+    }
+
+    protected void CerraModalProducto()
+    {
+        ModalProducto.Hide();
+    }
+
+    protected void AgregarDetalle()
+    {
+        int IdVentaDetalle = VentaVM.DetalleVenta.OrderByDescending(x => x.IdDetalleVenta).FirstOrDefault()?.IdDetalleVenta + 1 ?? 1;
+
+        //Verficar si producto ya existe
+        if (VentaVM.DetalleVenta.FirstOrDefault(x => x.IdArticulo == VentaDetalleViewModel.Articulo.IdArticulo) != null)
+        {
+            validarFormVenta = true;
+            mensajeError = "Este articulo ya está en el detalle";
+            return;
+        }
+        validarFormVenta = false;
+        decimal precio = VentaDetalleViewModel.Articulo.Precios.FirstOrDefault()?.PrecioVenta ?? 0;
+        decimal total = precio * 1;
+        VentaVM.DetalleVenta.Add(new DetalleVentaViewModel
+        {
+            IdDetalleVenta = IdVentaDetalle,
+            IdArticulo = VentaDetalleViewModel.Articulo.IdArticulo,
+            Cantidad = 1,
+            Articulo = VentaDetalleViewModel.Articulo,
+            Precio = VentaDetalleViewModel.Articulo.Precios.FirstOrDefault()?.PrecioCosto ?? 0,
+            SubTotal = total,
+            Total = total
+        }
+        );
+        VentaDetalleViewModel = new DetalleVentaViewModel();
+
+        CalcularTotales();
+    }
+
+
+    private void EliminarDetalle(string IdDetalle)
+    {
+
+        int id = Convert.ToInt32(IdDetalle);
+        var detalle = VentaVM.DetalleVenta.FirstOrDefault(x => x.IdDetalleVenta == id);
+
+        if (detalle != null)
+        {
+            VentaVM.DetalleVenta.Remove(detalle);
+        }
+        CalcularTotales();
+    }
+
+
+    private void CalcularTotales()
+    {
+        total = VentaVM.DetalleVenta.Sum(x => x.Total);
+        subtotal = VentaVM.DetalleVenta.Sum(x => x.SubTotal);
+        impuesto = VentaVM.DetalleVenta.Sum(x => x.Iva);
+        descuento = VentaVM.DetalleVenta.Sum(x => x.Descuento);
+    }
+
+    private async void handleGuardar()
+    {
+        if ( VentaVM.Cliente.IdCliente == 0)
+        {
+            mensajeError = "Todos los campos del pedido son obligatorio";
+            validarFormVenta = true;
+            return;
+        }
+
+        if (VentaVM.DetalleVenta.Count() == 0)
+        {
+            mensajeError = "El pedido no tiene detalle";
+            validarFormVenta = true;
+            return;
+        }
+
+        validarFormVenta = false;
+
+        try
+        {
+            respuesta = await service.GuardarVentas(VentaVM);
+            if (respuesta.Ok)
+            {
+                await js.InvokeVoidAsync("showAlert", "success", respuesta.Message, "");
+                navigate.NavigateTo("Pedido", forceLoad: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = "Ha ocurrido un error al obtener proveedores";
+            error = ex.Message;
+        }
+
+    }
+
+    private void handleCancelar()
+    {
+        VentaVM = new VentaViewModel();
+        VentaDetalleViewModel = new DetalleVentaViewModel();
+        BlockFormulario = true;
+        BtnNuevo = false;
+        BtnBuscar = false;
+        BtnGuardar = true;
+        BtnCancelar = true;
+        BtnAgregarProducto = true;
+        txtObservaciones = true;
+        CalcularTotales();
+    }
+
+    private void handleNuevo()
+    {
+        BlockFormulario = false;
+        BtnNuevo = true;
+        BtnBuscar = true;
+        BtnGuardar = false;
+        BtnCancelar = false;
+        BtnAgregarProducto = false;
+        txtObservaciones = false;
+    }
+
+    private void handleBuscar()
+    {
+        ModalVentas.Show();
+    }
+}

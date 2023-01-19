@@ -1,0 +1,99 @@
+﻿@inject IService service
+
+<hr />
+<div class="row">
+    <div class="col">
+        <div class="form-inline">
+
+            <label class="sr-only" for="nombreProveedor">nombreProveedor</label>
+            <div class="input-group mb-2 mr-sm-2">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">Nombre</div>
+                </div>
+                <input type="text" @bind-value="busqueda" class="form-control" id="nombreProveedor" placeholder="Nombre proveedor">
+            </div>
+
+            <button type="button" class="btn btn-outline-primary mb-2" @onclick="BuscarCliente">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<hr />
+<span class="text-danger"> @message</span>
+<span class="text-danger"> @error</span>
+<div class="table-responsive">
+    <table class="table table-bordered  table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Correo</th>
+                <th scope="col">Telefono</th>
+                <th scope="col">Telefono2</th>
+                <th scope="col">Direccion</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Clientes)
+            {
+                <tr>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" @onclick="(e) =>Seleccion(e, item.IdCliente, item.Nombre)">
+                            <i class="bi bi-check-circle"></i>
+                        </button>
+                    </td>
+                    <td>@item.Nombre</td>
+                    <td>@item.Correo</td>
+                    <td>@item.Telefono1</td>
+                    <td>@item.Telefono2</td>
+                    <td>@item.Direccion</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter]
+    public ClientesViewModel ClienteSeleccion { get; set; }
+
+    [Parameter]
+    public EventCallback CerrarModal { get; set; }
+
+    List<ClientesViewModel> Clientes = new List<ClientesViewModel>();
+    List<ClientesViewModel> ClientesTemp = new List<ClientesViewModel>();
+    string message = "";
+    string error = "";
+    string busqueda = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            Clientes =  service.ObtenerClientes();
+            ClientesTemp = Clientes;
+        }
+        catch (Exception ex)
+        {
+            message = "Ha ocurrido un error al obtener proveedores";
+            error = ex.Message;
+        }
+    }
+
+    protected void BuscarCliente()
+    {
+        if (string.IsNullOrEmpty(busqueda))
+            Clientes = ClientesTemp;
+        else
+            Clientes = Clientes.Where(x => x.Nombre.ToLower().Contains(busqueda.ToLower())).ToList();
+    }
+
+    protected void Seleccion(EventArgs e, int IdProveedor, string NombreProveedor)
+    {
+        ClienteSeleccion.IdCliente = IdProveedor;
+        ClienteSeleccion.Nombre = NombreProveedor;
+        CerrarModal.InvokeAsync(false);
+    }
+
+}

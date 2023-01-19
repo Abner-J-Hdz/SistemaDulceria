@@ -1,0 +1,56 @@
+﻿@inject IService service
+<EditForm Model="PedidoVM" OnValidSubmit="ValidarFormulario">
+    <DataAnnotationsValidator />
+    <div class="form-row">
+
+        <div class="form-group col-sm-6 col-md-4 col-lg-3">
+            <label for="txtNFactura">Cliente:</label>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Proveedor" @bind-value="PedidoVM.Cliente.Nombre" disabled>
+                <ValidationMessage For="() => PedidoVM.Cliente.Nombre" />
+                <div class="input-group-append">
+                    <button id="btnProveedor" class="btn btn-outline-secondary" @onclick="() => ModalProveedor.Show()" disabled="@DisabledFormulario" type="button"><i class="bi bi-search"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group col-sm-6 col-md-4 col-lg-3">
+            <label for="dtfecha">Fecha:</label>
+            <InputDate class="form-control" disabled="@DisabledFormulario" @bind-Value="PedidoVM.Fecha" id="dtfecha" />
+            @*<input type="date" class="form-control" disabled="@DisabledFormulario" @bind-value="PedidoVM.Fecha" id="dtfecha">*@
+        </div>
+    </div>
+</EditForm>
+
+<BSModal @ref="ModalProveedor" IsFullWidth="true">
+    <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalProveedor.Hide())">Selecciona proveedor</BSModalHeader>
+    <BSModalBody>
+        <SeleccionCliente ClienteSeleccion="PedidoVM.Cliente" CerrarModal="CerrarModalProveedor" />
+    </BSModalBody>
+    <div class="modal-footer">
+        <button class="btn btn-outline-danger" @onclick="() => ModalProveedor.Hide()"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
+    </div>
+</BSModal>
+
+
+@code {
+    [Parameter]
+    public VentaViewModel PedidoVM { get; set; }
+
+    public EventCallback AbrirFomulario { get; set; }
+
+    [Parameter]
+    public bool DisabledFormulario { get; set; }
+
+    BSModal ModalProveedor { get; set; }
+
+    protected void CerrarModalProveedor()
+    {
+        ModalProveedor.Hide();
+    }
+
+    protected void ValidarFormulario()
+    {
+
+    }
+}

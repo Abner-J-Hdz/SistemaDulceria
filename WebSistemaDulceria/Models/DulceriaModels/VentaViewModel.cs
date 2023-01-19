@@ -42,8 +42,11 @@ namespace WebSistemaDulceria.Models.DulceriaModels
 
         public int IdUsuarioModificacion { get; set; }
 
-        public ClientesViewModel Cliente { get; set; }
+        [StringLength(250, ErrorMessage = "Máximo de caracteres 250")]
+        public string Observaciones { get; set; }
 
-        public List<DetalleVentaViewModel> DetalleVenta { get; set; }
+        public ClientesViewModel Cliente { get; set; } = new ClientesViewModel();
+
+        public List<DetalleVentaViewModel> DetalleVenta { get; set; } = new List<DetalleVentaViewModel>();
     }
 }

@@ -590,6 +590,80 @@ namespace WebSistemaDulceria.Data.DulceriaService
             }
         }
 
+        public async Task<Response> GuardarVentas(VentaViewModel ventaVM)
+        {
+            Response resp = new Response();
+
+            try
+            {
+                int NumeroRecibo = context.Venta.OrderByDescending(x => x.IdVenta).FirstOrDefault()?.IdVenta + 1 ?? 1;
+                var venta = new Venta
+                {
+                    IdCliente = ventaVM.Cliente.IdCliente,
+                    Fecha = ventaVM.Fecha,
+                    NumeroRecibo = NumeroRecibo,
+                    SubTotal = ventaVM.SubTotal,
+                    Descuento = ventaVM.Descuento,
+                    Iva = ventaVM.Iva,
+                    Total = ventaVM.Total,
+                    Observaciones = ventaVM.Observaciones,
+                    FechaCreacion = DateTime.Now,
+                    IdUsuarioCreacion = 1
+                };
+
+                var detalleVenta = new List<DetalleVenta>();
+
+                foreach (var item in ventaVM.DetalleVenta)
+                {
+                    detalleVenta.Add(new DetalleVenta
+                    {
+                        IdArticulo = item.Articulo.IdArticulo,
+                        Cantidad = item.Cantidad,
+                        Precio = item.Precio, 
+                        SubTotal = item.SubTotal,
+                        Descuento = item.Descuento,
+                        Iva = item.Iva
+                    });
+                }
+
+                foreach (var item in detalleVenta)
+                {
+                    var productoTerminado = context.DetalleProductoTerminado.FirstOrDefault(x => x.IdArticuloMaterial == item.IdArticulo);
+                    string NombreArticulo = context.Articulo.FirstOrDefault(x => x.IdArticulo == item.IdArticulo)?.Nombre ?? "";
+
+                    if (productoTerminado == null)
+                    {
+                        resp.Message = "Articulo " + NombreArticulo + "sin cantidad.";
+                    }
+                    else
+                    {
+                        var restaProduct = productoTerminado.Cantidad - (int)item.Cantidad;
+
+                        if(restaProduct < 0)
+                            resp.Message = "Articulo " + NombreArticulo + "sin cantidad suficiente.";
+
+                        productoTerminado.Cantidad -= (int)item.Cantidad;
+                    }
+
+
+                }
+
+                await context.SaveChangesAsync();
+
+                resp.Ok = true;
+                resp.Message = "Guardado con éxito";
+                return resp;
+            }
+            catch (Exception ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ha ocurrido un error al guardar proveedor";
+                resp.Error = ex.Message;
+                return resp;
+            }
+        }
+
+
         #endregion
 
         #region Usuarios

@@ -34,6 +34,9 @@ namespace Entidades.DulceriaEntidades
         [Required]
         public decimal Total { get; set; }
 
+        [StringLength(250, ErrorMessage = "Maximo de caracteres 250")]
+        public string Observaciones { get; set; }
+
         public DateTime FechaCreacion { get; set; }
 
         public int IdUsuarioCreacion { get; set; }
