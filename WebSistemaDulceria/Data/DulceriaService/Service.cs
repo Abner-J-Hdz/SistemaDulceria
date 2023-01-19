@@ -593,6 +593,143 @@ namespace WebSistemaDulceria.Data.DulceriaService
         #endregion
 
         #region Usuarios
+
+        public async Task<Response> GuardarUsuario(UsuarioViewModel usuarioVM)
+        {
+            Response resp = new Response();
+            try
+            {
+                Usuarios usuario = new Usuarios
+                {
+                    Nombre = usuarioVM.Nombre,
+                    Apellido = usuarioVM.Apellido,
+                    Email = usuarioVM.Email,
+                    EstaActivo = true,
+                    Password = ""
+                };
+
+                context.Usuarios.Add(usuario);
+
+                await context.SaveChangesAsync();
+                return resp;
+            }
+            catch (Exception ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ha ocurrido un error al eliminar usuario";
+                resp.Error = ex.Message;
+                return resp;
+            }
+        }
+
+        public List<UsuarioViewModel> ObtenerUsuario() {
+            try
+            {
+                var usuariosDb = context.Usuarios.Where(x => x.EstaActivo == true).ToList();
+
+                return usuariosDb.Select(x => new UsuarioViewModel
+                {
+                    Nombre = x.Nombre,
+                    Apellido = x.Apellido,
+                    Email = x.Email,
+                }).ToList();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<Response> ActualizarUsuario(UsuarioViewModel usuarioVM)
+        {
+            Response resp = new Response();
+            try
+            {
+                var UsuarioDb = context.Usuarios.FirstOrDefault(x => x.IdUsuario == usuarioVM.IdUsuario);
+
+                if (UsuarioDb == null)
+                {
+                    resp.Ok = false;
+                    resp.Message = "Usuario no encontrado";
+                    return resp;
+                }
+
+                UsuarioDb.Nombre = usuarioVM.Nombre;
+                UsuarioDb.Apellido = usuarioVM.Apellido;
+                UsuarioDb.Email = usuarioVM.Email;
+
+                await context.SaveChangesAsync();
+
+                return resp;
+            }
+            catch (Exception ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ha ocurrido un error al actualizar usuario";
+                resp.Error = ex.Message;
+                return resp;
+            }
+        }
+
+        public async Task<Response> ActualizarPassword(int IdUsuario, string password)
+        {
+            Response resp = new Response();
+            try
+            {
+                var UsuarioDb = context.Usuarios.FirstOrDefault(x => x.IdUsuario == IdUsuario);
+
+                if (UsuarioDb == null)
+                {
+                    resp.Ok = false;
+                    resp.Message = "Usuario no encontrado";
+                    return resp;
+                }
+
+                UsuarioDb.Nombre = password;
+
+                await context.SaveChangesAsync();
+
+                return resp;
+            }
+            catch (Exception ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ha ocurrido un error al actualizar usuario";
+                resp.Error = ex.Message;
+                return resp;
+            }
+        }
+
+        public async Task<Response> EliminarPassword(int IdUsuario)
+        {
+            Response resp = new Response();
+            try
+            {
+                var UsuarioDb = context.Usuarios.FirstOrDefault(x => x.IdUsuario == IdUsuario);
+
+                if (UsuarioDb == null)
+                {
+                    resp.Ok = false;
+                    resp.Message = "Usuario no encontrado";
+                    return resp;
+                }
+
+                UsuarioDb.EstaActivo = false;
+
+                await context.SaveChangesAsync();
+
+                return resp;
+            }
+            catch (Exception ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ha ocurrido un error al eliminar usuario";
+                resp.Error = ex.Message;
+                return resp;
+            }
+        }
+
         public Response GetUsuarioLogin(string email, string password)
         {
             Response resp = new Response();

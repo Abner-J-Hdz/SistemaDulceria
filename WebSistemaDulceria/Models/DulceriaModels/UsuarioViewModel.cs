@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Entidades.DulceriaEntidades
+namespace WebSistemaDulceria.Models.DulceriaModels
 {
-    public class Usuarios
+    public class UsuarioViewModel
     {
+
         [Key]
         public int IdUsuario { get; set; }
         [Required]
@@ -19,10 +21,9 @@ namespace Entidades.DulceriaEntidades
 
         [Required]
         [StringLength(50, ErrorMessage = "El Email no deber tener mas de 100 caracteres")]
+        [EmailAddress(ErrorMessage = "Ingrese un email valido")]
         public string Email { get; set; }
 
-        [Required]
-        [StringLength(150, ErrorMessage = "El Password no deber tener mas de 100 caracteres")]
         public string Password { get; set; }
 
         public bool EstaActivo { get; set; }

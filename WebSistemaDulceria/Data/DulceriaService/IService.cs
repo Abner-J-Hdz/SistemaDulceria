@@ -52,8 +52,17 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
 
         #region Usuarios
-        Response GetUsuarioLogin(string email, string password);
+        Task<Response> GuardarUsuario(UsuarioViewModel usuarioVM);
 
+        List<UsuarioViewModel> ObtenerUsuario();
+
+        Task<Response> ActualizarUsuario(UsuarioViewModel usuarioVM);
+
+        Task<Response> ActualizarPassword(int IdUsuario, string password);
+
+        Task<Response> EliminarPassword(int IdUsuario);
+
+        Response GetUsuarioLogin(string email, string password);
         #endregion
 
     }
