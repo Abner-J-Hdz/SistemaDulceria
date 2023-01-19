@@ -611,6 +611,8 @@ namespace WebSistemaDulceria.Data.DulceriaService
                 context.Usuarios.Add(usuario);
 
                 await context.SaveChangesAsync();
+                resp.Ok = true;
+                resp.Message = "Usuario creado correctamente";
                 return resp;
             }
             catch (Exception ex)
