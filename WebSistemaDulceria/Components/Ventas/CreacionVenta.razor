@@ -114,7 +114,7 @@
 <BSModal @ref="ModalVentas" IsFullWidth="true">
     <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalVentas.Hide())">Selecciona pedido</BSModalHeader>
     <BSModalBody>
-        <SelectVenta />
+        <SelectVenta SeleccionarVenta="ObtenerVenta" />
     </BSModalBody>
     <div class="modal-footer">
         <button class="btn btn-outline-danger" @onclick="() => ModalVentas.Hide()"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
@@ -228,6 +228,20 @@
         CalcularTotales();
     }
 
+    private void ObtenerVenta(string IdVenta)
+    {
+        try
+        {
+            int id = Convert.ToInt32(IdVenta);
+            VentaVM = service.ObtenerVenta(id);
+            ModalVentas.Hide();
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+            ModalVentas.Hide();
+        }
+    }
 
     private void CalcularTotales()
     {

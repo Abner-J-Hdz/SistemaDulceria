@@ -37,14 +37,13 @@
             {
                 <tr>
                     <td>
-                        <button class="btn btn-sm btn-outline-primary" >
+                        <button @onclick="() => handleSelectVenta(item.IdVenta.ToString())" class="btn btn-sm btn-outline-primary" >
                             <i class="bi bi-check-circle"></i>
                         </button>
                         </td>
                     <td>@item.Cliente.Nombre</td>
                     <td>@item.NumeroRecibo</td>
                     <td>@item.Fecha</td>
-
                 </tr>
             }
         </tbody>
@@ -53,6 +52,9 @@
 
 
 @code {
+
+    [Parameter]
+    public EventCallback<string> SeleccionarVenta { get; set; }
 
     List<VentaViewModel> Ventas = new List<VentaViewModel>();
     List<VentaViewModel> VentasTemp = new List<VentaViewModel>();
@@ -81,6 +83,11 @@
             Ventas = VentasTemp;
         else
             Ventas = Ventas.Where(x => x.Cliente.Nombre.ToLower().Contains(busqueda.ToLower())).ToList();
+    }
+
+    protected void handleSelectVenta(string IdVenta)
+    {
+        SeleccionarVenta.InvokeAsync(IdVenta);
     }
 
 }

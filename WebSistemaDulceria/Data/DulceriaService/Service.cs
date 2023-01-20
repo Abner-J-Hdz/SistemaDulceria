@@ -590,6 +590,52 @@ namespace WebSistemaDulceria.Data.DulceriaService
             }
         }
 
+        public VentaViewModel ObtenerVenta(int IdVenta)
+        {
+            try
+            {
+                var ventaDb = context.Venta.FirstOrDefault(x => x.IdVenta == IdVenta);
+
+                var ventaVM = new VentaViewModel
+                {
+                    IdVenta = ventaDb.IdVenta,
+                    Fecha = ventaDb.Fecha,
+                    NumeroRecibo = ventaDb.NumeroRecibo,
+                    SubTotal = ventaDb.SubTotal,
+                    Descuento = ventaDb.Descuento,
+                    Iva = ventaDb.Iva,
+                    Total = ventaDb.Total,
+                };
+                ventaVM.DetalleVenta = new List<DetalleVentaViewModel>();
+
+                var detalleDb = context.DetalleVenta.Where(x => x.IdVenta == IdVenta).ToList();
+
+                ventaVM.DetalleVenta = detalleDb.Select(x => new DetalleVentaViewModel
+                {
+                    Editable = true,
+                    IdDetalleVenta = x.IdDetalleVenta,
+                    IdVenta = x.IdVenta,
+                    IdArticulo = x.IdArticulo,
+                    Cantidad = x.Cantidad,
+                    Precio = x.Precio,
+                    SubTotal = x.SubTotal,
+                    Descuento = x.Descuento,
+                    Iva = x.Iva,
+                    Articulo = new ArticuloViewModel
+                    {
+                        IdArticulo = x.Articulo.IdArticulo,
+                        Nombre = x.Articulo.Nombre
+                    }
+                }).ToList();
+
+                return ventaVM;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public async Task<Response> GuardarVentas(VentaViewModel ventaVM)
         {
             Response resp = new Response();
@@ -602,10 +648,11 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     IdCliente = ventaVM.Cliente.IdCliente,
                     Fecha = ventaVM.Fecha,
                     NumeroRecibo = NumeroRecibo,
-                    SubTotal = ventaVM.SubTotal,
-                    Descuento = ventaVM.Descuento,
-                    Iva = ventaVM.Iva,
-                    Total = ventaVM.Total,
+                    SubTotal = ventaVM.DetalleVenta.Sum(x => x.SubTotal),
+                    Descuento = ventaVM.DetalleVenta.Sum(x => x.Descuento),
+                    Iva = ventaVM.DetalleVenta.Sum(x => x.Iva),
+                    Total = ventaVM.DetalleVenta.Sum(x => x.Total),
+
                     Observaciones = ventaVM.Observaciones,
                     FechaCreacion = DateTime.Now,
                     FechaModificacion = DateTime.Now,

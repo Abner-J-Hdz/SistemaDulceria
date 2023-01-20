@@ -1,11 +1,11 @@
 ﻿
 <tr>
-    <td><button title="Eliminar detalle" @onclick="() => EliminarDetalle(DetalleVM.IdDetalleVenta.ToString())" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button></td>
+    <td><button disabled="@DetalleVM.Editable" title="Eliminar detalle" @onclick="() => EliminarDetalle(DetalleVM.IdDetalleVenta.ToString())" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button></td>
     <td><input disabled @bind-value="DetalleVM.Articulo.Nombre" class="form-control" /></td>
-    <td><input value="@DetalleVM.Cantidad" class="form-control" @onchange="handleChangeCantidad" /></td>
+    <td><input disabled="@DetalleVM.Editable" value="@DetalleVM.Cantidad" class="form-control" @onchange="handleChangeCantidad" /></td>
     <td><input disabled id="precioArticulo-@DetalleVM.IdDetalleVenta" value="@DetalleVM.Precio" @onchange="handleChangePrecio" class="form-control" /></td>
-    <td><input id="descuentoArticulo-@DetalleVM.IdDetalleVenta" value="@DetalleVM.Descuento" @onchange="handleChangeDescuento" class="form-control" /></td>
-    <td><input id="ivaArticulo-@DetalleVM.IdDetalleVenta" value="@DetalleVM.Iva" @onchange="handleChangeIva" class="form-control" /></td>
+    <td><input disabled="@DetalleVM.Editable" id="descuentoArticulo-@DetalleVM.IdDetalleVenta" value="@DetalleVM.Descuento" @onchange="handleChangeDescuento" class="form-control" /></td>
+    <td><input disabled="@DetalleVM.Editable" id="ivaArticulo-@DetalleVM.IdDetalleVenta" value="@DetalleVM.Iva" @onchange="handleChangeIva" class="form-control" /></td>
     <td><input disabled id="totalArticulo-@DetalleVM.IdDetalleVenta" value="@DetalleVM.Total" class="form-control" /></td>
 </tr>
 

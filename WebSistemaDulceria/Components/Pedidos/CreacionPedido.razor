@@ -274,7 +274,7 @@
             {
                 await js.InvokeVoidAsync("showAlert", "success", respuesta.Message, "");
                 await Task.Delay(1600).ContinueWith((task) =>
-                { 
+                {
                     navigate.NavigateTo("Pedido", forceLoad: true);
                 });
             }
