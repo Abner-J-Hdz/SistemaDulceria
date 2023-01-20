@@ -608,6 +608,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     Total = ventaVM.Total,
                     Observaciones = ventaVM.Observaciones,
                     FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
                     IdUsuarioCreacion = 1
                 };
 
@@ -640,14 +641,17 @@ namespace WebSistemaDulceria.Data.DulceriaService
                         var restaProduct = productoTerminado.Cantidad - (int)item.Cantidad;
 
                         if(restaProduct < 0)
+                        {
                             resp.Message = "Articulo " + NombreArticulo + "sin cantidad suficiente.";
+                            return resp;
+                        }
 
                         productoTerminado.Cantidad -= (int)item.Cantidad;
                     }
-
-
                 }
 
+                venta.DetalleVenta = detalleVenta;
+                context.Venta.Add(venta);
                 await context.SaveChangesAsync();
 
                 resp.Ok = true;

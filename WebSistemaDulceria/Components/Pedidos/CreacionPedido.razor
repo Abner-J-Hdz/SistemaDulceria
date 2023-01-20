@@ -273,7 +273,10 @@
             if (respuesta.Ok)
             {
                 await js.InvokeVoidAsync("showAlert", "success", respuesta.Message, "");
-                navigate.NavigateTo("Pedido", forceLoad: true);
+                await Task.Delay(1600).ContinueWith((task) =>
+                { 
+                    navigate.NavigateTo("Pedido", forceLoad: true);
+                });
             }
         }
         catch (Exception ex)

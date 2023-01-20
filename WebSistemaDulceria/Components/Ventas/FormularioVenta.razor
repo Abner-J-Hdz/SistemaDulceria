@@ -6,7 +6,7 @@
         <div class="form-group col-sm-6 col-md-4 col-lg-3">
             <label for="txtNFactura">Cliente:</label>
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Proveedor" @bind-value="PedidoVM.Cliente.Nombre" disabled>
+                <input type="text" class="form-control" placeholder="Cliente" @bind-value="PedidoVM.Cliente.Nombre" disabled>
                 <ValidationMessage For="() => PedidoVM.Cliente.Nombre" />
                 <div class="input-group-append">
                     <button id="btnProveedor" class="btn btn-outline-secondary" @onclick="() => ModalProveedor.Show()" disabled="@DisabledFormulario" type="button"><i class="bi bi-search"></i></button>

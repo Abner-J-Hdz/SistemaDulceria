@@ -1,5 +1,86 @@
-﻿
+﻿@inject IService service
+
+<hr />
+<div class="row">
+    <div class="col">
+        <div class="form-inline">
+
+            <label class="sr-only" for="nombreCliente">nombreCliente</label>
+            <div class="input-group mb-2 mr-sm-2">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">Nombre</div>
+                </div>
+                <input type="text" @bind-value="busqueda" class="form-control" id="nombreProveedor" placeholder="Nombre proveedor">
+            </div>
+
+            <button type="button" class="btn btn-outline-primary mb-2" @onclick="BuscarProveedor">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<hr />
+<span class="text-danger"> @message</span>
+<span class="text-danger"> @error</span>
+<div class="table-responsive">
+    <table class="table table-bordered  table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">N° Factura</th>
+                <th scope="col">Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Ventas)
+            {
+                <tr>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" >
+                            <i class="bi bi-check-circle"></i>
+                        </button>
+                        </td>
+                    <td>@item.Cliente.Nombre</td>
+                    <td>@item.NumeroRecibo</td>
+                    <td>@item.Fecha</td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
 
 @code {
+
+    List<VentaViewModel> Ventas = new List<VentaViewModel>();
+    List<VentaViewModel> VentasTemp = new List<VentaViewModel>();
+
+    string message = "";
+    string error = "";
+    string busqueda = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            Ventas = service.ObtenerVentas();
+            VentasTemp = Ventas;
+        }
+        catch (Exception ex)
+        {
+            message = "Ha ocurrido un error al obtener proveedores";
+            error = ex.Message;
+        }
+    }
+
+    protected void BuscarProveedor()
+    {
+        if (string.IsNullOrEmpty(busqueda))
+            Ventas = VentasTemp;
+        else
+            Ventas = Ventas.Where(x => x.Cliente.Nombre.ToLower().Contains(busqueda.ToLower())).ToList();
+    }
 
 }

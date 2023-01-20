@@ -111,6 +111,16 @@
     </div>
 </BSModal>
 
+<BSModal @ref="ModalVentas" IsFullWidth="true">
+    <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalVentas.Hide())">Selecciona pedido</BSModalHeader>
+    <BSModalBody>
+        <SelectVenta />
+    </BSModalBody>
+    <div class="modal-footer">
+        <button class="btn btn-outline-danger" @onclick="() => ModalVentas.Hide()"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
+    </div>
+</BSModal>
+
 @code {
     VentaViewModel VentaVM = new VentaViewModel();
     DetalleVentaViewModel VentaDetalleViewModel = new DetalleVentaViewModel();
@@ -251,7 +261,14 @@
             if (respuesta.Ok)
             {
                 await js.InvokeVoidAsync("showAlert", "success", respuesta.Message, "");
-                navigate.NavigateTo("Pedido", forceLoad: true);
+                await Task.Delay(1600).ContinueWith((task) =>
+                {
+                    navigate.NavigateTo("Ventas", forceLoad: true);
+                });
+            }
+            else
+            {
+                await js.InvokeVoidAsync("showAlert", "error", respuesta.Message, respuesta.Error);
             }
         }
         catch (Exception ex)
