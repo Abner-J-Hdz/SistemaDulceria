@@ -21,6 +21,10 @@
             <BSButton OnClick="handleCancelar" Class="mt-2 mr-2" Color="Color.Danger" IsOutline="true" IsDisabled="@BtnCancelar" Size="Size.Small">
                 <i class="bi bi-x-circle"></i>
             </BSButton>
+            <BSButton OnClick="handleEliminarVenta" Class="mt-2 mr-2" Color="Color.Danger" IsOutline="true" IsDisabled="@BtnEliminar" Size="Size.Small">
+                <i class="bi bi-trash3"></i>
+            </BSButton>
+
         </div>
     </div>
     <div class="card-body">
@@ -31,7 +35,7 @@
                 @mensajeError
             </div>
         }
-        <FormularioVenta PedidoVM="VentaVM" DisabledFormulario="BlockFormulario" ></FormularioVenta>
+        <FormularioVenta PedidoVM="VentaVM" DisabledFormulario="BlockFormulario"></FormularioVenta>
 
         <BSButton @onclick="AbrirModalProducto" Color="Color.Primary" title="Añadir producto" IsDisabled="@BtnAgregarProducto">
             <i class="bi bi-box mr-1"></i>Agregar Producto
@@ -103,7 +107,7 @@
 <BSModal @ref="ModalProducto" IsFullWidth="true">
     <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalProducto.Hide())">Selecciona producto</BSModalHeader>
     <BSModalBody>
-       
+
         <SeleccionProducto SeleccionArticulo="VentaDetalleViewModel.Articulo" AgregarDetalle="AgregarDetalle" CerraModalProducto="CerraModalProducto" />
     </BSModalBody>
     <div class="modal-footer">
@@ -112,7 +116,7 @@
 </BSModal>
 
 <BSModal @ref="ModalVentas" IsFullWidth="true">
-    <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalVentas.Hide())">Selecciona pedido</BSModalHeader>
+    <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalVentas.Hide())">Selecciona venta</BSModalHeader>
     <BSModalBody>
         <SelectVenta SeleccionarVenta="ObtenerVenta" />
     </BSModalBody>
@@ -121,13 +125,28 @@
     </div>
 </BSModal>
 
+<BSModal @ref="ModalAlertaEliminar" Size="Size.Small">
+    <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalVentas.Hide())">Eliminar</BSModalHeader>
+    <BSModalBody>
+        <p>¿Está seguro de eliminar esta venta?</p>
+    </BSModalBody>
+    <div class="modal-footer">
+        <button class="btn btn-outline-danger" @onclick="()=> ModalAlertaEliminar.Hide()"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
+        <button class="btn btn-outline-primary" @onclick="EliminarVenta"><i class="bi bi-trash mr-1 "></i>Eliminar</button>
+    </div>
+
+</BSModal>
+
+
 @code {
     VentaViewModel VentaVM = new VentaViewModel();
     DetalleVentaViewModel VentaDetalleViewModel = new DetalleVentaViewModel();
 
     BSModal ModalProducto { get; set; }
     BSModal ModalVentas { get; set; }
+    BSModal ModalAlertaEliminar { get; set; }
 
+    bool BtnEliminar = false;
     bool BtnNuevo = false; //{ get; set; }
     bool BtnGuardar = false; //{ get; set; }
     bool BtnBuscar = false; //{ get; set; }
@@ -135,6 +154,7 @@
     bool BtnAgregarProducto = false;
     bool BlockFormulario = true;
     bool txtObservaciones = true;
+
 
     bool validarFormVenta = false;
 
@@ -155,6 +175,7 @@
             BtnGuardar = true;
             BtnCancelar = true;
             BtnAgregarProducto = true;
+            BtnEliminar = true;
             VentaVM.Fecha = DateTime.Now;
         }
         catch (Exception e)
@@ -166,7 +187,7 @@
 
     protected async void AbrirModalProducto()
     {
-        if ( VentaVM.Cliente.IdCliente == 0 )
+        if (VentaVM.Cliente.IdCliente == 0)
         {
             validarFormVenta = true;
             mensajeError = "Todos los campos del pedido son obligatorio";
@@ -228,18 +249,25 @@
         CalcularTotales();
     }
 
-    private void ObtenerVenta(string IdVenta)
+    private async void ObtenerVenta(string IdVenta)
     {
         try
         {
             int id = Convert.ToInt32(IdVenta);
             VentaVM = service.ObtenerVenta(id);
             ModalVentas.Hide();
+            BtnNuevo = false;
+            BtnCancelar = true;
+            BtnEliminar = false;
         }
         catch (Exception ex)
         {
             mensajeError = ex.Message;
             ModalVentas.Hide();
+            await Task.Delay(1600).ContinueWith((task) =>
+            {
+                navigate.NavigateTo("ventas", forceLoad: true);
+            });
         }
     }
 
@@ -253,7 +281,7 @@
 
     private async void handleGuardar()
     {
-        if ( VentaVM.Cliente.IdCliente == 0)
+        if (VentaVM.Cliente.IdCliente == 0)
         {
             mensajeError = "Todos los campos del pedido son obligatorio";
             validarFormVenta = true;
@@ -322,4 +350,41 @@
     {
         ModalVentas.Show();
     }
+
+    private void handleEliminarVenta()
+    {
+        ModalAlertaEliminar.Show();
+    }
+
+    private async void EliminarVenta()
+    {
+        try
+        {
+            Response resp = new Response();
+            resp = await service.EliminarVenta(VentaVM.IdVenta);
+
+            if (resp.Ok)
+            {
+                await js.InvokeVoidAsync("showAlert", "success", resp.Message, "");
+                await Task.Delay(1600).ContinueWith((task) =>
+                {
+                    navigate.NavigateTo("ventas", forceLoad: true);
+                });
+            }
+            else
+            {
+                await js.InvokeVoidAsync("showAlert", "error", resp.Message, resp.Error);
+                await Task.Delay(1600).ContinueWith((task) =>
+                {
+                    navigate.NavigateTo("ventas", forceLoad: true);
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
+
 }

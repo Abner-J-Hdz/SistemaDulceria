@@ -558,7 +558,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
             List<VentaViewModel> ventas = new List<VentaViewModel>();
             try
             {
-                var ventasDb = context.Venta.ToList();
+                var ventasDb = context.Venta.Where(x => x.EstaActiva).ToList();
 
                 foreach (var item in ventasDb)
                 {
@@ -594,7 +594,12 @@ namespace WebSistemaDulceria.Data.DulceriaService
         {
             try
             {
-                var ventaDb = context.Venta.FirstOrDefault(x => x.IdVenta == IdVenta);
+                var ventaDb = context.Venta.FirstOrDefault(x => x.IdVenta == IdVenta && x.EstaActiva);
+
+                if(ventaDb == null)
+                {
+                    throw new Exception("NO se encontró venta");
+                }
 
                 var ventaVM = new VentaViewModel
                 {
@@ -607,6 +612,19 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     Total = ventaDb.Total,
                 };
                 ventaVM.DetalleVenta = new List<DetalleVentaViewModel>();
+
+                ventaVM.Cliente = new ClientesViewModel();
+
+                var cliente = context.Clientes.FirstOrDefault(x => x.IdCliente == ventaVM.IdCliente);
+
+                if(cliente != null)
+                {
+                    ventaVM.Cliente = new ClientesViewModel
+                    {
+                        IdCliente = cliente.IdCliente,
+                        Nombre = cliente.Nombre
+                    };
+                }
 
                 var detalleDb = context.DetalleVenta.Where(x => x.IdVenta == IdVenta).ToList();
 
@@ -636,6 +654,45 @@ namespace WebSistemaDulceria.Data.DulceriaService
             }
         }
 
+        public async Task<Response> EliminarVenta(int IdVenta)
+        {
+            Response resp = new Response();
+            try
+            {
+                var venta = context.Venta.FirstOrDefault(x => x.IdVenta == IdVenta);
+
+                if (venta == null)
+                {
+                    resp.Ok = false;
+                    resp.Message = "No se encontró venta";
+                    return resp;
+                }
+
+                var detalleVenta = context.DetalleVenta.Where(x => x.IdVenta == IdVenta).ToList();
+
+                foreach (var item in detalleVenta)
+                {
+                    var productoTerminado = context.DetalleProductoTerminado.FirstOrDefault(x => x.IdArticuloMaterial == item.IdArticulo);
+                    productoTerminado.Cantidad += (int)item.Cantidad;
+                }
+
+                venta.EstaActiva = false;
+
+                await context.SaveChangesAsync();
+
+                resp.Ok = true;
+                resp.Message = "Venta eliminada correctamente";
+                return resp;
+            }
+            catch (Exception ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ha ocurrido un error al eliminar";
+                resp.Error = ex.Message;
+                return resp;
+            }
+        }
+
         public async Task<Response> GuardarVentas(VentaViewModel ventaVM)
         {
             Response resp = new Response();
@@ -652,7 +709,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     Descuento = ventaVM.DetalleVenta.Sum(x => x.Descuento),
                     Iva = ventaVM.DetalleVenta.Sum(x => x.Iva),
                     Total = ventaVM.DetalleVenta.Sum(x => x.Total),
-
+                    EstaActiva = true,
                     Observaciones = ventaVM.Observaciones,
                     FechaCreacion = DateTime.Now,
                     FechaModificacion = DateTime.Now,
@@ -681,7 +738,9 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
                     if (productoTerminado == null)
                     {
-                        resp.Message = "Articulo " + NombreArticulo + "sin cantidad.";
+                        resp.Message = "Articulo " + NombreArticulo + " sin cantidad.";
+                        resp.Ok = false;
+                        return resp;
                     }
                     else
                     {
@@ -690,6 +749,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
                         if(restaProduct < 0)
                         {
                             resp.Message = "Articulo " + NombreArticulo + "sin cantidad suficiente.";
+                            resp.Ok = false;
                             return resp;
                         }
 
@@ -708,7 +768,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
             catch (Exception ex)
             {
                 resp.Ok = false;
-                resp.Message = "Ha ocurrido un error al guardar proveedor";
+                resp.Message = "Ha ocurrido un error al guardar venta";
                 resp.Error = ex.Message;
                 return resp;
             }
@@ -730,7 +790,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     Apellido = usuarioVM.Apellido,
                     Email = usuarioVM.Email,
                     EstaActivo = true,
-                    Password = ""
+                    Password = "z8jTNljQU9Y="
                 };
 
                 context.Usuarios.Add(usuario);
