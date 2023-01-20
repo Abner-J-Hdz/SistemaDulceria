@@ -1,5 +1,63 @@
-﻿<h3>VentaDetalle</h3>
+﻿
+<tr>
+    <td><button title="Eliminar detalle" @onclick="() => EliminarDetalle(DetalleVM.IdDetalleVenta.ToString())" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button></td>
+    <td><input disabled @bind-value="DetalleVM.Articulo.Nombre" class="form-control" /></td>
+    <td><input value="@DetalleVM.Cantidad" class="form-control" @onchange="handleChangeCantidad" /></td>
+    <td><input disabled id="precioArticulo-@DetalleVM.IdDetalleVenta" value="@DetalleVM.Precio" @onchange="handleChangePrecio" class="form-control" /></td>
+    <td><input id="descuentoArticulo-@DetalleVM.IdDetalleVenta" value="@DetalleVM.Descuento" @onchange="handleChangeDescuento" class="form-control" /></td>
+    <td><input id="ivaArticulo-@DetalleVM.IdDetalleVenta" value="@DetalleVM.Iva" @onchange="handleChangeIva" class="form-control" /></td>
+    <td><input disabled id="totalArticulo-@DetalleVM.IdDetalleVenta" value="@DetalleVM.Total" class="form-control" /></td>
+</tr>
 
 @code {
+    [Parameter]
+    public DetalleVentaViewModel DetalleVM { get; set; }
+
+    [Parameter]
+    public EventCallback<string> EliminarLinea { get; set; }
+
+    [Parameter]
+    public EventCallback CalcularTotales { get; set; }
+
+    private void handleChangeCantidad(ChangeEventArgs e)
+    {
+        DetalleVM.Cantidad = Convert.ToDecimal(e.Value as string);
+
+        DetalleVM.SubTotal = DetalleVM.Cantidad * DetalleVM.Precio;
+
+        DetalleVM.Total = DetalleVM.SubTotal + DetalleVM.Iva - DetalleVM.Descuento;
+        CalcularTotales.InvokeAsync(false);
+    }
+
+    private void handleChangeIva(ChangeEventArgs e)
+    {
+        DetalleVM.Iva = Convert.ToDecimal(e.Value as string);
+        DetalleVM.Total = DetalleVM.SubTotal + DetalleVM.Iva;
+        CalcularTotales.InvokeAsync(false);
+    }
+
+    private void handleChangePrecio(ChangeEventArgs e)
+    {
+        DetalleVM.Precio = Convert.ToDecimal(e.Value as string);
+
+        DetalleVM.SubTotal = DetalleVM.Cantidad * DetalleVM.Precio;
+
+        DetalleVM.Total = DetalleVM.SubTotal + DetalleVM.Iva - DetalleVM.Descuento;
+        CalcularTotales.InvokeAsync(false);
+    }
+
+    private void handleChangeDescuento(ChangeEventArgs e)
+    {
+        DetalleVM.Descuento = Convert.ToDecimal(e.Value as string);
+
+        DetalleVM.SubTotal = DetalleVM.Cantidad * DetalleVM.Descuento;
+        CalcularTotales.InvokeAsync(false);
+    }
+
+    private void EliminarDetalle(string IdDetalle)
+    {
+        EliminarLinea.InvokeAsync(IdDetalle);
+        CalcularTotales.InvokeAsync(false);
+    }
 
 }

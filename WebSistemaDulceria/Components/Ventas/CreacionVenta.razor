@@ -54,6 +54,7 @@
                     @{
                         foreach (var detalle in VentaVM.DetalleVenta)
                         {
+                            <VentaDetalle DetalleVM="detalle" EliminarLinea="EliminarDetalle" CalcularTotales="CalcularTotales"></VentaDetalle>
                             @*<PedidoDetalle DetalleVM="detalle" EliminarLinea="@elimi" CalcularTotales="CalcularTotales" />*@
                         }
                     }
@@ -193,7 +194,7 @@
             IdArticulo = VentaDetalleViewModel.Articulo.IdArticulo,
             Cantidad = 1,
             Articulo = VentaDetalleViewModel.Articulo,
-            Precio = VentaDetalleViewModel.Articulo.Precios.FirstOrDefault()?.PrecioCosto ?? 0,
+            Precio = VentaDetalleViewModel.Articulo.Precios.FirstOrDefault()?.PrecioVenta ?? 0,
             SubTotal = total,
             Total = total
         }
