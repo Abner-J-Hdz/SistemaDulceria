@@ -7,7 +7,7 @@
         <h2 class="text-primary">Usuarios</h2>
     </div>
     <div class="align-content-end">
-        <button title="Nuevo proveedor" type="button" class="btn btn-outline-info" @onclick="NuevoCliente">
+        <button title="Nuevo usuario" type="button" class="btn btn-outline-info" @onclick="NuevoCliente">
             <i class="bi bi-plus-circle m-1"></i> Nuevo
         </button>
     </div>
@@ -41,24 +41,24 @@
 </table>
 
 <BSModal @ref="ModalEdit" Size="Size.Large">
-    <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalEdit.Hide())">Editar Proveedor</BSModalHeader>
+    <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalEdit.Hide())">Editar usuario</BSModalHeader>
     <BSModalBody>
         <FormularioUsuarios UsuarioVM="@UsuarioEdit" CerraModal="CerrarModalEdit" />
     </BSModalBody>
 </BSModal>
 
 <BSModal @ref="ModalNuevo" Size="Size.Large">
-    <BSModalHeader OnClick="@(() => ModalNuevo.Hide())">Nuevo Proveedor</BSModalHeader>
+    <BSModalHeader OnClick="@(() => ModalNuevo.Hide())">Nuevo usuario</BSModalHeader>
     <BSModalBody>
         <FormularioUsuarios UsuarioVM="@UsuarioNuevo" CerraModal="CerrarModalNuevo" />
     </BSModalBody>
 </BSModal>
 
 <BSModal @ref="ModalEliminar" Size="Size.Small">
-    <BSModalHeader Class="bg-danger text-white" OnClick="@(() => ModalEliminar.Hide())">Eliminar proveedor</BSModalHeader>
+    <BSModalHeader Class="bg-danger text-white" OnClick="@(() => ModalEliminar.Hide())">Eliminar usuario</BSModalHeader>
     <BSModalBody>
         <p>
-            <span>Está seguro de eliminar el proveedor <strong>@nombreUsuario</strong> ?</span>
+            <span>Está seguro de eliminar el usuario <strong>@nombreUsuario</strong> ?</span>
         </p>
     </BSModalBody>
     <div class="modal-footer">

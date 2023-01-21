@@ -4,7 +4,14 @@
 @attribute [AllowAnonymous]
 
 <div class="row">
+    <br />
+
     <div class="col-auto mx-auto">
+
+        <h2 class="text-primary">Sistema de dulceria</h2>
+        <br />
+        <br />
+
         <form action="/account/login" method="post">
 
             @if (ErrorMessage != null)
@@ -14,18 +21,18 @@
 
             <!-- Email input -->
             <div class="form-outline mb-4">
-                <label class="form-label" for="form2Example1">Email address</label>
+                <label class="form-label" for="form2Example1">Correo:</label>
                 <input name="email" type="email" id="form2Example1" class="form-control" />
             </div>
 
             <!-- Password input -->
             <div class="form-outline mb-4">
-                <label class="form-label" for="form2Example2">Password</label>
+                <label class="form-label" for="form2Example2">Contraseña:</label>
                 <input name="password" type="password" id="form2Example2" class="form-control" />
             </div>
 
             <!-- Submit button -->
-            <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
+            <button type="submit" class="btn btn-primary btn-block mb-4">Iniciar sesion</button>
         </form>
     </div>
 </div>
