@@ -1,4 +1,6 @@
 ﻿using Datos;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,34 +9,38 @@ using WebSistemaDulceria.Models.DulceriaModels;
 
 namespace WebSistemaDulceria.Data.DulceriaService
 {
-    public class Data
+    public class Data:IData
     {
-        private readonly DbContextDulceria context;
-        /*public Data(DbContextDulceria _context)
+        private readonly string connectionString;
+
+        public Data(IConfiguration configuration)
         {
-            context = _context;
-        }*/
-        public List<ArticuloViewModel> ObtenerArticulos()
+            connectionString = configuration.GetConnectionString("ConexionDulceria");
+        }
+
+        public List<ArticuloViewModel> ArticulosVendidos()
         {
             try
             {
-                var ArticulosDb = context.Articulo.Where(x => x.EstaActivo).ToList();
-
-                return ArticulosDb.Select(x => new ArticuloViewModel
+                using (SqlConnection sql = new SqlConnection(connectionString))
                 {
-                    IdArticulo = x.IdArticulo,
-                    Nombre = x.Nombre,
-                    CodInterno = x.CodInterno,
-                    CodBarra = x.CodBarra,
-                    IdPresentacion = x.IdPresentacion,
-                    IdUnidadMedida = x.IdUnidadMedida,
-                    CantidadMinima = x.CantidadMinima,
-                    TieneVencimiento = x.TieneVencimiento,
-                    EsMenudeo = x.EsMenudeo,
-                    EsProductoTerminado = x.EsProductoTerminado,
-                    EstaActivo = x.EstaActivo
-                }).ToList();
+                    using (SqlCommand cmd = new SqlCommand("SP_ObtenerArticulosVendidos", sql))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        var response = new List<ArticuloViewModel>();
+                        sql.Open();
 
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                response.Add(MapToArticulos(reader));
+                            }
+                        }
+                        sql.Close();
+                        return response;
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -42,7 +48,20 @@ namespace WebSistemaDulceria.Data.DulceriaService
             }
         }
 
-
+        private ArticuloViewModel MapToArticulos(SqlDataReader reader)
+        {
+            decimal cantidadDecimal = (decimal)reader["Cantidad"];
+            decimal cantidad = Math.Round(cantidadDecimal, 2);
+            return new ArticuloViewModel()
+            {
+                IdArticulo = (int)reader["IdArticulo"],
+                CantidadVendida = (decimal)reader["Cantidad"],
+                Nombre = reader["Nombre"].ToString(),
+                CodInterno = reader["CodInterno"].ToString(),
+                CodBarra = reader["CodBarra"].ToString(),
+                DataLabel = cantidad.ToString() + " - " +  reader["Nombre"].ToString()
+            };
+        }
 
     }
 }

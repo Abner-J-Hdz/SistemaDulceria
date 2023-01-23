@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Syncfusion.Blazor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace WebSistemaDulceria
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddBootstrapCSS();
-
+            services.AddSyncfusionBlazor();
             services.AddControllers();///para añadir y gestionar controladores
 
             ///servicio de autenticacion de ASP.NET
@@ -54,6 +55,7 @@ namespace WebSistemaDulceria
                 options.UseSqlServer(Configuration.GetConnectionString("ConexionDulceria")));
 
             services.AddScoped<IService, Service>();
+            services.AddScoped<IData, WebSistemaDulceria.Data.DulceriaService.Data>();
 
         }
 

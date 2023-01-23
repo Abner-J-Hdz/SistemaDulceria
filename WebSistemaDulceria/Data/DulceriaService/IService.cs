@@ -30,6 +30,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         Task<Response> EliminarArticulo(int idArticulo);
 
+        //List<ArticuloViewModel> ArticulosVendidos();
         #endregion
 
         #region Pedido

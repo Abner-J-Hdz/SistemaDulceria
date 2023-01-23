@@ -1,26 +1,70 @@
 ﻿@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavManager
-
+@inject IService service
+@inject IData dataService
 @page "/"
 @attribute [Authorize]
+
+@using Syncfusion.Blazor.Charts
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Layouts
+
 <h3>Dulceria</h3>
 
+<div class="row">
+    <div class="col-md-6">
 
-<a href="/pedido">
-    Pedidos
-</a>
+        <SfAccumulationChart Title="Articulos mas vendidos" EnableAnimation="true" Width="@Width" Height="@Height" EnableBorderOnMouseMove="false" EnableSmartLabels="true">
+            <AccumulationChartBorder Color="transparent"></AccumulationChartBorder>
+            <AccumulationChartTooltipSettings Enable="true" Format="${point.x}"></AccumulationChartTooltipSettings>
+            <AccumulationChartSeriesCollection>
+                <AccumulationChartSeries DataSource="@charData" Radius="@Radius" XName="Nombre" YName="CantidadVendida" InnerRadius="40%" Palettes="@palettes">
+                    <AccumulationChartSeriesBorder Color="@Color" Width="3"></AccumulationChartSeriesBorder>
+                    <AccumulationDataLabelSettings Visible="true" Name="DataLabel" Position="AccumulationLabelPosition.Inside">
+                        <AccumulationChartDataLabelFont FontWeight="600"></AccumulationChartDataLabelFont>
+                        <AccumulationChartConnector Length="30px" Type="ConnectorType.Curve"></AccumulationChartConnector>
+                    </AccumulationDataLabelSettings>
+                </AccumulationChartSeries>
+            </AccumulationChartSeriesCollection>
+            <AccumulationChartLegendSettings Visible="false"></AccumulationChartLegendSettings>
+        </SfAccumulationChart>
 
+    </div>
+    <div class="col-md-4">
+
+    </div>
+</div>
 
 
 @code {
     private bool isAuthenticated;
+    SfChart chart1;
+    string Width = "100%";
+    string Height = "100%";
+    string Color;
+    string Radius = "80%";
+    int columns, pieColumn, splineRow, columnSizeX, columnSizeY,
+    pieSizeX, pieSizeY, splineSizeX, splineSizeY;
+    SfDashboardLayout sfDashboardLayout;
+    private string[] palettes = new string[] { "#61EFCD", "#CDDE1F", "#FEC200", "#CA765A", "#2485FA", "#F57D7D", "#C152D2",
+    "#8854D9", "#3D4EB8", "#00BCD7","#4472c4", "#ed7d31", "#ffc000", "#70ad47", "#5b9bd5", "#c1c1c1", "#6f6fe2", "#e269ae", "#9e480e", "#997300" };
+
+    List<ArticuloViewModel> charData = new List<ArticuloViewModel>();
+
     protected override async Task OnInitializedAsync()
     {
         isAuthenticated = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Identity.IsAuthenticated;
         if (!isAuthenticated)
             NavManager.NavigateTo("/login");
+
+        charData = dataService.ArticulosVendidos();
     }
-    //protected override Task OnInitialized()
-    //{
-    //}
+
+
+    void ChartLoad(ILoadedEventArgs Args)
+    {
+
+    }
+
+
 }
