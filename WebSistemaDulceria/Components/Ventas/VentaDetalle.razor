@@ -4,8 +4,9 @@
     <td><input disabled @bind-value="DetalleVM.Articulo.Nombre" class="form-control" /></td>
     <td><input disabled="@DetalleVM.Editable" value="@DetalleVM.Cantidad" class="form-control" @onchange="handleChangeCantidad" /></td>
     <td><input disabled id="precioArticulo-@DetalleVM.IdDetalleVenta" value="@DetalleVM.Precio" @onchange="handleChangePrecio" class="form-control" /></td>
-    <td><input disabled="@DetalleVM.Editable" id="descuentoArticulo-@DetalleVM.IdDetalleVenta" value="@DetalleVM.Descuento" @onchange="handleChangeDescuento" class="form-control" /></td>
-    <td><input disabled="@DetalleVM.Editable" id="ivaArticulo-@DetalleVM.IdDetalleVenta" value="@DetalleVM.Iva" @onchange="handleChangeIva" class="form-control" /></td>
+    <td><input id="descuentoArticulo-@DetalleVM.IdDetalleVenta" min="0" max="100" type="number"  value="@ValorDescuento" @onchange="handleChangeValorDescuento" class="form-control" /></td>
+    <td><input disabled="@true" id="descuentoArticulo-@DetalleVM.IdDetalleVenta" value="@DetalleVM.Descuento" @onchange="handleChangeDescuento" class="form-control" /></td>
+    @*<td><input disabled="@DetalleVM.Editable" id="ivaArticulo-@DetalleVM.IdDetalleVenta" value="@DetalleVM.Iva" @onchange="handleChangeIva" class="form-control" /></td>*@
     <td><input disabled id="totalArticulo-@DetalleVM.IdDetalleVenta" value="@DetalleVM.Total" class="form-control" /></td>
 </tr>
 
@@ -18,6 +19,8 @@
 
     [Parameter]
     public EventCallback CalcularTotales { get; set; }
+
+    public int ValorDescuento { get; set; }
 
     private void handleChangeCantidad(ChangeEventArgs e)
     {
@@ -54,10 +57,20 @@
         CalcularTotales.InvokeAsync(false);
     }
 
+    private void handleChangeValorDescuento(ChangeEventArgs e)
+    {
+
+        var subtotalPorcentaje =  (DetalleVM.Cantidad * DetalleVM.Precio) / 100;
+        DetalleVM.ValorDescuento = Convert.ToInt32((e.Value as string));
+        DetalleVM.Descuento = subtotalPorcentaje * DetalleVM.ValorDescuento;
+        CalcularTotales.InvokeAsync(false);
+    }
+
     private void EliminarDetalle(string IdDetalle)
     {
         EliminarLinea.InvokeAsync(IdDetalle);
         CalcularTotales.InvokeAsync(false);
     }
+
 
 }

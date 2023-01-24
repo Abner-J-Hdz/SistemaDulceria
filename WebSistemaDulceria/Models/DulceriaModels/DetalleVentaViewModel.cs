@@ -17,6 +17,8 @@ namespace WebSistemaDulceria.Models.DulceriaModels
         public decimal Iva { get; set; }
         public decimal Total { get; set; }
 
+        public int ValorDescuento { get; set; }
+
         public bool Editable { get; set; }
 
         public VentaViewModel Venta { get; set; }

@@ -730,7 +730,8 @@ namespace WebSistemaDulceria.Data.DulceriaService
                         Precio = item.Precio, 
                         SubTotal = item.SubTotal,
                         Descuento = item.Descuento,
-                        Iva = item.Iva
+                        Iva = item.Iva,
+                        PocentajeDescuento = item.ValorDescuento
                     });
                 }
 
@@ -776,7 +777,6 @@ namespace WebSistemaDulceria.Data.DulceriaService
                 return resp;
             }
         }
-
 
         #endregion
 
