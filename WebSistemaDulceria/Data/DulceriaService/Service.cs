@@ -642,6 +642,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     SubTotal = x.SubTotal,
                     Descuento = x.Descuento,
                     Iva = x.Iva,
+                    Total = (x.Iva + x.SubTotal) - x.Descuento,
                     Articulo = new ArticuloViewModel
                     {
                         IdArticulo = x.Articulo.IdArticulo,
@@ -767,6 +768,8 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
                 resp.Ok = true;
                 resp.Message = "Guardado con éxito";
+                resp.ResponseParameter1 = venta.IdVenta.ToString();
+                resp.ResponseParameter2 = NumeroRecibo.ToString();
                 return resp;
             }
             catch (Exception ex)
@@ -775,6 +778,71 @@ namespace WebSistemaDulceria.Data.DulceriaService
                 resp.Message = "Ha ocurrido un error al guardar venta";
                 resp.Error = ex.Message;
                 return resp;
+            }
+        }
+
+        public VentaViewModel ObtenerUltimaVenta()
+        {
+            try
+            {
+                var ventaDb = context.Venta.OrderByDescending(x => x.IdVenta).FirstOrDefault();
+
+                if (ventaDb == null)
+                {
+                    throw new Exception("NO se encontró venta");
+                }
+
+                var ventaVM = new VentaViewModel
+                {
+                    IdVenta = ventaDb.IdVenta,
+                    Fecha = ventaDb.Fecha,
+                    NumeroRecibo = ventaDb.NumeroRecibo,
+                    SubTotal = ventaDb.SubTotal,
+                    Descuento = ventaDb.Descuento,
+                    Iva = ventaDb.Iva,
+                    Total = ventaDb.Total,
+                };
+                ventaVM.DetalleVenta = new List<DetalleVentaViewModel>();
+
+                ventaVM.Cliente = new ClientesViewModel();
+
+                var cliente = context.Clientes.FirstOrDefault(x => x.IdCliente == ventaVM.IdCliente);
+
+                if (cliente != null)
+                {
+                    ventaVM.Cliente = new ClientesViewModel
+                    {
+                        IdCliente = cliente.IdCliente,
+                        Nombre = cliente.Nombre
+                    };
+                }
+
+                var detalleDb = context.DetalleVenta.Where(x => x.IdVenta == ventaDb.IdVenta).ToList();
+
+                ventaVM.DetalleVenta = detalleDb.Select(x => new DetalleVentaViewModel
+                {
+                    Editable = true,
+                    IdDetalleVenta = x.IdDetalleVenta,
+                    IdVenta = x.IdVenta,
+                    IdArticulo = x.IdArticulo,
+                    Cantidad = x.Cantidad,
+                    Precio = x.Precio,
+                    SubTotal = x.SubTotal,
+                    Descuento = x.Descuento,
+                    Iva = x.Iva,
+                    Total = (x.Iva + x.SubTotal) - x.Descuento,
+                    Articulo = new ArticuloViewModel
+                    {
+                        IdArticulo = x.Articulo.IdArticulo,
+                        Nombre = x.Articulo.Nombre
+                    }
+                }).ToList();
+
+                return ventaVM;
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
 

@@ -4,6 +4,13 @@
     <div class="form-row">
 
         <div class="form-group col-sm-6 col-md-4 col-lg-3">
+            <label for="txtNFactura">Numer Factura:</label>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Cliente" @bind-value="PedidoVM.NumeroRecibo" disabled>
+            </div>
+        </div>
+
+        <div class="form-group col-sm-6 col-md-4 col-lg-3">
             <label for="txtNFactura">Cliente:</label>
             <div class="input-group mb-3">
                 <input type="text" class="form-control" placeholder="Cliente" @bind-value="PedidoVM.Cliente.Nombre" disabled>
