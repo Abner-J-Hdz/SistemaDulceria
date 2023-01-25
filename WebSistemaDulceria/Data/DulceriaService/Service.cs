@@ -960,6 +960,39 @@ namespace WebSistemaDulceria.Data.DulceriaService
             }
         }
 
+        public async Task<Response> CambiarContraseña(string email, string password)
+        {
+            Response resp = new Response();
+            EncryptMd5 encrypt = new EncryptMd5();
+
+            try
+            {
+                var usuario = context.Usuarios.FirstOrDefault(x => x.Email == email);
+
+                if(usuario == null)
+                {
+                    resp.Ok = false;
+                    resp.Message = "Ocurrió un error al cambiar contraseña";
+                    resp.Error = "Usuario no encontrado";
+                    return resp;
+                }
+
+                usuario.Password = encrypt.Encrypt(password);
+
+                await context.SaveChangesAsync();
+                resp.Ok = true;
+                resp.Message = "Se actualizó contraseña";
+                return resp;
+            }
+            catch (Exception ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ocurrió un error al cambiar contraseña";
+                resp.Error = ex.Message;
+                return resp;
+            }
+        }
+
         #endregion
 
 

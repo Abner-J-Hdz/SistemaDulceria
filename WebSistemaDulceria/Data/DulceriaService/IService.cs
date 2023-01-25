@@ -75,6 +75,8 @@ namespace WebSistemaDulceria.Data.DulceriaService
         Task<Response> EliminarUsuario(int IdUsuario);
 
         Response GetUsuarioLogin(string email, string password);
+
+        Task<Response> CambiarContraseña(string email, string password);
         #endregion
 
     }

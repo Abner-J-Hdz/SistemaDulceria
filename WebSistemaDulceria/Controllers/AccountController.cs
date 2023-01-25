@@ -44,7 +44,7 @@ namespace WebSistemaDulceria.Controllers
                 //Podríamos obtenerlos de una base de datos.
                 var claims = new[]
                 {
-                    new Claim(ClaimTypes.Name, usuario.Nombre + " " + usuario.Email),
+                    new Claim(ClaimTypes.Name, usuario.Email),
                     new Claim(ClaimTypes.NameIdentifier, usuario.IdUsuario.ToString()),
                     new Claim(ClaimTypes.Email, usuario.Email)
                 };

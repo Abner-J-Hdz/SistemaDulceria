@@ -13,8 +13,9 @@
         <AuthorizeView>
             <Authorized>
                 <span class="ml-md-auto">
+                    
                     <i class="bi bi-person-bounding-box"></i>
-                    : @context.User.Identity.Name
+                    <a href="/cambiaracceso"><span id="User-Email" >@context.User.Identity.Name</span></a> 
                     <a href="/account/logout"><i class="bi bi-box-arrow-in-right mr-1"></i> Log out</a>
                 </span>
             </Authorized>
