@@ -20,6 +20,8 @@ namespace Datos
         public DbSet<Clientes> Clientes { get; set; }
         public DbSet<Venta> Venta { get; set; }
         public DbSet<DetalleVenta> DetalleVenta { get; set; }
+        public DbSet<Ajuste> Ajuste { get; set; }
+        public DbSet<DetalleAjuste> DetalleAjuste { get; set; }
 
         public DbContextDulceria(DbContextOptions<DbContextDulceria> options) : base(options)
         {
@@ -40,6 +42,8 @@ namespace Datos
             modelBuilder.ApplyConfiguration(new ClientesMap());
             modelBuilder.ApplyConfiguration(new VentaMap());
             modelBuilder.ApplyConfiguration(new DetalleVentaMap());
+            modelBuilder.ApplyConfiguration(new AjusteMap());
+            modelBuilder.ApplyConfiguration(new DetalleAjusteMap());
         }
     }
 }
