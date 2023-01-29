@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Entidades.DulceriaEntidades
+namespace WebSistemaDulceria.Models.DulceriaModels
 {
-    public class DetalleAjuste
+    public class DetalleAjusteViewModel
     {
         public int IdAjuste { get; set; }
 
-        [Key]
         public int IdDetalleAjuste { get; set; }
 
         public DateTime FechaVencimiento { get; set; }
@@ -20,7 +19,7 @@ namespace Entidades.DulceriaEntidades
 
         public decimal Costo { get; set; }
 
-        public decimal Total {get; set; }
+        public decimal TotalDetalleAjuste { get; set; }
 
         public DateTime FechaCreacion { get; set; }
 
@@ -30,9 +29,6 @@ namespace Entidades.DulceriaEntidades
 
         public int IdUsuarioModificacion { get; set; }
 
-        public Ajuste Ajuste { get; set; }
-
-        public Articulo Articulo { get; set; }
-
+        public ArticuloViewModel Articulo { get; set; }
     }
 }

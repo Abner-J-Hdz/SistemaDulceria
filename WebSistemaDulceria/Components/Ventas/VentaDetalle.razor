@@ -66,6 +66,7 @@
         var subtotalPorcentaje =  (DetalleVM.Cantidad * DetalleVM.Precio) / 100;
         DetalleVM.ValorDescuento = Convert.ToInt32((e.Value as string));
         DetalleVM.Descuento = subtotalPorcentaje * DetalleVM.ValorDescuento;
+        DetalleVM.Total = (DetalleVM.Cantidad * DetalleVM.Precio) - DetalleVM.Descuento;
         CalcularTotales.InvokeAsync(false);
     }
 

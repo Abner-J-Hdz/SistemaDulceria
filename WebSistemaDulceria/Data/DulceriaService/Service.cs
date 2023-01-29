@@ -645,8 +645,8 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     Total = (x.Iva + x.SubTotal) - x.Descuento,
                     Articulo = new ArticuloViewModel
                     {
-                        IdArticulo = x.Articulo.IdArticulo,
-                        Nombre = x.Articulo.Nombre
+                        IdArticulo = x.IdArticulo,
+                        Nombre = context.Articulo.FirstOrDefault(a => a.IdArticulo == x.IdArticulo).Nombre
                     }
                 }).ToList();
 
@@ -845,6 +845,146 @@ namespace WebSistemaDulceria.Data.DulceriaService
                 throw;
             }
         }
+
+        #endregion
+
+        #region Ajustes de Inventarios
+
+        public async Task<Response> GuardarAjusteInventario(AjusteViewModel ajuste)
+        {
+            Response resp = new Response();
+            try
+            {
+                int numeroReferencia = context.Ajuste.OrderByDescending(x => x.IdAjuste).FirstOrDefault().NumeroRefencia;
+
+                DateTime fechaHoy = DateTime.Now;
+
+                var ajusteDb = new Ajuste { 
+                    NumeroRefencia = numeroReferencia,
+                    Observaciones = ajuste.Observaciones,
+                    EsAjusteEntrada = ajuste.EsAjusteEntrada,
+                    Total = ajuste.Total,
+                    FechaCreacion = ajuste.FechaCreacion,
+                    EstaActivo = true,
+                    IdUsuarioCreacion = 1,
+                    FechaModificacion = ajuste.FechaCreacion,
+                    IdUsuarioModificacion = 1
+                };
+
+                var detalleAjuste = new List<DetalleAjuste>();
+
+                foreach (var item in ajuste.DetalleAjuste)
+                {
+                    detalleAjuste.Add(new DetalleAjuste
+                    {
+                        IdArticulo = item.IdArticulo,
+                        FechaVencimiento = item.FechaVencimiento,
+                        Cantidad = item.Cantidad,
+                        Costo = item.Costo,
+                        Total  = item.TotalDetalleAjuste,
+                        FechaCreacion = fechaHoy,
+                        FechaModificacion = fechaHoy,
+                        IdUsuarioCreacion = 1,
+                        IdUsuarioModificacion = 1
+                    });
+                }
+
+                //codigo para aumentar el stock teniendo en cuanta si es un ajuste entrada
+                /*
+                 code
+                 */
+
+
+                ajusteDb.DetalleAjuste = detalleAjuste;
+                context.Ajuste.Add(ajusteDb);
+
+                await context.SaveChangesAsync();
+
+                resp.Ok = true;
+                resp.Message = "Guardado con éxito";
+                resp.ResponseParameter1 = ajuste.IdAjuste.ToString();
+                resp.ResponseParameter2 = numeroReferencia.ToString();
+
+                return resp;
+            }
+            catch (Exception ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ha ocurrido un error al guardar el ajuste de inventario";
+                resp.Error = ex.Message;
+                return resp;
+            }
+        }
+
+        public List<AjusteViewModel> ObtenerAjustesinventario()
+        {
+            List<AjusteViewModel> ajuste = new List<AjusteViewModel>();
+            try
+            {
+                var ajusteDb = context.Ajuste.Where(x => x.EstaActivo).ToList();
+
+                foreach (var item in ajusteDb)
+                {
+                    ajuste.Add(new AjusteViewModel
+                    {
+                        IdAjuste = item.IdAjuste,
+                        IdUsuarioCreacion = item.IdUsuarioCreacion,
+                        NumeroRefencia = item.NumeroRefencia,
+                        FechaCreacion = item.FechaCreacion,
+                        Total = item.Total,
+                        Observaciones = item.Observaciones,
+                        usuario = new UsuarioViewModel
+                        {
+                            IdUsuario = item.IdUsuarioCreacion,
+                            Nombre = context.Usuarios.FirstOrDefault(x => x.IdUsuario == item.IdUsuarioCreacion)?.Nombre ?? ""
+                        },
+                    });
+                }
+
+                return ajuste;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public AjusteViewModel ObtenerUnAjusteInventario(int Id)
+        {
+            try
+            {
+                AjusteViewModel ajuste = new AjusteViewModel();
+
+                var ajusteDb = context.Ajuste.FirstOrDefault(x => x.IdAjuste == Id);
+
+                if (ajusteDb == null)
+                    throw new Exception("Ajuste de inventario no encontrado");
+
+                ajuste.IdAjuste = ajusteDb.IdAjuste;
+                ajuste.Observaciones = ajusteDb.Observaciones;
+                ajuste.IdUsuarioCreacion = ajusteDb.IdUsuarioCreacion;
+                ajuste.NumeroRefencia = ajusteDb.NumeroRefencia;
+                ajuste.EsAjusteEntrada = ajusteDb.EsAjusteEntrada;
+                ajuste.FechaCreacion = ajusteDb.FechaCreacion;
+                ajuste.Total = ajusteDb.Total;
+                ajuste.usuario = new UsuarioViewModel
+                {
+                    IdUsuario = ajusteDb.IdUsuarioCreacion,
+                    Nombre = context.Usuarios.FirstOrDefault(x => x.IdUsuario == ajusteDb.IdUsuarioCreacion)?.Nombre ?? ""
+                };
+
+
+
+
+
+                return ajuste;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
 
         #endregion
 

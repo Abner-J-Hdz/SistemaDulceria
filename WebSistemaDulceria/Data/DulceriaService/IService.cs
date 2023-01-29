@@ -63,6 +63,15 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         #endregion
 
+        #region Ajuste de inventario
+        Task<Response> GuardarAjusteInventario(AjusteViewModel ajuste);
+
+        List<AjusteViewModel> ObtenerAjustesinventario();
+
+        AjusteViewModel ObtenerUnAjusteInventario(int Id);
+
+        #endregion
+
         #region Usuarios
         Task<Response> GuardarUsuario(UsuarioViewModel usuarioVM);
 

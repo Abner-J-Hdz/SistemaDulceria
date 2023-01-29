@@ -1,8 +1,10 @@
 ﻿@page "/ventas"
+@page "/ventas/{id:int}"
 @attribute [Authorize]
 
-<CreacionVenta></CreacionVenta>
+<CreacionVenta Id="Id" ></CreacionVenta>
 
 @code {
-
+    [Parameter]
+    public int Id { get; set; }
 }

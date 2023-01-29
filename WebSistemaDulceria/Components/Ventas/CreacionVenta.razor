@@ -140,6 +140,10 @@
 
 
 @code {
+
+    [Parameter]
+    public int Id { get; set; }
+
     VentaViewModel VentaVM = new VentaViewModel();
     DetalleVentaViewModel VentaDetalleViewModel = new DetalleVentaViewModel();
 
@@ -184,7 +188,6 @@
             e.Message.ToString();
         }
     }
-
 
     protected async void AbrirModalProducto()
     {
@@ -254,12 +257,13 @@
     {
         try
         {
+            mensajeError = "";
             int id = Convert.ToInt32(IdVenta);
             VentaVM = service.ObtenerVenta(id);
             SoloLectura = true;
             ModalVentas.Hide();
             BtnNuevo = false;
-            BtnCancelar = true;
+            BtnCancelar = false;
             BtnEliminar = false;
 
             CalcularTotales();
@@ -285,6 +289,7 @@
 
     private async void handleGuardar()
     {
+        BtnGuardar = true;
         if (VentaVM.Cliente.IdCliente == 0)
         {
             mensajeError = "Todos los campos del pedido son obligatorio";
@@ -311,6 +316,12 @@
                 VentaVM.NumeroRecibo = Convert.ToInt32(respuesta.ResponseParameter2);
                 VentaVM.IdVenta = Convert.ToInt32(respuesta.ResponseParameter1);
                 VentaVM.DetalleVenta.ForEach(x => x.Editable = true);
+                BlockFormulario = true;
+
+                handleCancelar();
+
+                //ObtenerVenta(respuesta.ResponseParameter1);
+
                 /*await Task.Delay(1600).ContinueWith((task) =>
                 {
                     navigate.NavigateTo("Ventas", forceLoad: true);
@@ -343,6 +354,7 @@
         txtObservaciones = true;
         BtnEliminar = true;
         CalcularTotales();
+        mensajeError = "";
     }
 
     private void handleNuevo()
@@ -355,6 +367,7 @@
         BtnAgregarProducto = false;
         txtObservaciones = false;
         BtnEliminar = true;
+        mensajeError = "";
     }
 
     private void handleBuscar()

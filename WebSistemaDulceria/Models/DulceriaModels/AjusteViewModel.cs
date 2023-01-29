@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Entidades.DulceriaEntidades
+namespace WebSistemaDulceria.Models.DulceriaModels
 {
-    public class Ajuste
+    public class AjusteViewModel
     {
-        [Key]
         public int IdAjuste { get; set; }
 
         public int NumeroRefencia { get; set; }
@@ -26,8 +25,8 @@ namespace Entidades.DulceriaEntidades
 
         public int IdUsuarioModificacion { get; set; }
 
-        public bool EstaActivo { get; set; }
+        public UsuarioViewModel usuario { get; set; }   
 
-        public ICollection<DetalleAjuste> DetalleAjuste { get; set; }
+        public List<DetalleAjusteViewModel> DetalleAjuste { get; set; }
     }
 }
