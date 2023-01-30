@@ -1,10 +1,12 @@
-﻿
+﻿@inject IService service
+@inject IJSRuntime js
+@inject NavigationManager navigate
 
 
 <div class="card">
     <div class="card-header d-flex justify-content-between">
         <div>
-            <h5 class="">Ventas</h5>
+            <h5 class="">Ajuste Inventario</h5>
         </div>
         <div class="d-flex">
             <BSButton OnClick="handleNuevo" Class="mt-2 mr-2" Color="Color.Primary" IsOutline="true" IsDisabled="@BtnNuevo" Size="Size.Small">
@@ -23,7 +25,6 @@
             <BSButton OnClick="handleEliminarAjuste" Class="mt-2 mr-2" Color="Color.Danger" IsOutline="true" IsDisabled="@BtnEliminar" Size="Size.Small">
                 <i class="bi bi-trash3"></i>
             </BSButton>
-
         </div>
     </div>
     <div class="card-body">
@@ -34,7 +35,8 @@
                 @mensajeError
             </div>
         }
-        @*<FormularioVenta PedidoVM="VentaVM" DisabledFormulario="BlockFormulario"></FormularioVenta>*@
+
+        <FormularioInventario AjusteVM="AjusteVM" DisabledFormulario="BlockFormulario"></FormularioInventario>
 
         <BSButton @onclick="AbrirModalProducto" Color="Color.Primary" title="Añadir producto" IsDisabled="@BtnAgregarProducto">
             <i class="bi bi-box mr-1"></i>Agregar Producto
@@ -47,10 +49,7 @@
                         <th></th>
                         <th scope="col">Articulo</th>
                         <th scope="col">Cantidad</th>
-                        <th scope="col">Precio</th>
-                        <th scope="col">Desc %</th>
-                        <th scope="col">Descuento</th>
-                        @*<th scope="col">I.V.A.</th>*@
+                        <th scope="col">Costo</th>
                         <th scope="col">Total</th>
                     </tr>
                 </thead>
@@ -58,7 +57,7 @@
                     @{
                         foreach (var detalle in AjusteVM.DetalleAjuste)
                         {
-                            @*<VentaDetalle DetalleVM="detalle" EliminarLinea="EliminarDetalle" SoloLectura="SoloLectura" CalcularTotales="CalcularTotales"></VentaDetalle>*@
+                            <AjusteDetalle DetalleVM="detalle" SoloLectura="SoloLectura" CalcularTotales="CalcularTotales"></AjusteDetalle>
                         }
                     }
                 </tbody>
@@ -67,19 +66,13 @@
 
         <div class="row d-flex justify-content-end">
             <div class="col-sm-4 col-md-8">
-                @*<textarea @bind="@VentaVM.Observaciones" class="form-control h-100" disabled="@txtObservaciones">
+                <textarea @bind="@AjusteVM.Observaciones" class="form-control h-100" disabled="@txtObservaciones">
 
-                    </textarea>*@
+                 </textarea>
             </div>
             <div style="" class=" col-sm-6 col-md-4">
-                <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">Subtotal:</label>
-                    <div class="col-sm-8">
-                        <input @bind-value="subtotal" disabled class="form-control" />
-                    </div>
-                </div>
-                <div class="form-group row">
 
+                <div class="form-group row">
                     <label class="col-sm-4 col-form-label">Total:</label>
                     <div class="col-sm-8">
                         <input @bind-value="total" disabled class="form-control" />
@@ -95,7 +88,7 @@
     <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalProducto.Hide())">Selecciona producto</BSModalHeader>
     <BSModalBody>
 
-        <SeleccionProducto SeleccionArticulo="DetalleAjusteViewModel.Articulo" AgregarDetalle="AgregarDetalle" CerraModalProducto="CerraModalProducto" />
+        <SeleccionProductoInv SeleccionArticulo="DetalleAjusteViewModel.Articulo" AgregarDetalle="AgregarDetalle" CerraModalProducto="CerraModalProducto" />
     </BSModalBody>
     <div class="modal-footer">
         <button class="btn btn-outline-danger" @onclick="() => ModalProducto.Hide()"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
@@ -105,7 +98,7 @@
 <BSModal @ref="ModalAjuste" IsFullWidth="true">
     <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalAjuste.Hide())">Selecciona venta</BSModalHeader>
     <BSModalBody>
-        <SelectVenta SeleccionarVenta="ObtenerAjuste" />
+        @*<SelectVenta SeleccionarVenta="ObtenerAjuste" />*@
     </BSModalBody>
     <div class="modal-footer">
         <button class="btn btn-outline-danger" @onclick="() => ModalAjuste.Hide()"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
@@ -132,6 +125,8 @@
     BSModal ModalAjuste { get; set; }
     BSModal ModalAlertaEliminar { get; set; }
 
+    public Response respuesta { get; set; }
+
     bool BtnEliminar = false;
     bool BtnNuevo = false;
     bool BtnGuardar = false;
@@ -150,6 +145,29 @@
     bool validarFormAjuste = false;
     string mensajeError = "";
     string error = "";
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            BtnGuardar = true;
+            BtnCancelar = true;
+            BtnAgregarProducto = true;
+            BtnEliminar = true;
+            BlockFormulario = true;
+            AjusteVM.FechaCreacion = DateTime.Now;
+            AjusteVM.EsAjusteEntrada = true;
+        }
+        catch (Exception e)
+        {
+            e.Message.ToString();
+        }
+    }
+
+    private void CalcularTotales()
+    {
+        total = AjusteVM.DetalleAjuste.Sum(x => x.TotalDetalleAjuste);
+    }
 
     protected void CerraModalProducto()
     {
@@ -178,78 +196,70 @@
 
     protected void AgregarDetalle()
     {
-        /*
-        int IdVentaDetalle = VentaVM.DetalleVenta.OrderByDescending(x => x.IdDetalleVenta).FirstOrDefault()?.IdDetalleVenta + 1 ?? 1;
+        int IdAjusteDetalle = AjusteVM.DetalleAjuste.OrderByDescending(x => x.IdDetalleAjuste).FirstOrDefault()?.IdDetalleAjuste + 1 ?? 1;
 
-        if (VentaVM.DetalleVenta.FirstOrDefault(x => x.IdArticulo == VentaDetalleViewModel.Articulo.IdArticulo) != null)
+        if (AjusteVM.DetalleAjuste.FirstOrDefault(x => x.IdArticulo == DetalleAjusteViewModel.Articulo.IdArticulo) != null)
         {
-            validarFormVenta = true;
+            validarFormAjuste = true;
             mensajeError = "Este articulo ya está en el detalle";
             return;
         }
-        validarFormVenta = false;
-        decimal precio = VentaDetalleViewModel.Articulo.Precios.FirstOrDefault()?.PrecioVenta ?? 0;
-        decimal total = precio * 1;
-        VentaVM.DetalleVenta.Add(new DetalleVentaViewModel
+        validarFormAjuste = false;
+        decimal costo = DetalleAjusteViewModel.Articulo.Precios.FirstOrDefault()?.PrecioCosto ?? 0;
+        decimal total = costo * 1;
+        AjusteVM.DetalleAjuste.Add(new DetalleAjusteViewModel
         {
-            IdDetalleVenta = IdVentaDetalle,
-            IdArticulo = VentaDetalleViewModel.Articulo.IdArticulo,
+            IdDetalleAjuste = IdAjusteDetalle,
+            IdArticulo = DetalleAjusteViewModel.Articulo.IdArticulo,
             Cantidad = 1,
-            Articulo = VentaDetalleViewModel.Articulo,
-            Precio = VentaDetalleViewModel.Articulo.Precios.FirstOrDefault()?.PrecioVenta ?? 0,
-            SubTotal = total,
-            Total = total
+            Articulo = DetalleAjusteViewModel.Articulo,
+            Costo = DetalleAjusteViewModel.Articulo.Precios.FirstOrDefault()?.PrecioVenta ?? 0,
+            TotalDetalleAjuste = total
         }
         );
-        VentaDetalleViewModel = new DetalleVentaViewModel();
-        */
-        //CalcularTotales();
+        DetalleAjusteViewModel = new DetalleAjusteViewModel();
+
+        CalcularTotales();
     }
 
     private async void handleGuardar()
     {
-        /*  BtnGuardar = true;
-          if (VentaVM.Cliente.IdCliente == 0)
-          {
-              mensajeError = "Todos los campos del pedido son obligatorio";
-              validarFormVenta = true;
-              return;
-          }
+        BtnGuardar = true;
 
-          if (VentaVM.DetalleVenta.Count() == 0)
-          {
-              mensajeError = "El pedido no tiene detalle";
-              validarFormVenta = true;
-              return;
-          }
+        if (AjusteVM.DetalleAjuste.Count() == 0)
+        {
+            mensajeError = "El pedido no tiene detalle";
+            validarFormAjuste = true;
+            return;
+        }
 
-          validarFormVenta = false;
+        validarFormAjuste = false;
 
-          try
-          {
-              respuesta = await service.GuardarVentas(VentaVM);
-              if (respuesta.Ok)
-              {
-                  await js.InvokeVoidAsync("showAlert", "success", respuesta.Message, "");
+        try
+        {
+            respuesta = await service.GuardarAjusteInventario(AjusteVM);
+            if (respuesta.Ok)
+            {
+                await js.InvokeVoidAsync("showAlert", "success", respuesta.Message, "");
 
-                  VentaVM.NumeroRecibo = Convert.ToInt32(respuesta.ResponseParameter2);
-                  VentaVM.IdVenta = Convert.ToInt32(respuesta.ResponseParameter1);
-                  VentaVM.DetalleVenta.ForEach(x => x.Editable = true);
-                  BlockFormulario = true;
+                AjusteVM.NumeroRefencia = Convert.ToInt32(respuesta.ResponseParameter2);
+                AjusteVM.IdAjuste = Convert.ToInt32(respuesta.ResponseParameter1);
+                AjusteVM.DetalleAjuste.ForEach(x => x.Editable = false);
+                BlockFormulario = true;
 
-                  handleCancelar();
+                handleCancelar();
 
-              }
-              else
-              {
-                  await js.InvokeVoidAsync("showAlert", "error", respuesta.Message, respuesta.Error);
-              }
-          }
-          catch (Exception ex)
-          {
-              mensajeError = "Ha ocurrido un error al obtener proveedores";
-              error = ex.Message;
-          }*/
+            }
+            else
+            {
+                await js.InvokeVoidAsync("showAlert", "error", respuesta.Message, respuesta.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = "Ha ocurrido un error al obtener proveedores";
+            error = ex.Message;
+        }
 
     }
 

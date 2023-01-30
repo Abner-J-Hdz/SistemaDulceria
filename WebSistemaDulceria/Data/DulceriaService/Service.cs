@@ -855,7 +855,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
             Response resp = new Response();
             try
             {
-                int numeroReferencia = context.Ajuste.OrderByDescending(x => x.IdAjuste).FirstOrDefault().NumeroRefencia;
+                int numeroReferencia = context.Ajuste.OrderByDescending(x => x.IdAjuste).FirstOrDefault()?.NumeroRefencia + 1 ?? 1;
 
                 DateTime fechaHoy = DateTime.Now;
 
@@ -868,7 +868,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     EstaActivo = true,
                     IdUsuarioCreacion = 1,
                     FechaModificacion = ajuste.FechaCreacion,
-                    IdUsuarioModificacion = 1
+                    IdUsuarioModficacion = 1
                 };
 
                 var detalleAjuste = new List<DetalleAjuste>();
@@ -877,23 +877,54 @@ namespace WebSistemaDulceria.Data.DulceriaService
                 {
                     detalleAjuste.Add(new DetalleAjuste
                     {
-                        IdArticulo = item.IdArticulo,
-                        FechaVencimiento = item.FechaVencimiento,
+                        IdArticuloMaterial = item.IdArticulo,
+                        FechaVencimiento = fechaHoy,//item.FechaVencimiento,
                         Cantidad = item.Cantidad,
                         Costo = item.Costo,
                         Total  = item.TotalDetalleAjuste,
                         FechaCreacion = fechaHoy,
                         FechaModificacion = fechaHoy,
                         IdUsuarioCreacion = 1,
-                        IdUsuarioModificacion = 1
+                        IdUsuarioModficacion = 1
                     });
                 }
 
                 //codigo para aumentar el stock teniendo en cuanta si es un ajuste entrada
-                /*
-                 code
-                 */
+                /*aumentar el stock si ajuste entrada es true*/
+                foreach (var item in detalleAjuste)
+                {
+                    var productoTerminado = context.DetalleProductoTerminado.FirstOrDefault(x => x.IdArticuloMaterial == item.IdArticuloMaterial);
+                    string NombreArticulo = context.Articulo.FirstOrDefault(x => x.IdArticulo == item.IdArticuloMaterial)?.Nombre ?? "";
 
+                    if (ajuste.EsAjusteEntrada)
+                    {
+                        if (productoTerminado == null)
+                        {
+                            var detelleProducto = new DetalleProductoTerminado();
+                            detelleProducto.IdArticuloMaterial = item.IdArticuloMaterial;
+                            detelleProducto.Cantidad = (int)item.Cantidad;
+                            context.DetalleProductoTerminado.Add(detelleProducto);
+                        }
+                        else
+                        {
+                            productoTerminado.Cantidad += (int)item.Cantidad;
+                        }
+                    }
+                    else
+                    {
+                        var restaProduct = productoTerminado.Cantidad - (int)item.Cantidad;
+
+                        if (restaProduct < 0)
+                        {
+                            resp.Message = "Articulo " + NombreArticulo + "sin cantidad suficiente.";
+                            resp.Ok = false;
+                            return resp;
+                        }
+
+                        productoTerminado.Cantidad -= (int)item.Cantidad;
+                    }
+
+                }
 
                 ajusteDb.DetalleAjuste = detalleAjuste;
                 context.Ajuste.Add(ajusteDb);

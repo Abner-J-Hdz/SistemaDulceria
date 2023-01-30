@@ -25,6 +25,8 @@ namespace WebSistemaDulceria.Models.DulceriaModels
 
         public int IdUsuarioModificacion { get; set; }
 
+        public bool BlocckForm { get; set; }
+
         public UsuarioViewModel usuario { get; set; } = new UsuarioViewModel();
 
         public List<DetalleAjusteViewModel> DetalleAjuste { get; set; } = new List<DetalleAjusteViewModel>();

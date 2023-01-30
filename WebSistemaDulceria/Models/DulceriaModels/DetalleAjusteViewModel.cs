@@ -30,5 +30,8 @@ namespace WebSistemaDulceria.Models.DulceriaModels
         public int IdUsuarioModificacion { get; set; }
 
         public ArticuloViewModel Articulo { get; set; } = new ArticuloViewModel();
+
+        public bool Editable { get; set; }
+
     }
 }

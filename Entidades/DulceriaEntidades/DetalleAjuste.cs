@@ -14,7 +14,7 @@ namespace Entidades.DulceriaEntidades
 
         public DateTime FechaVencimiento { get; set; }
 
-        public int IdArticulo { get; set; }
+        public int IdArticuloMaterial { get; set; }
 
         public decimal Cantidad { get; set; }
 
@@ -28,7 +28,7 @@ namespace Entidades.DulceriaEntidades
 
         public DateTime FechaModificacion { get; set; }
 
-        public int IdUsuarioModificacion { get; set; }
+        public int IdUsuarioModficacion { get; set; }
 
         public Ajuste Ajuste { get; set; }
 

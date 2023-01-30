@@ -30,8 +30,36 @@
         </SfAccumulationChart>
 
     </div>
-    <div class="col-md-4">
-
+    <div class="col-md-6">
+        <SfChart Title="Top 10 clientes" Width="@Width">
+            <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
+            <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
+                <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
+                <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+            </ChartPrimaryXAxis>
+            <ChartPrimaryYAxis Title="Total" LabelFormat="{value}" EdgeLabelPlacement="EdgeLabelPlacement.Shift">
+                <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+                <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
+            </ChartPrimaryYAxis>
+            <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
+            <ChartLegendSettings Visible="true" ></ChartLegendSettings>
+            <ChartSeriesCollection>
+                <ChartSeries DataSource="@charBarData" XName="Nombre" YName="Total" Name="Total comprado" Width="2" ColumnSpacing="0.1" Type="ChartSeriesType.Bar">
+                    <ChartMarker>
+                        <ChartDataLabel Visible="false" Position="LabelPosition.Middle">
+                            <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                        </ChartDataLabel>
+                    </ChartMarker>
+                </ChartSeries>
+                @*<ChartSeries DataSource="@charBarData" XName="Nombre" YName="NumeroVentas" Name="Numero de compras realizadas" Width="2" ColumnSpacing="0.1" Type="ChartSeriesType.Bar">
+                    <ChartMarker>
+                        <ChartDataLabel Visible="false" Position="LabelPosition.Middle">
+                            <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                        </ChartDataLabel>
+                    </ChartMarker>
+                </ChartSeries>*@
+            </ChartSeriesCollection>
+        </SfChart>
     </div>
 </div>
 
@@ -50,6 +78,8 @@
     "#8854D9", "#3D4EB8", "#00BCD7","#4472c4", "#ed7d31", "#ffc000", "#70ad47", "#5b9bd5", "#c1c1c1", "#6f6fe2", "#e269ae", "#9e480e", "#997300" };
 
     List<ArticuloViewModel> charData = new List<ArticuloViewModel>();
+    List<ClientesMasCompras> charBarData= new List<ClientesMasCompras>();
+    //List<ClientesMasCompras> charBarData
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,6 +88,7 @@
             NavManager.NavigateTo("/login");
 
         charData = dataService.ArticulosVendidos();
+        charBarData = dataService.ClientesMasCompras();
     }
 
 

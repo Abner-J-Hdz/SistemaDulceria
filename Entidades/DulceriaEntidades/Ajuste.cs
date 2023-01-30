@@ -24,7 +24,7 @@ namespace Entidades.DulceriaEntidades
 
         public DateTime FechaModificacion { get; set; }
 
-        public int IdUsuarioModificacion { get; set; }
+        public int IdUsuarioModficacion { get; set; }
 
         public bool EstaActivo { get; set; }
 

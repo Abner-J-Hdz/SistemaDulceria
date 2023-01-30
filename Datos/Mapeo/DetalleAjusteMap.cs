@@ -20,7 +20,7 @@ namespace Datos.Mapeo
 
             builder.HasOne(dt => dt.Articulo)
                 .WithMany()
-                .HasForeignKey(dt => dt.IdArticulo);
+                .HasForeignKey(dt => dt.IdArticuloMaterial);
 
         }
     }

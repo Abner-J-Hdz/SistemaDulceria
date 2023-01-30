@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebSistemaDulceria.Models.DulceriaModels;
+using WebSistemaDulceria.Models.DulceriaModels.Graficos;
 
 namespace WebSistemaDulceria.Data.DulceriaService
 {
@@ -62,6 +63,51 @@ namespace WebSistemaDulceria.Data.DulceriaService
                 DataLabel = cantidad.ToString() + " - " +  reader["Nombre"].ToString()
             };
         }
+
+        public List<ClientesMasCompras> ClientesMasCompras()
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("SP_ObtenerTopCliente", sql))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        var response = new List<ClientesMasCompras>();
+                        sql.Open();
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                response.Add(MapToclientes(reader));
+                            }
+                        }
+                        sql.Close();
+                        return response;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+        private ClientesMasCompras MapToclientes(SqlDataReader reader)
+        {
+            decimal total = (decimal)reader["Total"];
+            decimal TotalVenta = Math.Round(total, 2);
+
+            return new ClientesMasCompras()
+            {
+                Nombre = reader["Nombre"] == DBNull.Value ? "" : reader["Nombre"].ToString(),
+                Correo = reader["Correo"] == DBNull.Value ? "" : reader["Correo"].ToString(),
+                Total = TotalVenta,
+                NumeroVentas = reader["NumeroVentas"] == DBNull.Value ? 0 : (int)reader["NumeroVentas"]
+            };
+        }
+
 
     }
 }
