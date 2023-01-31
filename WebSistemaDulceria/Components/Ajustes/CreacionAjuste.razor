@@ -96,7 +96,7 @@
 </BSModal>
 
 <BSModal @ref="ModalAjuste" IsFullWidth="true">
-    <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalAjuste.Hide())">Selecciona venta</BSModalHeader>
+    <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalAjuste.Hide())">Selecciona ajuste inventario</BSModalHeader>
     <BSModalBody>
         @*<SelectVenta SeleccionarVenta="ObtenerAjuste" />*@
     </BSModalBody>
@@ -110,10 +110,10 @@
     <BSModalBody>
         <p>¿Está seguro de eliminar esta venta?</p>
     </BSModalBody>
-    @*<div class="modal-footer">
+    <div class="modal-footer">
             <button class="btn btn-outline-danger" @onclick="()=> ModalAlertaEliminar.Hide()"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
-            <button class="btn btn-outline-primary" @onclick="EliminarVenta"><i class="bi bi-trash mr-1 "></i>Eliminar</button>
-        </div>*@
+            <button class="btn btn-outline-primary" @onclick="EliminarAjuste"><i class="bi bi-trash mr-1 "></i>Eliminar</button>
+     </div>
 
 </BSModal>
 
@@ -194,6 +194,18 @@
         //}
     }
 
+    private void EliminarDetalle(string IdDetalle)
+    {
+        int id = Convert.ToInt32(IdDetalle);
+        var detalle = AjusteVM.DetalleAjuste.FirstOrDefault(x => x.IdDetalleAjuste == id);
+
+        if (detalle != null)
+        {
+            AjusteVM.DetalleAjuste.Remove(detalle);
+        }
+        CalcularTotales();
+    }
+
     protected void AgregarDetalle()
     {
         int IdAjusteDetalle = AjusteVM.DetalleAjuste.OrderByDescending(x => x.IdDetalleAjuste).FirstOrDefault()?.IdDetalleAjuste + 1 ?? 1;
@@ -248,6 +260,11 @@
                 BlockFormulario = true;
 
                 handleCancelar();
+                await Task.Delay(1700).ContinueWith((task) =>
+                {
+                    navigate.NavigateTo("ajusteinventario", forceLoad: true);
+                });
+
 
             }
             else
@@ -298,20 +315,25 @@
         ModalAjuste.Show();
     }
 
-    private async void handleEliminarAjuste()
+    private void handleEliminarAjuste()
+    {
+        ModalAlertaEliminar.Show();
+    }
+
+    private async void EliminarAjuste()
     {
         try
         {
-            /*
+
             Response resp = new Response();
-            resp = await service.EliminarVenta(VentaVM.IdVenta);
+            resp = await service.EliminarAjusteInventario(AjusteVM.IdAjuste);
 
             if (resp.Ok)
             {
                 await js.InvokeVoidAsync("showAlert", "success", resp.Message, "");
                 await Task.Delay(1600).ContinueWith((task) =>
                 {
-                    navigate.NavigateTo("ventas", forceLoad: true);
+                    navigate.NavigateTo("ajusteinventario", forceLoad: true);
                 });
             }
             else
@@ -319,9 +341,9 @@
                 await js.InvokeVoidAsync("showAlert", "error", resp.Message, resp.Error);
                 await Task.Delay(1600).ContinueWith((task) =>
                 {
-                    navigate.NavigateTo("ventas", forceLoad: true);
+                    navigate.NavigateTo("ajusteinventario", forceLoad: true);
                 });
-            }*/
+            }
         }
         catch (Exception ex)
         {

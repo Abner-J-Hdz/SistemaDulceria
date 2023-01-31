@@ -70,6 +70,8 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         AjusteViewModel ObtenerUnAjusteInventario(int Id);
 
+        Task<Response> EliminarAjusteInventario(int IdAjuste);
+
         #endregion
 
         #region Usuarios

@@ -1016,6 +1016,56 @@ namespace WebSistemaDulceria.Data.DulceriaService
             }
         }
 
+        public async Task<Response> EliminarAjusteInventario(int IdAjuste) 
+        {
+            Response resp = new Response();
+            try
+            {
+                var ajusteDb = context.Ajuste.FirstOrDefault(x => x.IdAjuste ==  IdAjuste);
+
+                if (ajusteDb == null)
+                {
+                    resp.Ok = false;
+                    resp.Message = "No se encontró ajuste";
+                    return resp;
+                }
+
+                var detalleAjuste = context.DetalleAjuste.Where(x => x.IdAjuste == IdAjuste).ToList();
+
+                foreach (var item in detalleAjuste)
+                {
+                    var productoTerminado = context.DetalleProductoTerminado.FirstOrDefault(x => x.IdArticuloMaterial == item.IdArticuloMaterial);
+                    int CantidaRestante = 0;
+                    if (ajusteDb.EsAjusteEntrada)
+                        CantidaRestante = productoTerminado.Cantidad - (int)item.Cantidad;
+                    else
+                        productoTerminado.Cantidad += (int)item.Cantidad;
+
+                    if (CantidaRestante < 0)
+                    {
+                        resp.Ok = true;
+                        resp.Message = $"El articulo ${productoTerminado.Articulo.Nombre} no puede quedar en un numero menor a 0";
+                        return resp;
+                    }
+                }
+
+                ajusteDb.EstaActivo = false;
+
+                await context.SaveChangesAsync();
+
+                resp.Ok = true;
+                resp.Message = "Ajuste eliminado correctamente";
+                return resp;
+            }
+            catch (Exception ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ha ocurrido un error al eliminar";
+                resp.Error = ex.Message;
+                return resp;
+            }
+        }
+
 
         #endregion
 
