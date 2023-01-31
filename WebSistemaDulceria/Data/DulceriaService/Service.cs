@@ -963,7 +963,8 @@ namespace WebSistemaDulceria.Data.DulceriaService
                         NumeroRefencia = item.NumeroRefencia,
                         FechaCreacion = item.FechaCreacion,
                         Total = item.Total,
-                        Observaciones = item.Observaciones,
+                        AjsuteEntrada = item.EsAjusteEntrada ? "Si" : "No",
+                    Observaciones = item.Observaciones,
                         usuario = new UsuarioViewModel
                         {
                             IdUsuario = item.IdUsuarioCreacion,
@@ -996,6 +997,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
                 ajuste.IdUsuarioCreacion = ajusteDb.IdUsuarioCreacion;
                 ajuste.NumeroRefencia = ajusteDb.NumeroRefencia;
                 ajuste.EsAjusteEntrada = ajusteDb.EsAjusteEntrada;
+                ajuste.AjsuteEntrada = ajusteDb.EsAjusteEntrada ? "Si" : "No";
                 ajuste.FechaCreacion = ajusteDb.FechaCreacion;
                 ajuste.Total = ajusteDb.Total;
                 ajuste.usuario = new UsuarioViewModel
@@ -1004,9 +1006,21 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     Nombre = context.Usuarios.FirstOrDefault(x => x.IdUsuario == ajusteDb.IdUsuarioCreacion)?.Nombre ?? ""
                 };
 
-
-
-
+                var ajusteDetalle = context.DetalleAjuste.Where(x => x.IdAjuste == Id).ToList();
+                ajuste.DetalleAjuste = ajusteDetalle.Select(x => new DetalleAjusteViewModel
+                {
+                    Editable = true,
+                    IdDetalleAjuste = x.IdDetalleAjuste,
+                    IdAjuste = x.IdAjuste,
+                    IdArticulo = x.IdArticuloMaterial,
+                    Costo = x.Costo,
+                    Cantidad = x.Cantidad,
+                    TotalDetalleAjuste = x.Cantidad * x.Costo,
+                    Articulo = new ArticuloViewModel { 
+                        IdArticulo = x.IdAjuste,
+                        Nombre = context.Articulo.FirstOrDefault(y=>y.IdArticulo == x.IdArticuloMaterial)?.Nombre ?? ""
+                    }
+                }).ToList();
 
                 return ajuste;
             }

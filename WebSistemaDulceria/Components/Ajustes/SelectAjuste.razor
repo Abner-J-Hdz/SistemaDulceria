@@ -1,0 +1,93 @@
+﻿@inject IService service
+
+<hr />
+<div class="row">
+    <div class="col">
+        <div class="form-inline">
+
+            @*<label class="sr-only" for="nombreCliente">nombreCliente</label>
+            <div class="input-group mb-2 mr-sm-2">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">Nombre</div>
+                </div>
+                <input type="text" @bind-value="busqueda" class="form-control" id="nombreProveedor" placeholder="Nombre proveedor">
+            </div>
+
+            <button type="button" class="btn btn-outline-primary mb-2" @onclick="BuscarProveedor">
+                <i class="bi bi-search"></i>
+            </button>*@
+        </div>
+    </div>
+</div>
+<hr />
+<span class="text-danger"> @message</span>
+<span class="text-danger"> @error</span>
+<div class="table-responsive">
+    <table class="table table-bordered  table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th scope="col">Ajuste Entrada</th>
+                <th scope="col">N° Factura</th>
+                <th scope="col">Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Ajustes)
+            {
+                <tr>
+                    <td>
+                        <button @onclick="() => handleSelectVenta(item.IdAjuste.ToString())" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-check-circle"></i>
+                        </button>
+                    </td>
+                    <td>@item.AjsuteEntrada</td>
+                    <td>@item.NumeroRefencia</td>
+                    <td>@item.FechaCreacion</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+@code {
+
+    [Parameter]
+    public EventCallback<string> SeleccionarAjuste { get; set; }
+
+    List<AjusteViewModel> Ajustes = new List<AjusteViewModel>();
+    List<AjusteViewModel> AjusteTemp = new List<AjusteViewModel>();
+
+    string message = "";
+    string error = "";
+    string busqueda = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            Ajustes = service.ObtenerAjustesinventario();
+            AjusteTemp = Ajustes;
+        }
+        catch (Exception ex)
+        {
+            message = "Ha ocurrido un error al obtener proveedores";
+            error = ex.Message;
+        }
+    }
+
+    protected void BuscarProveedor()
+    {
+        if (string.IsNullOrEmpty(busqueda))
+            Ajustes = AjusteTemp;
+        else
+            Ajustes = Ajustes.Where(x => x.usuario.Nombre.ToLower().Contains(busqueda.ToLower())).ToList();
+    }
+
+    protected void handleSelectVenta(string IdVenta)
+    {
+        SeleccionarAjuste.InvokeAsync(IdVenta);
+    }
+
+}

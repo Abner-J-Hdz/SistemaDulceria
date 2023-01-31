@@ -98,7 +98,7 @@
 <BSModal @ref="ModalAjuste" IsFullWidth="true">
     <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalAjuste.Hide())">Selecciona ajuste inventario</BSModalHeader>
     <BSModalBody>
-        @*<SelectVenta SeleccionarVenta="ObtenerAjuste" />*@
+        <SelectAjuste SeleccionarAjuste="ObtenerAjuste" />
     </BSModalBody>
     <div class="modal-footer">
         <button class="btn btn-outline-danger" @onclick="() => ModalAjuste.Hide()"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
@@ -176,7 +176,28 @@
 
     private async void ObtenerAjuste(string IdAjuste)
     {
+        try
+        {
+            mensajeError = "";
+            int id = Convert.ToInt32(IdAjuste);
+            AjusteVM = service.ObtenerUnAjusteInventario(id);
+            SoloLectura = true;
+            ModalAjuste.Hide();
+            BtnNuevo = false;
+            BtnCancelar = false;
+            BtnEliminar = false;
 
+            CalcularTotales();
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+            ModalAjuste.Hide();
+            await Task.Delay(1600).ContinueWith((task) =>
+            {
+                navigate.NavigateTo("ajusteinventario", forceLoad: true);
+            });
+        }
     }
 
     protected async void AbrirModalProducto()
@@ -282,9 +303,9 @@
 
     private void handleCancelar()
     {
-        //VentaVM = new VentaViewModel();
-        //VentaVM.Fecha = DateTime.Now;
-        //VentaDetalleViewModel = new DetalleVentaViewModel();
+        AjusteVM = new AjusteViewModel();
+        AjusteVM.FechaCreacion = DateTime.Now;
+        DetalleAjusteViewModel = new DetalleAjusteViewModel();
         BlockFormulario = true;
         BtnNuevo = false;
         BtnBuscar = false;
