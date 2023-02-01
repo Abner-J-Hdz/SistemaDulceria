@@ -57,7 +57,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         List<VentaViewModel> ObtenerVentas();
 
-        VentaViewModel ObtenerVenta(int IdVenta);
+        Task<VentaViewModel> ObtenerVenta(int IdVenta);
 
         Task<Response> EliminarVenta(int IdVenta);
 

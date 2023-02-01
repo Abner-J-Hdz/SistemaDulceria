@@ -593,7 +593,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
             }
         }
 
-        public VentaViewModel ObtenerVenta(int IdVenta)
+        public async Task<VentaViewModel> ObtenerVenta(int IdVenta)
         {
             try
             {
@@ -608,6 +608,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
                 {
                     IdVenta = ventaDb.IdVenta,
                     Fecha = ventaDb.Fecha,
+                    IdCliente = ventaDb.IdCliente,
                     NumeroRecibo = ventaDb.NumeroRecibo,
                     SubTotal = ventaDb.SubTotal,
                     Descuento = ventaDb.Descuento,
@@ -625,7 +626,8 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     ventaVM.Cliente = new ClientesViewModel
                     {
                         IdCliente = cliente.IdCliente,
-                        Nombre = cliente.Nombre
+                        Nombre = cliente.Nombre,
+                        Correo = cliente.Correo
                     };
                 }
 

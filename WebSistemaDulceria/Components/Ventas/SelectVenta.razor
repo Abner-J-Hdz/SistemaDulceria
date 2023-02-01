@@ -22,7 +22,7 @@
 <hr />
 <span class="text-danger"> @message</span>
 <span class="text-danger"> @error</span>
-<div class="table-responsive">
+<div class="table-responsive" style="max-height:400px">
     <table class="table table-bordered  table-striped table-hover">
         <thead>
             <tr>
@@ -37,10 +37,13 @@
             {
                 <tr>
                     <td>
-                        <button @onclick="() => handleSelectVenta(item.IdVenta.ToString())" class="btn btn-sm btn-outline-primary" >
+                        <button @onclick="() => handleSelectVenta(item.IdVenta.ToString())" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-check-circle"></i>
                         </button>
-                        </td>
+                        <button @onclick="() => handleVistaPrevia(item.IdVenta.ToString())" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-printer"></i>
+                        </button>
+                    </td>
                     <td>@item.Cliente.Nombre</td>
                     <td>@item.NumeroRecibo</td>
                     <td>@item.Fecha</td>
@@ -55,6 +58,10 @@
 
     [Parameter]
     public EventCallback<string> SeleccionarVenta { get; set; }
+
+    [Parameter]
+    public EventCallback<string> VistaPreviaVenta { get; set; }
+
 
     List<VentaViewModel> Ventas = new List<VentaViewModel>();
     List<VentaViewModel> VentasTemp = new List<VentaViewModel>();
@@ -88,6 +95,12 @@
     protected void handleSelectVenta(string IdVenta)
     {
         SeleccionarVenta.InvokeAsync(IdVenta);
+    }
+
+    protected void handleVistaPrevia(string IdVenta)
+    {
+        VistaPreviaVenta.InvokeAsync(IdVenta);
+
     }
 
 }
