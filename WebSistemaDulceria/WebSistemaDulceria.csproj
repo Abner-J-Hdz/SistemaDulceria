@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -12,6 +12,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Datos\Datos.csproj" />
     <ProjectReference Include="..\Entidades\Entidades.csproj" />
+    <ProjectReference Include="..\Modelo\Modelo.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Report\" />
   </ItemGroup>
 
 </Project>
