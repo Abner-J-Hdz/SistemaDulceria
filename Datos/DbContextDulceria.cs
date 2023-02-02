@@ -22,6 +22,8 @@ namespace Datos
         public DbSet<DetalleVenta> DetalleVenta { get; set; }
         public DbSet<Ajuste> Ajuste { get; set; }
         public DbSet<DetalleAjuste> DetalleAjuste { get; set; }
+        public DbSet<TipoObjecto> TipoObjecto { get; set; }
+        public DbSet<Objecto> Objecto { get; set; }
 
         public DbContextDulceria(DbContextOptions<DbContextDulceria> options) : base(options)
         {
@@ -44,6 +46,8 @@ namespace Datos
             modelBuilder.ApplyConfiguration(new DetalleVentaMap());
             modelBuilder.ApplyConfiguration(new AjusteMap());
             modelBuilder.ApplyConfiguration(new DetalleAjusteMap());
+            modelBuilder.ApplyConfiguration(new ObjectoMap());
+            modelBuilder.ApplyConfiguration(new TipoObjetoMap());
         }
     }
 }
