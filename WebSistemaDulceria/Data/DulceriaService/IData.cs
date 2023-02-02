@@ -9,8 +9,8 @@ namespace WebSistemaDulceria.Data.DulceriaService
 {
     interface IData
     {
-        List<ArticuloViewModel> ArticulosVendidos();
+        List<ArticuloViewModel> ArticulosVendidos(DateTime fechaInicio, DateTime fechaFin);
 
-        List<ClientesMasCompras> ClientesMasCompras();
+        List<ClientesMasCompras> ClientesMasCompras(DateTime fechaInicio, DateTime fechaFin);
     }
 }

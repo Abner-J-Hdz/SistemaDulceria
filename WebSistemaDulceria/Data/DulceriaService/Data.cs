@@ -19,7 +19,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
             connectionString = configuration.GetConnectionString("ConexionDulceria");
         }
 
-        public List<ArticuloViewModel> ArticulosVendidos()
+        public List<ArticuloViewModel> ArticulosVendidos(DateTime fechaInicio, DateTime fechaFin)
         {
             try
             {
@@ -28,6 +28,9 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     using (SqlCommand cmd = new SqlCommand("SP_ObtenerArticulosVendidos", sql))
                     {
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        cmd.Parameters.Add(new SqlParameter("@FECHAINICIO", fechaInicio == null ? DateTime.Now : fechaInicio));
+                        cmd.Parameters.Add(new SqlParameter("@FECHAFIN", fechaFin == null ? DateTime.Now : fechaFin ));
+
                         var response = new List<ArticuloViewModel>();
                         sql.Open();
 
@@ -64,7 +67,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
             };
         }
 
-        public List<ClientesMasCompras> ClientesMasCompras()
+        public List<ClientesMasCompras> ClientesMasCompras(DateTime fechaInicio, DateTime fechaFin)
         {
             try
             {
@@ -73,7 +76,11 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     using (SqlCommand cmd = new SqlCommand("SP_ObtenerTopCliente", sql))
                     {
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        cmd.Parameters.Add(new SqlParameter("@FECHAINICIO", fechaInicio == null ? DateTime.Now : fechaInicio));
+                        cmd.Parameters.Add(new SqlParameter("@FECHAFIN", fechaFin == null ? DateTime.Now : fechaFin));
+
                         var response = new List<ClientesMasCompras>();
+
                         sql.Open();
 
                         using (var reader = cmd.ExecuteReader())

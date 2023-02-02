@@ -10,7 +10,22 @@
 @using Syncfusion.Blazor.Layouts
 
 <h3 class="text-primary">Dashboard</h3>
-
+<div class="row">
+    <div class="col-md-4 mr-auto ml-auto" style="">
+        <EditForm EditContext="EditContext"  >
+            <div class="row">
+                <div class="col">
+                    <label>Fecha inicio</label>
+                    <InputDate @bind-Value="fechas.fechaInicio" class="form-control" />
+                </div>
+                <div class="col">
+                    <label>Fecha fin</label>
+                    <InputDate @bind-Value="fechas.fechaFin" class="form-control" max="@DateTime.Now.ToString("yyyy-MM")" />
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-6">
 
@@ -65,6 +80,12 @@
 
 
 @code {
+    private EditContext EditContext;
+    FechasDashboard fechas = new FechasDashboard();
+
+    //fechaInicio = DateTime.Now;
+    //fechaFin = DateTime.Now;
+
     private bool isAuthenticated;
     SfChart chart1;
     string Width = "100%";
@@ -87,9 +108,23 @@
         if (!isAuthenticated)
             NavManager.NavigateTo("/login");
 
-        charData = dataService.ArticulosVendidos();
-        charBarData = dataService.ClientesMasCompras();
+
+        EditContext = new EditContext(fechas);
+        EditContext.OnFieldChanged += EditContext_OnFieldChanged;
+
+        base.OnInitialized();
+
+        charData = dataService.ArticulosVendidos(DateTime.Now,DateTime.Now);
+        charBarData = dataService.ClientesMasCompras(DateTime.Now, DateTime.Now);
     }
+
+    // Note: The OnFieldChanged event is raised for each field in the model
+    private void EditContext_OnFieldChanged(object sender, FieldChangedEventArgs e)
+    {
+        charData = dataService.ArticulosVendidos(fechas.fechaInicio, fechas.fechaFin);
+        charBarData = dataService.ClientesMasCompras(fechas.fechaInicio, fechas.fechaFin);
+    }
+
 
 
     void ChartLoad(ILoadedEventArgs Args)
