@@ -60,7 +60,7 @@
     <BSModalHeader Class="bg-danger text-white" OnClick="@(() => ModalEliminar.Hide())">Eliminar objecto</BSModalHeader>
     <BSModalBody>
         <p>
-            <span>Está seguro de eliminar el objecto <strong>@nombreObjeto</strong> ?</span>
+            <span>Está seguro de eliminar el objeto <strong>@nombreObjeto</strong> ?</span>
         </p>
     </BSModalBody>
     <div class="modal-footer">
@@ -98,11 +98,11 @@
         {
             Objectos = service.ObtenerObjecto();
             tipoObjectos = service.ObtenerTipoObjecto();
-            tipoObjectos.Insert(0, new TipoObjectoViewModel { IdTipoObjeto = 0, Nombre = "Seleccione tipo objecto" });
+            tipoObjectos.Insert(0, new TipoObjectoViewModel { IdTipoObjeto = 0, Nombre = "Seleccione tipo objeto" });
         }
         catch (Exception ex)
         {
-            message = "Ha ocurrido un error al obtener Objectos";
+            message = "Ha ocurrido un error al obtener Objetos";
             error = ex.Message;
         }
     }
