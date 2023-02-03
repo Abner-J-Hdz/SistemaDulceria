@@ -1,0 +1,113 @@
+﻿@inject IService service
+@inject NavigationManager navigate
+@inject IJSRuntime js
+
+<EditForm Model="ObjectoVM" OnValidSubmit="GuardarActualizarProveedor">
+    <DataAnnotationsValidator />
+    <span class="text-danger">@message</span>
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Nombre:</label>
+                <InputText id="txtNombre" @bind-Value="ObjectoVM.Nombre" autofocus class="form-control" />
+                <ValidationMessage For="() => ObjectoVM.Nombre" />
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="form-group">
+                <label>Código interno:</label>
+                <InputText @bind-Value="ObjectoVM.CodigoInterno" maxlength="5" class="form-control" />
+                <ValidationMessage For="() => ObjectoVM.CodigoInterno" />
+                <small id="emailHelp" class="form-text text-muted"></small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Tipo objecto:</label>
+
+                <select class="form-control"  @onchange="handleChangeTipoObjecto">
+                    @if(TipoObjectoVM != null)
+                    {
+                        @foreach (var item in TipoObjectoVM)
+                        {
+                            <option selected="@(item.IdTipoObjeto == ObjectoVM.IdTipoObjeto ? "true": "")" value="@item.IdTipoObjeto">@item.Nombre</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" @onclick="CerraModal"><i class="bi bi-x-circle mr-1"></i>  Cerrar</button>
+        <button type="submit" class="btn btn-outline-primary"><i class="bi bi-save mt-1"></i>  @LabelButton</button>
+    </div>
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public ObjectoViewModel ObjectoVM { get; set; }
+
+    [Parameter]
+    public List<TipoObjectoViewModel> TipoObjectoVM { get; set; }
+
+    [Parameter]
+    public EventCallback CerraModal { get; set; }
+
+    [Parameter]
+    public EventCallback RecargarListado { get; set; }
+
+    string LabelButton = "";
+
+    string message = "";
+    public Response respuesta { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (ObjectoVM.IdObjeto == 0)
+            LabelButton = "Guardar";
+        else
+            LabelButton = "Actualizar";
+
+        await js.InvokeVoidAsync("focusElementById", "txtNombre");
+    }
+
+    protected async Task GuardarActualizarProveedor()
+    {
+        if (ObjectoVM.IdTipoObjeto == 0)
+        {
+            message = "Selecciona un tipo objecto";
+            return;
+        }
+        message = "";
+        if (ObjectoVM.IdObjeto == 0 && ObjectoVM.IdTipoObjeto != 0)
+            respuesta = await service.GuardarObjecto(ObjectoVM);
+        else
+            respuesta = await service.ActualizarObjeto(ObjectoVM);
+
+        if (respuesta.Ok)
+        {
+            await js.InvokeVoidAsync("showAlert", "success", respuesta.Message, "");
+            await Task.Delay(1600).ContinueWith((task) =>
+            {
+                navigate.NavigateTo("objectos", forceLoad: true);
+            });
+            await CerraModal.InvokeAsync(true);
+        }
+        else
+        {
+            await CerraModal.InvokeAsync(true);
+        }
+    }
+
+    private void handleChangeTipoObjecto(ChangeEventArgs e)
+    {
+        ObjectoVM.IdTipoObjeto = Convert.ToInt32(e.Value as string);
+    }
+
+}

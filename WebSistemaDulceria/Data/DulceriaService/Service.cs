@@ -1336,6 +1336,42 @@ namespace WebSistemaDulceria.Data.DulceriaService
             }
         }
 
+        public async Task<Response> ActualizarObjeto(ObjectoViewModel objectoVM)
+        {
+            Response resp = new Response();
+            try
+            {
+                var objetoDb = context.Objecto.FirstOrDefault(x => x.IdObjeto == objectoVM.IdObjeto);
+
+                if (objetoDb  == null)
+                {
+                    resp.Ok = true;
+                    resp.Message = "No se encontró objeto";
+                    return resp;
+                }
+
+                objetoDb.CodigoInterno = objectoVM.CodigoInterno;
+                objetoDb.Nombre = objectoVM.Nombre;
+                objetoDb.IdTipoObjeto = objectoVM.IdTipoObjeto;
+                objetoDb.EstaActivo = true;
+                objetoDb.FechaModificacion = DateTime.Now;
+                objetoDb.IdUsuarioModificacion = 1;
+
+                await context.SaveChangesAsync();
+                resp.Ok = true;
+                resp.Message = "Objecto creado correctamente";
+                return resp;
+            }
+            catch (Exception ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ha ocurrido un error al guardar objecto";
+                resp.Error = ex.Message;
+                return resp;
+            }
+        }
+
+
         public List<TipoObjectoViewModel> ObtenerTipoObjecto()
         {
             try
@@ -1379,6 +1415,31 @@ namespace WebSistemaDulceria.Data.DulceriaService
             }
         }
 
+        public async Task<Response> EliminarObjeto(int idObjecto)
+        {
+            Response resp = new Response();
+
+            try
+            {
+                var objeto = await context.Objecto.FirstOrDefaultAsync(x => x.IdObjeto == idObjecto);
+
+                if (objeto == null)
+                    throw new Exception("No se encontró objeto");
+
+                objeto.EstaActivo = false;
+                await context.SaveChangesAsync();
+                resp.Ok = true;
+                resp.Message = "Eliminado con éxito"; ;
+                return resp;
+            }
+            catch (Exception ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ha ocurrido un error al eliminar objeto";
+                resp.Error = ex.Message;
+                return resp;
+            }
+        }
 
 
         #endregion

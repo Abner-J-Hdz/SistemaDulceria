@@ -96,6 +96,11 @@ namespace WebSistemaDulceria.Data.DulceriaService
         List<TipoObjectoViewModel> ObtenerTipoObjecto();
 
         List<ObjectoViewModel> ObtenerObjecto();
+
+        Task<Response> ActualizarObjeto(ObjectoViewModel objectoVM);
+
+        Task<Response> EliminarObjeto(int idObjecto);
+
         #endregion
 
     }

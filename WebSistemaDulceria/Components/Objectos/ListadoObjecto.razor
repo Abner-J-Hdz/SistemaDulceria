@@ -1,1 +1,175 @@
 ﻿
+
+@inject IService service
+@inject IJSRuntime js
+@inject NavigationManager navigate
+<div class="d-flex  justify-content-between mb-2" style="">
+    <div>
+        <h2 class="text-primary">Objetos</h2>
+    </div>
+    <div class="align-content-end">
+        <button title="Nuevo proveedor" type="button" class="btn btn-outline-info" @onclick="NuevoObjecto">
+            <i class="bi bi-plus-circle m-1"></i> Nuevo
+        </button>
+    </div>
+</div>
+
+<span class="text-danger">@message</span>
+<span class="text-danger">@error</span>
+
+<table class="table table-bordered  table-striped table-hover">
+    <thead>
+        <tr>
+            <th></th>
+            <th scope="col">CodInterno</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Tipo Objecto</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Objectos)
+        {
+            <tr>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" title="Editar" @onclick="@(e => EditaProveedor(e, item.IdObjeto))"><i class="bi bi-pencil-square"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" title="Eliminar" @onclick="@(e => AlertaEliminarProveedor(e, item.IdObjeto, item.Nombre))"><i class="bi bi-trash"></i></button>
+                </td>
+                <td>@item.CodigoInterno</td>
+                <td>@item.Nombre</td>
+                <td>@item.TipoObjecto.Nombre</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<BSModal @ref="ModalEdit" Size="Size.Large">
+    <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalEdit.Hide())">Editar objeto</BSModalHeader>
+    <BSModalBody>
+        <FormularioObjecto ObjectoVM="@objectoEdit" TipoObjectoVM="tipoObjectos" CerraModal="CerrarModalNuevo"></FormularioObjecto>
+    </BSModalBody>
+</BSModal>
+
+<BSModal @ref="ModalNuevo" Size="Size.Large">
+    <BSModalHeader OnClick="@(() => ModalNuevo.Hide())">Nuevo Objeto</BSModalHeader>
+    <BSModalBody>
+        <FormularioObjecto ObjectoVM="@objectoNuevo" TipoObjectoVM="tipoObjectos" CerraModal="CerrarModalNuevo" ></FormularioObjecto>
+    </BSModalBody>
+</BSModal>
+
+<BSModal @ref="ModalEliminar" Size="Size.Small">
+    <BSModalHeader Class="bg-danger text-white" OnClick="@(() => ModalEliminar.Hide())">Eliminar objecto</BSModalHeader>
+    <BSModalBody>
+        <p>
+            <span>Está seguro de eliminar el objecto <strong>@nombreObjeto</strong> ?</span>
+        </p>
+    </BSModalBody>
+    <div class="modal-footer">
+        <button class="btn btn-outline-danger" @onclick="CerrarModalEliminar"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
+        <button class="btn btn-outline-primary" @onclick="EliminarObjecto"><i class="bi bi-trash mr-1 "></i>Eliminar</button>
+    </div>
+</BSModal>
+
+@code{
+
+    BSModal ModalEdit { get; set; }
+    BSModal ModalNuevo { get; set; }
+    BSModal ModalEliminar { get; set; }
+
+    List<ObjectoViewModel> Objectos = new List<ObjectoViewModel>();
+    List<TipoObjectoViewModel> tipoObjectos = new List<TipoObjectoViewModel>();
+
+    ObjectoViewModel objectoEdit = new ObjectoViewModel();
+
+    string message = "";
+    string error = "";
+    string nombreObjeto = "";
+    int idProveedorEliminar = 0;
+
+    ObjectoViewModel objectoNuevo = new ObjectoViewModel();
+
+    protected void NuevoObjecto()
+    {
+        ModalNuevo.Show();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            Objectos = service.ObtenerObjecto();
+            tipoObjectos = service.ObtenerTipoObjecto();
+            tipoObjectos.Insert(0, new TipoObjectoViewModel { IdTipoObjeto = 0, Nombre = "Seleccione tipo objecto" });
+        }
+        catch (Exception ex)
+        {
+            message = "Ha ocurrido un error al obtener Objectos";
+            error = ex.Message;
+        }
+    }
+
+    protected void EditaProveedor(EventArgs e, int IdProveedor)
+    {
+        objectoEdit = Objectos.FirstOrDefault(x => x.IdObjeto == IdProveedor);
+        ModalEdit.Show();
+    }
+
+    protected void CerrarModalNuevo()
+    {
+        ModalNuevo.Hide();
+    }
+
+    protected void CerrarModalEdit()
+    {
+        ModalEdit.Hide();
+    }
+
+    protected async void RecargarListadoProveedores()
+    {
+        try
+        {
+            //Objectos = await service.ObtenerProveedores();
+        }
+        catch (Exception ex)
+        {
+            message = "Ha ocurrido un error al obtener proveedores";
+            error = ex.Message;
+        }
+    }
+
+    protected void AlertaEliminarProveedor(EventArgs e, int IdProveedor, string nombreProveedorEliminar)
+    {
+        ModalEliminar.Show();
+        nombreObjeto = nombreProveedorEliminar;
+        idProveedorEliminar = IdProveedor;
+    }
+
+    protected void CerrarModalEliminar()
+    {
+        idProveedorEliminar = 0;
+
+        ModalEliminar.Hide();
+    }
+
+    protected async void EliminarObjecto()
+    {
+        try
+        {
+            var respuesta = await service.EliminarObjeto(idProveedorEliminar);
+            if (respuesta.Ok)
+            {
+                await js.InvokeVoidAsync("showAlert", "success", respuesta.Message, "");
+                CerrarModalEliminar();
+                await Task.Delay(1600).ContinueWith((task) =>
+                {
+                    navigate.NavigateTo("objectos", forceLoad: true);
+                });
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+}
