@@ -90,5 +90,13 @@ namespace WebSistemaDulceria.Data.DulceriaService
         Task<Response> CambiarContraseña(string email, string password);
         #endregion
 
+        #region TblObjecto
+        Task<Response> GuardarObjecto(ObjectoViewModel objectoVM);
+
+        List<TipoObjectoViewModel> ObtenerTipoObjecto();
+
+        List<ObjectoViewModel> ObtenerObjecto();
+        #endregion
+
     }
 }

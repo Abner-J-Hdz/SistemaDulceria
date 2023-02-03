@@ -1111,7 +1111,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
             catch (Exception ex)
             {
                 resp.Ok = false;
-                resp.Message = "Ha ocurrido un error al eliminar usuario";
+                resp.Message = "Ha ocurrido un error al guardar usuario";
                 resp.Error = ex.Message;
                 return resp;
             }
@@ -1300,7 +1300,88 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         #endregion
 
+        #region TblObjecto
 
+        public async Task<Response> GuardarObjecto(ObjectoViewModel objectoVM)
+        {
+            Response resp = new Response();
+            try
+            {
+                Objecto objectoDb = new Objecto
+                {
+                    CodigoInterno = objectoVM.CodigoInterno,
+                    Nombre = objectoVM.Nombre,
+                    IdTipoObjeto = objectoVM.IdTipoObjeto,
+                    EstaActivo = true,
+
+                    FechaCreacion = DateTime.Now,
+                    IdUsuarioCreacion = 1,
+                    FechaModificacion = DateTime.Now,
+                    IdUsuarioModificacion = 1                    
+                };
+
+                context.Objecto.Add(objectoDb);
+
+                await context.SaveChangesAsync();
+                resp.Ok = true;
+                resp.Message = "Objecto creado correctamente";
+                return resp;
+            }
+            catch (Exception ex)
+            {
+                resp.Ok = false;
+                resp.Message = "Ha ocurrido un error al guardar objecto";
+                resp.Error = ex.Message;
+                return resp;
+            }
+        }
+
+        public List<TipoObjectoViewModel> ObtenerTipoObjecto()
+        {
+            try
+            {
+                return context.TipoObjecto.Where(x => x.EstaActivo).Select(x => new TipoObjectoViewModel
+                {
+                    CodigoInterno = x.CodigoInterno,
+                    IdTipoObjeto = x.IdTipoObjeto,
+                    Nombre = x.Nombre,
+                    Descripcion = x.Descripcion,
+                }).ToList();
+                //return new List<TipoObjectoViewModel>();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        public List<ObjectoViewModel> ObtenerObjecto()
+        {
+            try
+            {
+                return context.Objecto.Where(x => x.EstaActivo).Select(x => new ObjectoViewModel
+                {
+                    IdObjeto = x.IdObjeto,
+                    CodigoInterno = x.CodigoInterno,
+                    IdTipoObjeto = x.IdTipoObjeto,
+                    Nombre = x.Nombre,
+                    TipoObjecto = new TipoObjectoViewModel
+                    {
+                        IdTipoObjeto = x.IdTipoObjeto,
+                        Nombre = context.TipoObjecto.FirstOrDefault(t => t.IdTipoObjeto == x.IdTipoObjeto).Nombre ?? "",
+                    }
+                }).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+
+
+        #endregion
     }
 }
 

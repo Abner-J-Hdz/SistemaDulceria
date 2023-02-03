@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Entidades.DulceriaEntidades
+namespace WebSistemaDulceria.Models.DulceriaModels
 {
-    public class Objecto
+    public class ObjectoViewModel
     {
         public int IdObjeto { get; set; }
         [Required]
@@ -19,5 +20,7 @@ namespace Entidades.DulceriaEntidades
         public int IdUsuarioCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
         public int IdUsuarioModificacion { get; set; }
+
+        public TipoObjectoViewModel TipoObjecto { get; set; } = new TipoObjectoViewModel();
     }
 }
