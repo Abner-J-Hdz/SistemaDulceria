@@ -129,7 +129,6 @@
         <button class="btn btn-outline-danger" @onclick="()=> ModalAlertaEliminar.Hide()"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
         <button class="btn btn-outline-primary" @onclick="EliminarVenta"><i class="bi bi-trash mr-1 "></i>Eliminar</button>
     </div>
-
 </BSModal>
 
 <BSModal @ref="ModalReporte"  IsFullWidth="true" >
@@ -229,15 +228,13 @@
         </div>
     </BSModalBody>
     <div class="modal-footer">
-        @*crearPDF()*@
-        <button class="btn btn-outline-danger" @onclick="()=> ModalReporte.Hide()"><i class="bi bi-x-circle mr-1"></i>Cancelar</button>
+        <button class="btn btn-outline-danger" @onclick="CancelarModalFactura"><i class="bi bi-x-circle mr-1"></i>Cancelar</button>
         <button class="btn btn-outline-primary" @onclick="Imprimir"><i class="bi bi-printer mr-1 "></i>Imprimir</button>
     </div>
 </BSModal>
 
-
 @code {
-
+    #region Variables
     VentaViewModel VentaVM = new VentaViewModel();
     VentaViewModel VentaReporte = new VentaViewModel();
     DetalleVentaViewModel VentaDetalleViewModel = new DetalleVentaViewModel();
@@ -269,6 +266,7 @@
     string error = "";
 
     public Response respuesta { get; set; }
+    #endregion
 
     protected override void OnInitialized()
     {
@@ -326,9 +324,9 @@
             IdArticulo = VentaDetalleViewModel.Articulo.IdArticulo,
             Cantidad = 1,
             Articulo = VentaDetalleViewModel.Articulo,
-            Precio = VentaDetalleViewModel.Articulo.Precios.FirstOrDefault()?.PrecioVenta ?? 0,
-            SubTotal = total,
-            Total = total
+            Precio = Math.Round(VentaDetalleViewModel.Articulo.Precios.FirstOrDefault()?.PrecioVenta ?? 0),
+            SubTotal = Math.Round(total),
+            Total = Math.Round(total)
         }
         );
         VentaDetalleViewModel = new DetalleVentaViewModel();
@@ -381,6 +379,11 @@
         subtotal = VentaVM.DetalleVenta.Sum(x => x.SubTotal);
         impuesto = VentaVM.DetalleVenta.Sum(x => x.Iva);
         descuento = VentaVM.DetalleVenta.Sum(x => x.Descuento);
+
+        total = Math.Round(total, 2);
+        subtotal = Math.Round(subtotal, 2);
+        impuesto = Math.Round(impuesto, 2);
+        descuento = Math.Round(descuento, 2);
     }
 
     private async void handleGuardar()
@@ -436,7 +439,6 @@
             mensajeError = "Ha ocurrido un error al obtener proveedores";
             error = ex.Message;
         }
-
     }
 
     private void handleCancelar()
@@ -532,5 +534,10 @@
     private async void Imprimir()
     {
         await js.InvokeVoidAsync("crearPDF");
+    }
+
+    private void CancelarModalFactura()
+    {
+        navigate.NavigateTo("Ventas", forceLoad: true);
     }
 }

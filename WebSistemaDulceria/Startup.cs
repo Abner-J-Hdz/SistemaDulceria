@@ -38,9 +38,20 @@ namespace WebSistemaDulceria
             services.AddSyncfusionBlazor();
             services.AddControllers();///para añadir y gestionar controladores
 
+            services.AddAuthorization();
             ///servicio de autenticacion de ASP.NET
+            ///
+
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie();///AddCookie() MANTENDRÁ EL ESTADO DE LA AUTENTICACION
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/login";
+                });
+
+
+            //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                //.AddCookie();
+            ///AddCookie() MANTENDRÁ EL ESTADO DE LA AUTENTICACION
             /*services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {

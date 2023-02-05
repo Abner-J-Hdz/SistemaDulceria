@@ -106,7 +106,7 @@
     {
         isAuthenticated = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Identity.IsAuthenticated;
         if (!isAuthenticated)
-            NavManager.NavigateTo("/login");
+            NavManager.NavigateTo("/login/");
 
 
         EditContext = new EditContext(fechas);

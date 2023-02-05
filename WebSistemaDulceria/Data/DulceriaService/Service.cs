@@ -610,10 +610,10 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     Fecha = ventaDb.Fecha,
                     IdCliente = ventaDb.IdCliente,
                     NumeroRecibo = ventaDb.NumeroRecibo,
-                    SubTotal = ventaDb.SubTotal,
-                    Descuento = ventaDb.Descuento,
-                    Iva = ventaDb.Iva,
-                    Total = ventaDb.Total,
+                    SubTotal = Math.Round(ventaDb.SubTotal),
+                    Descuento = Math.Round(ventaDb.Descuento),
+                    Iva = Math.Round(ventaDb.Iva),
+                    Total = Math.Round(ventaDb.Total),
                 };
                 ventaVM.DetalleVenta = new List<DetalleVentaViewModel>();
 
@@ -639,12 +639,12 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     IdDetalleVenta = x.IdDetalleVenta,
                     IdVenta = x.IdVenta,
                     IdArticulo = x.IdArticulo,
-                    Cantidad = x.Cantidad,
-                    Precio = x.Precio,
-                    SubTotal = x.SubTotal,
-                    Descuento = x.Descuento,
-                    Iva = x.Iva,
-                    Total = (x.Iva + x.SubTotal) - x.Descuento,
+                    Cantidad = Math.Round(x.Cantidad, 2),
+                    Precio = Math.Round(x.Precio),
+                    SubTotal = Math.Round(x.SubTotal),
+                    Descuento = Math.Round( x.Descuento, 2),
+                    Iva = Math.Round(x.Iva),
+                    Total = Math.Round(((x.Iva + x.SubTotal) - x.Descuento), 2),
                     Articulo = new ArticuloViewModel
                     {
                         IdArticulo = x.IdArticulo,

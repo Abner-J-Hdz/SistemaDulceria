@@ -1,5 +1,9 @@
 ﻿@inherits LayoutComponentBase
 @inject IBootstrapCSS BootrapCSS
+
+
+<div class="main">
+
     <AuthorizeView>
         <Authorized>
             <div class="sidebar">
@@ -9,14 +13,14 @@
     </AuthorizeView>
 
 
-<div class="main">
+
     <div class="top-row px-4">
         <AuthorizeView>
             <Authorized>
                 <span class="ml-md-auto">
-                    
+
                     <i class="bi bi-person-bounding-box"></i>
-                    <a href="/cambiaracceso"><span id="User-Email" >@context.User.Identity.Name</span></a> 
+                    <a href="/cambiaracceso"><span id="User-Email">@context.User.Identity.Name</span></a>
                     <a href="/account/logout"><i class="bi bi-box-arrow-in-right mr-1"></i> Log out</a>
                 </span>
             </Authorized>
@@ -28,13 +32,14 @@
             <NotAuthorized>
                 <div class="row">
                     <div class="col-auto mx-auto">
+                        <span id="NoLogin"></span>
                         <a href="login" class="ml-md-auto">Inicia Sesion</a>
                     </div>
                 </div>
             </NotAuthorized>
         </AuthorizeView>
 
-                @Body
+        @Body
 
     </div>
 </div>
@@ -61,5 +66,7 @@
         {
             await BootrapCSS.SetBootstrapCSS("4.3.1");
         }
+
+        
     }
 }

@@ -27,6 +27,18 @@ function getUserEmail() {
     return document.getElementById('User-Email').innerHTML;
 }
 
+function verifyLogin() {
+    let xd = document.getElementById('NoLogin')
+    if (xd != null) {
+        console.log('redirect');
+        window.location.href = '/login'
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    verifyLogin();
+});
+
 
 /*
 function enabledElement(elements) {
