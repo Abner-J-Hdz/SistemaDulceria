@@ -1,9 +1,5 @@
 ﻿@inherits LayoutComponentBase
 @inject IBootstrapCSS BootrapCSS
-
-
-<div class="main">
-
     <AuthorizeView>
         <Authorized>
             <div class="sidebar">
@@ -12,61 +8,65 @@
         </Authorized>
     </AuthorizeView>
 
+    <div class="main">
 
 
-    <div class="top-row px-4">
-        <AuthorizeView>
-            <Authorized>
-                <span class="ml-md-auto">
 
-                    <i class="bi bi-person-bounding-box"></i>
-                    <a href="/cambiaracceso"><span id="User-Email">@context.User.Identity.Name</span></a>
-                    <a href="/account/logout"><i class="bi bi-box-arrow-in-right mr-1"></i> Log out</a>
-                </span>
-            </Authorized>
-        </AuthorizeView>
-    </div>
 
-    <div class="content px-4 imageBackgroung">
-        <AuthorizeView>
-            <NotAuthorized>
-                <div class="row">
-                    <div class="col-auto mx-auto">
-                        <span id="NoLogin"></span>
-                        <a href="login" class="ml-md-auto">Inicia Sesion</a>
+
+        <div class="top-row px-4">
+            <AuthorizeView>
+                <Authorized>
+                    <span class="ml-md-auto">
+
+                        <i class="bi bi-person-bounding-box"></i>
+                        <a href="/cambiaracceso"><span id="User-Email">@context.User.Identity.Name</span></a>
+                        <a href="/account/logout"><i class="bi bi-box-arrow-in-right mr-1"></i> Log out</a>
+                    </span>
+                </Authorized>
+            </AuthorizeView>
+        </div>
+
+        <div class="content px-4 imageBackgroung">
+            <AuthorizeView>
+                <NotAuthorized>
+                    <div class="row">
+                        <div class="col-auto mx-auto">
+                            <span id="NoLogin"></span>
+                            <a href="login" class="ml-md-auto">Inicia Sesion</a>
+                        </div>
                     </div>
-                </div>
-            </NotAuthorized>
-        </AuthorizeView>
+                </NotAuthorized>
+            </AuthorizeView>
 
-        @Body
+            @Body
 
+        </div>
     </div>
-</div>
 
 
-@code{
-    private bool isServerSide = true;
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    try
-    //    {
-    //        await BootrapCSS.SetBootstrapCSS("4.3.1");
-    //    }
-    //    catch (Exception )
-    //    {
-    //        isServerSide = true;
-    //        throw;
-    //    }
-    //}
+    @code{
+        private bool isServerSide = true;
+        //protected override async Task OnInitializedAsync()
+        //{
+        //    try
+        //    {
+        //        await BootrapCSS.SetBootstrapCSS("4.3.1");
+        //    }
+        //    catch (Exception )
+        //    {
+        //        isServerSide = true;
+        //        throw;
+        //    }
+        //}
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (isServerSide && firstRender)
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await BootrapCSS.SetBootstrapCSS("4.3.1");
-        }
+            if (isServerSide && firstRender)
+            {
+                await BootrapCSS.SetBootstrapCSS("4.3.1");
+            }
 
-        
+
+        }
     }
-}

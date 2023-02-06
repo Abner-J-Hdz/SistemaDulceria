@@ -27,6 +27,12 @@ namespace WebSistemaDulceria.Controllers
         {
             try
             {
+                if(string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email))
+                {
+                    return LocalRedirect("/");
+                }
+
+
                 EncryptMd5 encrypt = new EncryptMd5();
 
                 var usuario = _context.Usuarios.FirstOrDefault(x => x.Email == email);

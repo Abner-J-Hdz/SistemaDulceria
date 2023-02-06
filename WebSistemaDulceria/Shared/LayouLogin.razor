@@ -1,8 +1,20 @@
 ﻿@inherits LayoutComponentBase
 
-<div class=" container" style="height:100vh; width: 100vw">
-    @Body
-</div>
-@code {
+    <style>
+        .backgroundLogin {
+            background: rgb(33,21,242);
+            background: linear-gradient(357deg, rgb(33 21 242 / 77%) 0%, rgba(45,129,231,0.34226190476190477) 100%, rgba(0,212,255,1) 100%)
+        }
+        .imageBackground {
+            background-image: url(../img/Cajetas.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+    <div class="imageBackground container-fluid" style="height:100vh; width: 100vw">
+        @Body
+    </div>
+    @code {
 
-}
+    }

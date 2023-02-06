@@ -561,7 +561,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
             List<VentaViewModel> ventas = new List<VentaViewModel>();
             try
             {
-                var ventasDb = context.Venta.Where(x => x.EstaActiva).ToList();
+                var ventasDb = context.Venta.Where(x => x.EstaActiva).OrderByDescending(x => x.IdVenta).ToList();
 
                 foreach (var item in ventasDb)
                 {
