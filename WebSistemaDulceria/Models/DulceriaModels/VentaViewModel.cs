@@ -48,5 +48,9 @@ namespace WebSistemaDulceria.Models.DulceriaModels
         public ClientesViewModel Cliente { get; set; } = new ClientesViewModel();
 
         public List<DetalleVentaViewModel> DetalleVenta { get; set; } = new List<DetalleVentaViewModel>();
+
+
+        public decimal CantidadArticulos { get; set; }
+
     }
 }

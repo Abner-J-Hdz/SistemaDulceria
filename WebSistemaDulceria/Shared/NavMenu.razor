@@ -60,6 +60,20 @@
             </NavLink>
         </li>
 
+        <li  class="nav-item px-3">
+            <NavLink class="nav-link" @onclick="()=>expandSubNav = !expandSubNav">
+                <i class="bi bi-file-earmark-ruled-fill mr-3"></i>Reportes
+            </NavLink>
+            @if (expandSubNav)
+            {
+                <span class="nav-item px-3">
+                    <NavLink class="nav-link" href="/reporteVentas">
+                        <i class="ml-3 bi bi-arrow-right mr-3"></i> Ventas del día
+                    </NavLink>
+                </span>
+            }
+        </li>
+
     </ul>
 </div>
 
@@ -67,6 +81,8 @@
     private bool collapseNavMenu = true;
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private bool expandSubNav;
 
     private void ToggleNavMenu()
     {

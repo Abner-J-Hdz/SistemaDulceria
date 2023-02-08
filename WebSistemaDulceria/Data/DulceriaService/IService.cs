@@ -52,6 +52,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
         #endregion
 
         #region Ventas
+        List<VentaViewModel> ObtenerVentasDeDia();
 
         Task<Response> GuardarVentas(VentaViewModel ventaVM);
 

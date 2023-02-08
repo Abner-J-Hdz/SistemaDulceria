@@ -556,6 +556,53 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         #region Ventas
 
+        public List<VentaViewModel> ObtenerVentasDeDia()
+        {
+            List<VentaViewModel> ventas = new List<VentaViewModel>();
+            try
+            {
+                var fecha = DateTime.Today;
+                var ventasDb = context.Venta.Where(x => x.EstaActiva && x.Fecha.Date == fecha )
+                    .OrderByDescending(x => x.IdVenta).ToList();
+
+                foreach (var item in ventasDb)
+                {
+                    ///obtener el detalle para obtener la cantidad de articulos
+
+                    var detalleVentas = context.DetalleVenta.Where(x => x.IdVenta == item.IdVenta).ToList();
+
+                    ventas.Add(new VentaViewModel
+                    {
+                        IdVenta = item.IdVenta,
+                        IdCliente = item.IdCliente,
+
+                        NumeroRecibo = item.NumeroRecibo,
+                        Fecha = item.Fecha,
+
+                        SubTotal = Math.Round(item.SubTotal,2),
+                        Descuento = Math.Round(item.Descuento,2),
+                        Total = Math.Round(item.Total,2),
+                        Iva = Math.Round(item.Iva,2),
+
+                        CantidadArticulos = Math.Round( item.DetalleVenta.Sum(x => x.Cantidad), 2),
+
+                        Cliente = new ClientesViewModel
+                        {
+                            IdCliente = item.IdCliente,
+                            Nombre = context.Clientes.FirstOrDefault(x => x.IdCliente == item.IdCliente)?.Nombre ?? ""
+                        },
+                    });
+                }
+                return ventas;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+
+
         public List<VentaViewModel> ObtenerVentas()
         {
             List<VentaViewModel> ventas = new List<VentaViewModel>();
