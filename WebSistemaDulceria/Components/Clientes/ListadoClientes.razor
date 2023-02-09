@@ -45,14 +45,14 @@
 </table>
 
 <BSModal @ref="ModalEdit" Size="Size.Large">
-    <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalEdit.Hide())">Editar Proveedor</BSModalHeader>
+    <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalEdit.Hide())">Editar cliente</BSModalHeader>
     <BSModalBody>
         <FormularioCliente ClienteVM="@clienteEdit" CerraModal="CerrarModalEdit" RecargarListado="RecargarListadoCliente" />
     </BSModalBody>
 </BSModal>
 
 <BSModal @ref="ModalNuevo" Size="Size.Large">
-    <BSModalHeader OnClick="@(() => ModalNuevo.Hide())">Nuevo Proveedor</BSModalHeader>
+    <BSModalHeader OnClick="@(() => ModalNuevo.Hide())">Nuevo cliente</BSModalHeader>
     <BSModalBody>
         <FormularioCliente ClienteVM="@ClienteNuevo" CerraModal="CerrarModalNuevo" />
     </BSModalBody>

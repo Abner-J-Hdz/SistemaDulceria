@@ -170,10 +170,10 @@ namespace WebSistemaDulceria.Data.DulceriaService
                         z => new PreciosViewModel
                         {
                             IdArticuloPrecio = z.IdArticuloPrecio,
-                            PrecioCosto = z.PrecioCosto,
-                            PrecioInicial =z.PrecioInicial,
+                            PrecioCosto = Math.Round( z.PrecioCosto, 2),
+                            PrecioInicial = z.PrecioInicial,
                             MargenGanancia = z.MargenGanancia,
-                            PrecioVenta = z.PrecioVenta
+                            PrecioVenta = Math.Round(z.PrecioVenta, 2)
                         }).ToList() ?? new List<PreciosViewModel>(),
                     Lote = context.Lote.Where( y => y.IdArticulo == x.IdArticulo).Select(
                         z => new  LoteViewModel
@@ -207,10 +207,10 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     Nombre = articuloVM.Nombre,
                     CodBarra = articuloVM.CodBarra,
                     CodInterno = articuloVM.CodInterno,
-                    TieneVencimiento = articuloVM.TieneVencimiento,
-                    EsMenudeo = articuloVM.EsMenudeo,
-                    CantidadMenudeo = articuloVM.CantidadMenudeo,
-                    EsProductoTerminado = articuloVM.EsProductoTerminado,
+                    TieneVencimiento = false,//articuloVM.TieneVencimiento,
+                    EsMenudeo = false,//articuloVM.EsMenudeo,
+                    CantidadMenudeo = false, //articuloVM.CantidadMenudeo,
+                    EsProductoTerminado = true,//articuloVM.EsProductoTerminado,
                     IdUnidadMedida = 1,
                     IdPresentacion = 1,
                     EstaActivo = true,
