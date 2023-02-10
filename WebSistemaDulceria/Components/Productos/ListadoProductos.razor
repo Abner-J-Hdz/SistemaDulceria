@@ -49,8 +49,8 @@
                     <td>@item.CodInterno</td>
                     <td>@item.Nombre</td>
                     <td>@item.CodBarra</td>
-                    <td>@(item.Precios.FirstOrDefault()?.PrecioCosto?? 0)</td>
-                    <td>@(item.Precios.FirstOrDefault()?.PrecioVenta ?? 0)</td>
+                    <td>@( Math.Round((item.Precios.FirstOrDefault()?.PrecioCosto ?? 0),2))</td>
+                    <td>@( Math.Round((item.Precios.FirstOrDefault()?.PrecioVenta ?? 0),2))</td>
                     @*<td>@(item.Lote.FirstOrDefault()?.Cantidad ?? 0)</td>*@
                     <td>@(item.DetalleProductoTerminado.FirstOrDefault()?.Cantidad ?? 0)</td>
                 </tr>
@@ -72,7 +72,6 @@
         <FormularioArticulo ArticuloVM="articuloEdit" CerraModal="CerrarModalEdit" />
     </BSModalBody>
 </BSModal>
-
 
 <BSModal @ref="ModalEliminar" Size="Size.Small">
     <BSModalHeader Class="bg-danger text-white" OnClick="@(() => ModalEliminar.Hide())">Eliminar articulo</BSModalHeader>
