@@ -1,0 +1,109 @@
+﻿@inject IService service
+
+<hr />
+<div class="row">
+    <div class="col">
+        <div class="form-inline">
+
+            <label class="sr-only" for="nombreProveedor">nombreProveedor</label>
+            <div class="input-group mb-2 mr-sm-2">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">Nombre</div>
+                </div>
+                <input type="text" @bind-value="busqueda" class="form-control" id="txtbusquedaArticulo" placeholder="">
+            </div>
+
+            <button type="button" class="btn btn-outline-primary mb-2" @onclick="BuscarArticulos">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<hr />
+<div>
+    <span class="text-danger">@message</span>
+</div>
+<div class="table-responsive">
+    <table class="table table-bordered  table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th scope="col">Cod</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Cod Barra</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Articulos)
+            {
+                <tr>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" @onclick="(e) =>Seleccion(e, item.IdArticulo, item.Nombre)">
+                            <i class="bi bi-check-circle"></i>
+                        </button>
+                    </td>
+                    <td>@item.CodInterno</td>
+                    <td>@item.Nombre</td>
+                    <td>@item.CodBarra</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+@code {
+    [Parameter]
+    public ArticuloViewModel SeleccionArticulo { get; set; }
+
+    [Parameter]
+    public EventCallback AgregarDetalle { get; set; }
+
+    [Parameter]
+    public EventCallback CerraModalProducto { get; set; }
+
+    List<ArticuloViewModel> Articulos = new List<ArticuloViewModel>();
+    List<ArticuloViewModel> ArticulosTemp = new List<ArticuloViewModel>();
+    string message = "";
+    string error = "";
+    string busqueda = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Articulos = service.ObtenerArticulosInsumos();
+        ArticulosTemp = Articulos;
+    }
+
+    /*protected override void OnInitialized()
+    {
+        Articulos = ServiceData.ObtenerArticulos();
+    }*/
+
+    protected void BuscarArticulos()
+    {
+        if (string.IsNullOrEmpty(busqueda))
+            Articulos = ArticulosTemp;
+        else
+            Articulos = ArticulosTemp.Where(x => x.Nombre.ToLower().Contains(busqueda.ToLower())).ToList();
+    }
+
+    protected async void Seleccion(EventArgs e, int IdArticulo, string NombreArticulo)
+    {
+        SeleccionArticulo.IdArticulo = IdArticulo;
+        SeleccionArticulo.Nombre = NombreArticulo;
+
+        var precios = Articulos.Where(x => x.IdArticulo == IdArticulo).FirstOrDefault()?.Precios ?? new List<PreciosViewModel>();
+
+        if (precios.Count() == 0)
+        {
+            message = "Articulo sin precio";
+            return;
+        }
+
+        SeleccionArticulo.Precios =precios;
+        await AgregarDetalle.InvokeAsync(true);
+        await CerraModalProducto.InvokeAsync(false);
+    }
+
+}

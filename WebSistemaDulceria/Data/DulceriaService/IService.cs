@@ -28,6 +28,8 @@ namespace WebSistemaDulceria.Data.DulceriaService
 
         List<ArticuloViewModel> ObtenerArticulos();
 
+        List<ArticuloViewModel> ObtenerArticulosInsumos();
+
         Task<Response> EliminarArticulo(int idArticulo);
 
         //List<ArticuloViewModel> ArticulosVendidos();

@@ -43,6 +43,7 @@ namespace WebSistemaDulceria.Models.DulceriaModels
         public List<LoteViewModel> Lote { get; set; } = new List<LoteViewModel>();
 
         public List<DetalleProductoTerminadoViewModel> DetalleProductoTerminado { get; set; } = new List<DetalleProductoTerminadoViewModel>();
+        public bool EsProductoInsumo { get; set; }
 
         public decimal CantidadVendida { get; set; }
 

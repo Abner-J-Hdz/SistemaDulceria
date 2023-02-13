@@ -23,9 +23,12 @@
     {
         DetalleVM.Cantidad = Convert.ToDecimal( e.Value as string);
 
-        DetalleVM.Subtotal = DetalleVM.Cantidad * DetalleVM.Precio;
+        DetalleVM.Subtotal =  Math.Round((DetalleVM.Cantidad * DetalleVM.Precio),2);
 
         DetalleVM.Total = DetalleVM.Subtotal + DetalleVM.Iva - DetalleVM.Descuento;
+
+        DetalleVM.Total = Math.Round(DetalleVM.Total, 2);
+
         CalcularTotales.InvokeAsync(false);
     }
 

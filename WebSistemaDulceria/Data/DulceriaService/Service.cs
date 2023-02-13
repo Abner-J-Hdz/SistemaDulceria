@@ -151,7 +151,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
         {
             try
             {
-                var ArticulosDb =  context.Articulo.Where(x => x.EstaActivo).ToList();
+                var ArticulosDb =  context.Articulo.Where(x => x.EstaActivo && !x.EsProductoInsumo).ToList();
 
                 return ArticulosDb.Select(x => new ArticuloViewModel
                 {
@@ -197,6 +197,57 @@ namespace WebSistemaDulceria.Data.DulceriaService
             }
         }
 
+        public List<ArticuloViewModel> ObtenerArticulosInsumos()
+        {
+            try
+            {
+                var ArticulosDb = context.Articulo.Where(x => x.EstaActivo && x.EsProductoInsumo).ToList();
+
+                return ArticulosDb.Select(x => new ArticuloViewModel
+                {
+                    IdArticulo = x.IdArticulo,
+                    Nombre = x.Nombre,
+                    CodInterno = x.CodInterno,
+                    CodBarra = x.CodBarra,
+                    IdPresentacion = x.IdPresentacion,
+                    IdUnidadMedida = x.IdUnidadMedida,
+                    CantidadMinima = x.CantidadMinima,
+                    TieneVencimiento = x.TieneVencimiento,
+                    EsMenudeo = x.EsMenudeo,
+                    EsProductoTerminado = x.EsProductoTerminado,
+                    EstaActivo = x.EstaActivo,
+                    Precios = context.Precios.Where(y => y.IdArticulo == x.IdArticulo).Select(
+                        z => new PreciosViewModel
+                        {
+                            IdArticuloPrecio = z.IdArticuloPrecio,
+                            PrecioCosto = Math.Round(z.PrecioCosto, 2),
+                            PrecioInicial = z.PrecioInicial,
+                            MargenGanancia = z.MargenGanancia,
+                            PrecioVenta = Math.Round(z.PrecioVenta, 2)
+                        }).ToList() ?? new List<PreciosViewModel>(),
+                    Lote = context.Lote.Where(y => y.IdArticulo == x.IdArticulo).Select(
+                        z => new LoteViewModel
+                        {
+                            Cantidad = z.Cantidad,
+                            IdArticulo = z.IdArticulo,
+                            IdLote = z.IdLote,
+                        }).ToList() ?? new List<LoteViewModel>(),
+                    DetalleProductoTerminado = context.DetalleProductoTerminado.Where(y => y.IdArticuloMaterial == x.IdArticulo)
+                    .Select(z => new DetalleProductoTerminadoViewModel
+                    {
+                        IdArticuloMaterial = z.IdArticuloMaterial,
+                        Cantidad = z.Cantidad,
+                        IdArticuloTerminado = z.IdArticuloTerminado
+                    }).ToList() ?? new List<DetalleProductoTerminadoViewModel>()
+                }).ToList();
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public async Task<Response> GuardarArticulo(ArticuloViewModel articuloVM)
         {
             Response resp = new Response();
@@ -213,6 +264,7 @@ namespace WebSistemaDulceria.Data.DulceriaService
                     EsProductoTerminado = true,//articuloVM.EsProductoTerminado,
                     IdUnidadMedida = 1,
                     IdPresentacion = 1,
+                    EsProductoInsumo = articuloVM.EsProductoInsumo,
                     EstaActivo = true,
                     FechaModificacion = DateTime.Now,
                     IdUsuarioModificacion = 1,

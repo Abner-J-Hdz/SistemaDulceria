@@ -36,6 +36,8 @@ namespace Entidades.DulceriaEntidades
         
         public bool EstaActivo { get; set; }
 
+        public bool EsProductoInsumo { get; set; }
+
         public DateTime FechaCreacion { get; set; }
 
         public int IdUsuarioCreacion { get; set; }

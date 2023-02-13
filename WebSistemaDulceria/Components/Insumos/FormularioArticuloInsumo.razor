@@ -22,7 +22,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    @*<div class="row">
         <div class="col">
             <div class="form-group">
                 <label>Cod Barra:</label>
@@ -37,34 +37,6 @@
                 <ValidationMessage For="() => ArticuloVM.CantidadMinima" />
             </div>
         </div>
-    </div>
-    @*<div class="row">
-        <div class="col">
-            <div class="form-group">
-                <label>Vencimiento:</label>
-                <input type="checkbox" @bind-value="ArticuloVM.TieneVencimiento" class="form-control">
-            </div>
-        </div>
-        <div class="col">
-            <div class="form-group">
-                <label>Cantidad Menudeo:</label>
-                <InputCheckbox @bind-Value="ArticuloVM.CantidadMenudeo" class="form-control" />
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <div class="form-group">
-                <label>Menudeo:</label>
-                <input type="checkbox" @bind-value="ArticuloVM.EsMenudeo" class="form-control">
-            </div>
-        </div>
-        <div class="col">
-            <div class="form-group">
-                <label>Es Producto Terminado:</label>
-                <InputCheckbox @bind-Value="ArticuloVM.EsProductoTerminado" class="form-control" />
-            </div>
-        </div>
     </div>*@
 
     <div class="row">
@@ -75,10 +47,10 @@
             </div>
         </div>
         <div class="col">
-            <div class="form-group">
+            @*<div class="form-group">
                 <label>Precio venta</label>
                 <InputNumber min="0" @bind-Value="ArticuloVM.PrecioVenta" class="form-control" />
-            </div>
+            </div>*@
         </div>
     </div>
 
@@ -93,7 +65,7 @@
 @code {
     [Parameter]
     public ArticuloViewModel ArticuloVM { get; set; }
-    
+
     [Parameter]
     public EventCallback CerraModal { get; set; }
 
@@ -103,7 +75,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ArticuloVM.EsProductoInsumo = true;
         if (ArticuloVM.IdArticulo == 0)
             LabelButton = "Guardar";
         else
@@ -123,6 +94,7 @@
 
     protected async Task GuardarActualizarProduccto()
     {
+        ArticuloVM.EsProductoInsumo = true;
         if (ArticuloVM.IdArticulo == 0)
             respuesta = await service.GuardarArticulo(ArticuloVM);
         else
@@ -134,7 +106,7 @@
             await js.InvokeVoidAsync("showAlert", "success", respuesta.Message, "");
             await Task.Delay(1600).ContinueWith((task) =>
             {
-                navigate.NavigateTo("productos", forceLoad: true);
+                navigate.NavigateTo("insumos", forceLoad: true);
             });
             await CerraModal.InvokeAsync(true);
         }

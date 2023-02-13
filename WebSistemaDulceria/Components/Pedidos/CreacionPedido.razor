@@ -103,7 +103,7 @@
 <BSModal @ref="ModalProducto" IsFullWidth="true">
     <BSModalHeader Class="bg-primary text-white" OnClick="@(() => ModalProducto.Hide())">Selecciona producto</BSModalHeader>
     <BSModalBody>
-        <SeleccionProducto SeleccionArticulo="PedidoDetalleViewModel.Articulo" AgregarDetalle="AgregarDetalle" CerraModalProducto="CerraModalProducto" />
+        <SeleccionProductoPedidos SeleccionArticulo="PedidoDetalleViewModel.Articulo" AgregarDetalle="AgregarDetalle" CerraModalProducto="CerraModalProducto" />
     </BSModalBody>
     <div class="modal-footer">
         <button class="btn btn-outline-danger" @onclick="() => ModalProducto.Hide()"><i class="bi bi-x-circle mr-1"></i>Cerrar</button>
@@ -123,30 +123,30 @@
 
 @code {
 
-    PedidoViewModel PedidoVM = new PedidoViewModel();
+        PedidoViewModel PedidoVM = new PedidoViewModel();
 
-    DetallePedidoViewModel PedidoDetalleViewModel = new DetallePedidoViewModel();
+        DetallePedidoViewModel PedidoDetalleViewModel = new DetallePedidoViewModel();
 
-    BSModal ModalProducto { get; set; }
-    BSModal ModalPedidos { get; set; }
+        BSModal ModalProducto { get; set; }
+        BSModal ModalPedidos { get; set; }
 
-    bool BtnNuevo = false; //{ get; set; }
-    bool BtnGuardar = false; //{ get; set; }
-    bool BtnBuscar = false; //{ get; set; }
-    bool BtnCancelar = false; //{ get; set; }
-    bool BtnAgregarProducto = false;
-    bool BlockFormulario = true;
-    bool txtObservaciones = true;
+        bool BtnNuevo = false; //{ get; set; }
+        bool BtnGuardar = false; //{ get; set; }
+        bool BtnBuscar = false; //{ get; set; }
+        bool BtnCancelar = false; //{ get; set; }
+        bool BtnAgregarProducto = false;
+        bool BlockFormulario = true;
+        bool txtObservaciones = true;
 
-    bool validarFormPedido = false;
+        bool validarFormPedido = false;
 
-    decimal total { get; set; } = 0;
-    decimal subtotal { get; set; } = 0;
-    decimal impuesto { get; set; } = 0;
-    decimal descuento { get; set; } = 0;
+        decimal total { get; set; } = 0;
+        decimal subtotal { get; set; } = 0;
+        decimal impuesto { get; set; } = 0;
+        decimal descuento { get; set; } = 0;
 
-    string mensajeError = "";
-    string error = "";
+        string mensajeError = "";
+        string error = "";
 
 
     public Response respuesta { get; set; }
@@ -213,9 +213,9 @@
             IdArticulo = PedidoDetalleViewModel.Articulo.IdArticulo,
             Cantidad = 1,
             Articulo = PedidoDetalleViewModel.Articulo,
-            Precio = PedidoDetalleViewModel.Articulo.Precios.FirstOrDefault()?.PrecioCosto ?? 0,
-            Subtotal = total,
-            Total = total
+            Precio = Math.Round((PedidoDetalleViewModel.Articulo.Precios.FirstOrDefault()?.PrecioCosto ?? 0),2),
+            Subtotal =  Math.Round(total,2),
+            Total = Math.Round( total,2)
         }
         );
         PedidoDetalleViewModel = new DetallePedidoViewModel();
@@ -243,10 +243,10 @@
 
     private void CalcularTotales()
     {
-        total = PedidoVM.DetallePedido.Sum(x => x.Total);
-        subtotal = PedidoVM.DetallePedido.Sum(x => x.Subtotal);
-        impuesto = PedidoVM.DetallePedido.Sum(x => x.Iva);
-        descuento = PedidoVM.DetallePedido.Sum(x => x.Descuento);
+        total = Math.Round( PedidoVM.DetallePedido.Sum(x => x.Total), 2);
+        subtotal = Math.Round(PedidoVM.DetallePedido.Sum(x => x.Subtotal), 2);
+        impuesto = Math.Round(PedidoVM.DetallePedido.Sum(x => x.Iva), 2);
+        descuento = Math.Round(PedidoVM.DetallePedido.Sum(x => x.Descuento), 2);
     }
 
     private async void handleGuardar()
